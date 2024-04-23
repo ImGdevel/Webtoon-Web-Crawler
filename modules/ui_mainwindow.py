@@ -16,6 +16,9 @@ from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplicat
     QStackedWidget, QTableWidget, QTableWidgetItem, QTextEdit,
     QVBoxLayout, QWidget)
 import resources_rc
+from src import HomeView
+from views import RealStreamView, VideoView, ImageView, SettingsView
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -1380,7 +1383,10 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.row_3)
 
         self.stackedWidget.addWidget(self.widgets)
-        self.new_page = QWidget()
+
+        #////////////////////////// Page Add ////////////////////////////////////////
+
+        self.new_page = RealStreamView()
         self.new_page.setObjectName(u"new_page")
         self.verticalLayout_20 = QVBoxLayout(self.new_page)
         self.verticalLayout_20.setObjectName(u"verticalLayout_20")
@@ -1391,6 +1397,35 @@ class Ui_MainWindow(object):
         self.verticalLayout_20.addWidget(self.label)
 
         self.stackedWidget.addWidget(self.new_page)
+
+
+        self.video_page = VideoView()
+        self.video_page.setObjectName(u"video_page")
+        self.verticalLayout_21 = QVBoxLayout(self.video_page)
+        self.verticalLayout_21.setObjectName(u"verticalLayout_21")
+        self.label = QLabel(self.video_page)
+        self.label.setObjectName(u"label")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_21.addWidget(self.label)
+        
+        self.stackedWidget.addWidget(self.video_page)
+
+        
+
+        self.img_page = ImageView()
+        self.img_page.setObjectName(u"img_page")
+        self.verticalLayout_22 = QVBoxLayout(self.img_page)
+        self.verticalLayout_22.setObjectName(u"verticalLayout_22")
+        self.label = QLabel(self.img_page)
+        self.label.setObjectName(u"label")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_22.addWidget(self.label)
+        
+        self.stackedWidget.addWidget(self.img_page)
+
+        #/////////////////////////////// page end //////////////////////////////////////
 
         self.verticalLayout_15.addWidget(self.stackedWidget)
 

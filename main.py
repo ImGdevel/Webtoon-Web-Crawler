@@ -104,6 +104,20 @@ class MainWindow(QMainWindow):
             UIFunctions.resetStyle(self, btnName) # RESET ANOTHERS BUTTONS SELECTED
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
 
+        # SHOW VIDEO PAGE
+        if btnName == "btn_video":
+            widgets.stackedWidget.setCurrentWidget(widgets.video_page) # SET PAGE
+            UIFunctions.resetStyle(self, btnName) # RESET ANOTHERS BUTTONS SELECTED
+            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
+
+        # SHOW IMAGE PAGE
+        if btnName == "btn_Image":
+            widgets.stackedWidget.setCurrentWidget(widgets.img_page) # SET PAGE
+            UIFunctions.resetStyle(self, btnName) # RESET ANOTHERS BUTTONS SELECTED
+            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
+
+        
+
         if btnName == "btn_save":
             print("Save BTN clicked!")
 
