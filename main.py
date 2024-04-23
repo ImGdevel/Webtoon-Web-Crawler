@@ -52,7 +52,10 @@ class MainWindow(QMainWindow):
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
-        widgets.btn_new.clicked.connect(self.buttonClick)
+        widgets.btn_streaming.clicked.connect(self.buttonClick)
+        widgets.btn_video.clicked.connect(self.buttonClick)
+        widgets.btn_image.clicked.connect(self.buttonClick)
+        widgets.btn_filter_setting.clicked.connect(self.buttonClick)
         widgets.btn_save.clicked.connect(self.buttonClick)
 
 
@@ -86,6 +89,9 @@ class MainWindow(QMainWindow):
         btn = self.sender()
         btnName = btn.objectName()
 
+        # PRINT BTN NAME
+        print(f'Button "{btnName}" pressed!')
+
         # SHOW HOME PAGE
         if btnName == "btn_home":
             widgets.stackedWidget.setCurrentWidget(widgets.home)
@@ -98,31 +104,34 @@ class MainWindow(QMainWindow):
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
-        # SHOW NEW PAGE
-        if btnName == "btn_new":
-            widgets.stackedWidget.setCurrentWidget(widgets.new_page) # SET PAGE
-            UIFunctions.resetStyle(self, btnName) # RESET ANOTHERS BUTTONS SELECTED
-            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
+        # SHOW STREAMING PAGE
+        if btnName == "btn_streaming":
+            widgets.stackedWidget.setCurrentWidget(widgets.streaming_page) 
+            UIFunctions.resetStyle(self, btnName) 
+            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
         # SHOW VIDEO PAGE
-        if btnName == "btn_video":
-            widgets.stackedWidget.setCurrentWidget(widgets.video_page) # SET PAGE
-            UIFunctions.resetStyle(self, btnName) # RESET ANOTHERS BUTTONS SELECTED
-            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
+        if btnName == u"btn_video":
+            widgets.stackedWidget.setCurrentWidget(widgets.video_page)
+            UIFunctions.resetStyle(self, btnName) 
+            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
         # SHOW IMAGE PAGE
-        if btnName == "btn_Image":
-            widgets.stackedWidget.setCurrentWidget(widgets.img_page) # SET PAGE
-            UIFunctions.resetStyle(self, btnName) # RESET ANOTHERS BUTTONS SELECTED
-            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
+        if btnName == "btn_image":
+            widgets.stackedWidget.setCurrentWidget(widgets.img_page)
+            UIFunctions.resetStyle(self, btnName) 
+            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
-        
+        # SHOW FILTER SETTING PAGE
+        if btnName == "btn_filter_setting":
+            widgets.stackedWidget.setCurrentWidget(widgets.filter_setting) 
+            UIFunctions.resetStyle(self, btnName) 
+            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) 
 
         if btnName == "btn_save":
             print("Save BTN clicked!")
 
-        # PRINT BTN NAME
-        print(f'Button "{btnName}" pressed!')
+
 
 
     # RESIZE EVENTS

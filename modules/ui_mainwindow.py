@@ -17,15 +17,15 @@ from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplicat
     QVBoxLayout, QWidget)
 import resources_rc
 from src import HomeView
-from views import RealStreamView, VideoView, ImageView, SettingsView
+from views import RealStreamView, VideoView, ImageView, SettingsView, FilterSettingView
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1034, 568)
-        MainWindow.setMinimumSize(QSize(940, 560))
+        MainWindow.resize(1280, 800)
+        MainWindow.setMinimumSize(QSize(1280, 800))
         self.styleSheet = QWidget(MainWindow)
         self.styleSheet.setObjectName(u"styleSheet")
         font = QFont()
@@ -656,6 +656,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_8.setSpacing(0)
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
         self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
+
+        #  ////////////////////////////////////////////////////////////////////////
+
         self.btn_home = QPushButton(self.topMenu)
         self.btn_home.setObjectName(u"btn_home")
         sizePolicy.setHeightForWidth(self.btn_home.sizePolicy().hasHeightForWidth())
@@ -665,6 +668,8 @@ class Ui_MainWindow(object):
         self.btn_home.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_home.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.btn_home.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-home.png);")
+
+
 
         self.verticalLayout_8.addWidget(self.btn_home)
 
@@ -680,17 +685,57 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_8.addWidget(self.btn_widgets)
 
-        self.btn_new = QPushButton(self.topMenu)
-        self.btn_new.setObjectName(u"btn_new")
-        sizePolicy.setHeightForWidth(self.btn_new.sizePolicy().hasHeightForWidth())
-        self.btn_new.setSizePolicy(sizePolicy)
-        self.btn_new.setMinimumSize(QSize(0, 45))
-        self.btn_new.setFont(font)
-        self.btn_new.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btn_new.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_new.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-file.png);")
+        self.btn_streaming = QPushButton(self.topMenu)
+        self.btn_streaming.setObjectName(u"btn_streaming")
+        sizePolicy.setHeightForWidth(self.btn_streaming.sizePolicy().hasHeightForWidth())
+        self.btn_streaming.setSizePolicy(sizePolicy)
+        self.btn_streaming.setMinimumSize(QSize(0, 45))
+        self.btn_streaming.setFont(font)
+        self.btn_streaming.setCursor(QCursor(Qt.PointingHandCursor))
+        self.btn_streaming.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.btn_streaming.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-file.png);")
 
-        self.verticalLayout_8.addWidget(self.btn_new)
+        self.verticalLayout_8.addWidget(self.btn_streaming)
+
+
+        self.btn_video = QPushButton(self.topMenu)
+        self.btn_video.setObjectName(u"btn_video")
+        sizePolicy.setHeightForWidth(self.btn_video.sizePolicy().hasHeightForWidth())
+        self.btn_video.setSizePolicy(sizePolicy)
+        self.btn_video.setMinimumSize(QSize(0, 45))
+        self.btn_video.setFont(font)
+        self.btn_video.setCursor(QCursor(Qt.PointingHandCursor))
+        self.btn_video.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.btn_video.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-file.png);")
+
+        self.verticalLayout_8.addWidget(self.btn_video)
+
+
+        self.btn_image = QPushButton(self.topMenu)
+        self.btn_image.setObjectName(u"btn_image")
+        sizePolicy.setHeightForWidth(self.btn_image.sizePolicy().hasHeightForWidth())
+        self.btn_image.setSizePolicy(sizePolicy)
+        self.btn_image.setMinimumSize(QSize(0, 45))
+        self.btn_image.setFont(font)
+        self.btn_image.setCursor(QCursor(Qt.PointingHandCursor))
+        self.btn_image.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.btn_image.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-file.png);")
+
+        self.verticalLayout_8.addWidget(self.btn_image)
+
+
+        self.btn_filter_setting = QPushButton(self.topMenu)
+        self.btn_filter_setting.setObjectName(u"btn_filter_setting")
+        sizePolicy.setHeightForWidth(self.btn_image.sizePolicy().hasHeightForWidth())
+        self.btn_filter_setting.setSizePolicy(sizePolicy)
+        self.btn_filter_setting.setMinimumSize(QSize(0, 45))
+        self.btn_filter_setting.setFont(font)
+        self.btn_filter_setting.setCursor(QCursor(Qt.PointingHandCursor))
+        self.btn_filter_setting.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.btn_filter_setting.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-file.png);")
+
+        self.verticalLayout_8.addWidget(self.btn_filter_setting)
+
 
         self.btn_save = QPushButton(self.topMenu)
         self.btn_save.setObjectName(u"btn_save")
@@ -716,6 +761,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_8.addWidget(self.btn_exit)
 
+        # ///////////////////////////////////////////////////////////////////
 
         self.verticalMenuLayout.addWidget(self.topMenu, 0, Qt.AlignmentFlag.AlignTop)
 
@@ -1386,17 +1432,17 @@ class Ui_MainWindow(object):
 
         #////////////////////////// Page Add ////////////////////////////////////////
 
-        self.new_page = RealStreamView()
-        self.new_page.setObjectName(u"new_page")
-        self.verticalLayout_20 = QVBoxLayout(self.new_page)
+        self.streaming_page = RealStreamView()
+        self.streaming_page.setObjectName(u"new_page")
+        self.verticalLayout_20 = QVBoxLayout(self.streaming_page)
         self.verticalLayout_20.setObjectName(u"verticalLayout_20")
-        self.label = QLabel(self.new_page)
+        self.label = QLabel(self.streaming_page)
         self.label.setObjectName(u"label")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_20.addWidget(self.label)
 
-        self.stackedWidget.addWidget(self.new_page)
+        self.stackedWidget.addWidget(self.streaming_page)
 
 
         self.video_page = VideoView()
@@ -1424,6 +1470,19 @@ class Ui_MainWindow(object):
         self.verticalLayout_22.addWidget(self.label)
         
         self.stackedWidget.addWidget(self.img_page)
+
+
+        self.filter_setting = FilterSettingView()
+        self.filter_setting.setObjectName(u"img_page")
+        self.verticalLayout_23 = QVBoxLayout(self.filter_setting)
+        self.verticalLayout_23.setObjectName(u"verticalLayout_22")
+        self.label = QLabel(self.filter_setting)
+        self.label.setObjectName(u"label")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_23.addWidget(self.label)
+        
+        self.stackedWidget.addWidget(self.filter_setting)
 
         #/////////////////////////////// page end //////////////////////////////////////
 
@@ -1580,7 +1639,10 @@ class Ui_MainWindow(object):
         self.toggleButton.setText(QCoreApplication.translate("MainWindow", u"Hide", None))
         self.btn_home.setText(QCoreApplication.translate("MainWindow", u"Home", None))
         self.btn_widgets.setText(QCoreApplication.translate("MainWindow", u"Widgets", None))
-        self.btn_new.setText(QCoreApplication.translate("MainWindow", u"New", None))
+        self.btn_streaming.setText(QCoreApplication.translate("MainWindow", u"Stream", None))
+        self.btn_video.setText(QCoreApplication.translate("MainWindow", u"Video", None))
+        self.btn_image.setText(QCoreApplication.translate("MainWindow", u"Image", None))
+        self.btn_filter_setting.setText(QCoreApplication.translate("MainWindow", u"Filter", None))
         self.btn_save.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.btn_exit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
         self.toggleLeftBox.setText(QCoreApplication.translate("MainWindow", u"Left Box", None))
