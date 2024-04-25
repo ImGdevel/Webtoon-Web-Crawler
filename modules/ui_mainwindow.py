@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplicat
     QStackedWidget, QTableWidget, QTableWidgetItem, QTextEdit,
     QVBoxLayout, QWidget)
 from .resources_rc import *
+from views import *
 
 
 class Ui_MainWindow(object):
@@ -1414,7 +1415,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.row_3)
 
         self.stackedWidget.addWidget(self.widgets)
-        self.streaming_page = QWidget()
+        self.streaming_page = StramingView()
         self.streaming_page.setObjectName(u"streaming_page")
         self.verticalLayout_20 = QVBoxLayout(self.streaming_page)
         self.verticalLayout_20.setObjectName(u"verticalLayout_20")
@@ -1425,7 +1426,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_20.addWidget(self.label01)
 
         self.stackedWidget.addWidget(self.streaming_page)
-        self.video_page = QWidget()
+        self.video_page = VideoView()
         self.video_page.setObjectName(u"video_page")
         self.verticalLayout_21 = QVBoxLayout(self.video_page)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
@@ -1436,7 +1437,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_21.addWidget(self.label02)
 
         self.stackedWidget.addWidget(self.video_page)
-        self.image_page = QWidget()
+        self.image_page = ImageView()
         self.image_page.setObjectName(u"image_page")
         self.verticalLayout_22 = QVBoxLayout(self.image_page)
         self.verticalLayout_22.setObjectName(u"verticalLayout_22")
@@ -1447,7 +1448,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_22.addWidget(self.label03)
 
         self.stackedWidget.addWidget(self.image_page)
-        self.filter_setting_page = QWidget()
+        self.filter_setting_page = FilterSettingView()
         self.filter_setting_page.setObjectName(u"filter_setting_page")
         self.verticalLayout_23 = QVBoxLayout(self.filter_setting_page)
         self.verticalLayout_23.setObjectName(u"verticalLayout_23")
