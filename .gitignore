@@ -2,3 +2,7 @@ __pycache__/
 .git/
 .pyc
 /build
+
+#
+./ui_main.py
+./resources_rc.py
