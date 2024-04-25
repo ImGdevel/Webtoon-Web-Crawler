@@ -678,7 +678,6 @@ Button */
                <family>Segoe UI Semibold</family>
                <pointsize>12</pointsize>
                <italic>false</italic>
-               <fontweight></fontweight>
               </font>
              </property>
              <property name="text">
@@ -1234,7 +1233,7 @@ Button */
                   <string/>
                  </property>
                  <property name="icon">
-                  <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
+                  <iconset resource="resources.qrc">
                    <normaloff>:/icons/images/icons/icon_close.png</normaloff>:/icons/images/icons/icon_close.png</iconset>
                  </property>
                  <property name="iconSize">
@@ -1650,7 +1649,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
+                   <iconset resource="resources.qrc">
                     <normaloff>:/icons/images/icons/icon_settings.png</normaloff>:/icons/images/icons/icon_settings.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -1685,7 +1684,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
+                   <iconset resource="resources.qrc">
                     <normaloff>:/icons/images/icons/icon_minimize.png</normaloff>:/icons/images/icons/icon_minimize.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -1729,7 +1728,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
+                   <iconset resource="resources.qrc">
                     <normaloff>:/icons/images/icons/icon_maximize.png</normaloff>:/icons/images/icons/icon_maximize.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -1764,7 +1763,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
+                   <iconset resource="resources.qrc">
                     <normaloff>:/icons/images/icons/icon_close.png</normaloff>:/icons/images/icons/icon_close.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -2046,7 +2045,7 @@ background-repeat: no-repeat;</string>
                                      <string>Open</string>
                                     </property>
                                     <property name="icon">
-                                     <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
+                                     <iconset resource="resources.qrc">
                                       <normaloff>:/icons/images/icons/cil-folder-open.png</normaloff>:/icons/images/icons/cil-folder-open.png</iconset>
                                     </property>
                                    </widget>
@@ -2268,7 +2267,7 @@ background-repeat: no-repeat;</string>
                                <string>Link Button</string>
                               </property>
                               <property name="icon">
-                               <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
+                               <iconset resource="resources.qrc">
                                 <normaloff>:/icons/images/icons/cil-link.png</normaloff>:/icons/images/icons/cil-link.png</iconset>
                               </property>
                               <property name="description">
@@ -3058,7 +3057,7 @@ background-repeat: no-repeat;</string>
   </widget>
  </widget>
  <resources>
-  <include location="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc"/>
+  <include location="resources.qrc"/>
  </resources>
  <connections/>
 </ui>
