@@ -24,13 +24,11 @@ class FilterSettingView(QWidget):
         self.left_layout = self.setup_left_layer()
         self.left_widget = QWidget()
         self.left_widget.setLayout(self.left_layout)
-        self.left_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 왼쪽 레이어 배경색 설정
 
         # 오른쪽 레이어 - Filter Setting
         self.right_layout = self.setup_right_layer()
         self.right_widget = QWidget()
         self.right_widget.setLayout(self.right_layout)
-        self.right_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')  # 오른쪽 레이어 배경색 설정
 
         self.empty_widget = QWidget()        
 
@@ -102,7 +100,6 @@ class FilterSettingView(QWidget):
 
         # todo: 하단 오른 쪽 끝에 적용 버튼 추가
         apply_button = QPushButton("적용")
-        apply_button.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
         apply_button.clicked.connect(self.apply_filter_settings)
         apply_button.setFixedSize(60, 30)  # 높이 설정
 
@@ -151,14 +148,12 @@ class FilterSettingView(QWidget):
         
         face_setting_widget = QWidget()
         face_setting_widget.setLayout(face_register_layout)
-        face_setting_widget.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
         
         face_layout.addWidget(face_label)
         face_layout.addWidget(face_setting_widget)
 
         # Add 버튼 추가
         add_face_button = QPushButton("Add")
-        add_face_button.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')
         add_face_button.setFixedSize(60, 30)
         add_face_button.clicked.connect(self.show_add_face_dialog)
         face_layout.addWidget(add_face_button)
@@ -175,7 +170,6 @@ class FilterSettingView(QWidget):
         object_label.setFixedHeight(30)  # 높이 설정
         
         self.object_setting_widget = QWidget()
-        self.object_setting_widget.setStyleSheet(f'background-color: {Colors.baseColor02}; color: white;')  # 배경색 설정
 
         # QVBoxLayout을 self.object_setting_widget 위젯에 설정
         self.object_setting_layout = QVBoxLayout(self.object_setting_widget)

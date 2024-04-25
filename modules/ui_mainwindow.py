@@ -16,7 +16,6 @@ from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplicat
     QStackedWidget, QTableWidget, QTableWidgetItem, QTextEdit,
     QVBoxLayout, QWidget)
 import resources_rc
-from src import HomeView
 from views import RealStreamView, VideoView, ImageView, SettingsView, FilterSettingView
 
 

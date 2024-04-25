@@ -40,7 +40,7 @@ class ImageView(QWidget):
         self.file_view_widget.setMinimumSize(300, 150)
         self.file_view_widget.setMaximumWidth(1000)
         self.file_view_widget.setMaximumHeight(250)
-        self.file_view_widget.setStyleSheet(f'background-color: {Colors.baseColor01};')
+        
         self.file_view_widget.remove_file.connect(self.removeUrl)
         self.file_view_widget.add_file.connect(self.addItemFileView)
         self.file_view_widget.drop_signal.connect(self.addItemFileView)
@@ -55,7 +55,7 @@ class ImageView(QWidget):
 
         self.setting_widget.addWidget(self.filter_list_widget)
 
-        self.setting_frame.setStyleSheet(f'background-color: {Colors.baseColor01};')
+        
         self.setting_frame.setMinimumSize(100, 150)
         self.setting_frame.setMaximumWidth(200)
         self.setting_layout = QVBoxLayout()
