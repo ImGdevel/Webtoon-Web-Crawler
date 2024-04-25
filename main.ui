@@ -2821,7 +2821,7 @@ background-repeat: no-repeat;</string>
                      <widget class="QWidget" name="streaming_page">
                       <layout class="QVBoxLayout" name="verticalLayout_20">
                        <item>
-                        <widget class="QLabel" name="label">
+                        <widget class="QLabel" name="label01">
                          <property name="text">
                           <string>streaming page</string>
                          </property>
@@ -2835,7 +2835,7 @@ background-repeat: no-repeat;</string>
                      <widget class="QWidget" name="video_page">
                       <layout class="QVBoxLayout" name="verticalLayout_21">
                        <item>
-                        <widget class="QLabel" name="label">
+                        <widget class="QLabel" name="label02">
                          <property name="text">
                           <string>video page</string>
                          </property>
@@ -2847,9 +2847,9 @@ background-repeat: no-repeat;</string>
                       </layout>
                      </widget>
                      <widget class="QWidget" name="image_page">
-                      <layout class="QVBoxLayout" name="verticalLayout_20">
+                      <layout class="QVBoxLayout" name="verticalLayout_22">
                        <item>
-                        <widget class="QLabel" name="label">
+                        <widget class="QLabel" name="label03">
                          <property name="text">
                           <string>image page</string>
                          </property>
@@ -2861,7 +2861,7 @@ background-repeat: no-repeat;</string>
                       </layout>
                      </widget>
                      <widget class="QWidget" name="filter_setting_page">
-                      <layout class="QVBoxLayout" name="verticalLayout_20">
+                      <layout class="QVBoxLayout" name="verticalLayout_23">
                        <item>
                         <widget class="QLabel" name="label">
                          <property name="text">

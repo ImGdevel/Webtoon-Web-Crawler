@@ -1,13 +1,3 @@
-# -*- coding: utf-8 -*-
-
-################################################################################
-## Form generated from reading UI file 'main.ui'
-##
-## Created by: Qt User Interface Compiler version 6.7.0
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
-
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
@@ -23,6 +13,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplicat
     QStackedWidget, QTableWidget, QTableWidgetItem, QTextEdit,
     QVBoxLayout, QWidget)
 from .resources_rc import *
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -1427,44 +1418,44 @@ class Ui_MainWindow(object):
         self.streaming_page.setObjectName(u"streaming_page")
         self.verticalLayout_20 = QVBoxLayout(self.streaming_page)
         self.verticalLayout_20.setObjectName(u"verticalLayout_20")
-        self.label = QLabel(self.streaming_page)
-        self.label.setObjectName(u"label")
-        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label01 = QLabel(self.streaming_page)
+        self.label01.setObjectName(u"label01")
+        self.label01.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.verticalLayout_20.addWidget(self.label)
+        self.verticalLayout_20.addWidget(self.label01)
 
         self.stackedWidget.addWidget(self.streaming_page)
         self.video_page = QWidget()
         self.video_page.setObjectName(u"video_page")
         self.verticalLayout_21 = QVBoxLayout(self.video_page)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
-        self.label1 = QLabel(self.video_page)
-        self.label1.setObjectName(u"label1")
-        self.label1.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label02 = QLabel(self.video_page)
+        self.label02.setObjectName(u"label02")
+        self.label02.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.verticalLayout_21.addWidget(self.label1)
+        self.verticalLayout_21.addWidget(self.label02)
 
         self.stackedWidget.addWidget(self.video_page)
         self.image_page = QWidget()
         self.image_page.setObjectName(u"image_page")
-        self.verticalLayout_201 = QVBoxLayout(self.image_page)
-        self.verticalLayout_201.setObjectName(u"verticalLayout_201")
-        self.label2 = QLabel(self.image_page)
-        self.label2.setObjectName(u"label2")
-        self.label2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.verticalLayout_22 = QVBoxLayout(self.image_page)
+        self.verticalLayout_22.setObjectName(u"verticalLayout_22")
+        self.label03 = QLabel(self.image_page)
+        self.label03.setObjectName(u"label03")
+        self.label03.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.verticalLayout_201.addWidget(self.label2)
+        self.verticalLayout_22.addWidget(self.label03)
 
         self.stackedWidget.addWidget(self.image_page)
         self.filter_setting_page = QWidget()
         self.filter_setting_page.setObjectName(u"filter_setting_page")
-        self.verticalLayout_202 = QVBoxLayout(self.filter_setting_page)
-        self.verticalLayout_202.setObjectName(u"verticalLayout_202")
-        self.label3 = QLabel(self.filter_setting_page)
-        self.label3.setObjectName(u"label3")
-        self.label3.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.verticalLayout_23 = QVBoxLayout(self.filter_setting_page)
+        self.verticalLayout_23.setObjectName(u"verticalLayout_23")
+        self.label = QLabel(self.filter_setting_page)
+        self.label.setObjectName(u"label")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.verticalLayout_202.addWidget(self.label3)
+        self.verticalLayout_23.addWidget(self.label)
 
         self.stackedWidget.addWidget(self.filter_setting_page)
 
@@ -1736,10 +1727,10 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Line", None));
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
-        self.label.setText(QCoreApplication.translate("MainWindow", u"streaming page", None))
-        self.label1.setText(QCoreApplication.translate("MainWindow", u"video page", None))
-        self.label2.setText(QCoreApplication.translate("MainWindow", u"image page", None))
-        self.label3.setText(QCoreApplication.translate("MainWindow", u"filter setting page", None))
+        self.label01.setText(QCoreApplication.translate("MainWindow", u"streaming page", None))
+        self.label02.setText(QCoreApplication.translate("MainWindow", u"video page", None))
+        self.label03.setText(QCoreApplication.translate("MainWindow", u"image page", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"filter setting page", None))
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
         self.btn_logout.setText(QCoreApplication.translate("MainWindow", u"Logout", None))
