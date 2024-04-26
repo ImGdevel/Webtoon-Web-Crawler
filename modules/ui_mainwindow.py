@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+
+################################################################################
+## Form generated from reading UI file 'main.ui'
+##
+## Created by: Qt User Interface Compiler version 6.7.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
+
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
@@ -13,20 +23,18 @@ from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplicat
     QStackedWidget, QTableWidget, QTableWidgetItem, QTextEdit,
     QVBoxLayout, QWidget)
 from .resources_rc import *
-from views import *
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1034, 568)
-        MainWindow.setMinimumSize(QSize(940, 560))
+        MainWindow.resize(1280, 800)
+        MainWindow.setMinimumSize(QSize(1280, 800))
         self.styleSheet = QWidget(MainWindow)
         self.styleSheet.setObjectName(u"styleSheet")
         font = QFont()
         font.setFamilies([u"Segoe UI"])
-        font.setPointSize(10)
+        font.setPointSize(12)
         font.setBold(False)
         font.setItalic(False)
         self.styleSheet.setFont(font)
@@ -39,7 +47,7 @@ class Ui_MainWindow(object):
 "\n"
 "QWidget{\n"
 "	color: rgb(221, 221, 221);\n"
-"	font: 10pt \"Segoe UI\";\n"
+"	font: 12pt \"Segoe UI\";\n"
 "}\n"
 "\n"
 "/* /////////////////////////////////////////////////////////////////////////////////////////////////\n"
@@ -590,8 +598,9 @@ class Ui_MainWindow(object):
         self.titleLeftApp.setObjectName(u"titleLeftApp")
         self.titleLeftApp.setGeometry(QRect(70, 8, 160, 20))
         font1 = QFont()
-        font1.setFamilies([u"Segoe UI Semibold"])
+        font1.setFamilies([u"Segoe UI"])
         font1.setPointSize(12)
+        font1.setBold(True)
         font1.setItalic(False)
         self.titleLeftApp.setFont(font1)
         self.titleLeftApp.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignTop)
@@ -684,7 +693,7 @@ class Ui_MainWindow(object):
         self.btn_streaming.setFont(font)
         self.btn_streaming.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_streaming.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_streaming.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-file.png);")
+        self.btn_streaming.setStyleSheet(u"background-image:url(:/icons/images/icons/cil-headphones.png);")
 
         self.verticalLayout_8.addWidget(self.btn_streaming)
 
@@ -696,7 +705,7 @@ class Ui_MainWindow(object):
         self.btn_video.setFont(font)
         self.btn_video.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_video.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_video.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-file.png);")
+        self.btn_video.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-movie.png);")
 
         self.verticalLayout_8.addWidget(self.btn_video)
 
@@ -708,7 +717,7 @@ class Ui_MainWindow(object):
         self.btn_image.setFont(font)
         self.btn_image.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_image.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_image.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-file.png);")
+        self.btn_image.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-image1.png);")
 
         self.verticalLayout_8.addWidget(self.btn_image)
 
@@ -720,33 +729,9 @@ class Ui_MainWindow(object):
         self.btn_filter_setting.setFont(font)
         self.btn_filter_setting.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_filter_setting.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_filter_setting.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-file.png);")
+        self.btn_filter_setting.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-library.png);")
 
         self.verticalLayout_8.addWidget(self.btn_filter_setting)
-
-        self.btn_save = QPushButton(self.topMenu)
-        self.btn_save.setObjectName(u"btn_save")
-        sizePolicy.setHeightForWidth(self.btn_save.sizePolicy().hasHeightForWidth())
-        self.btn_save.setSizePolicy(sizePolicy)
-        self.btn_save.setMinimumSize(QSize(0, 45))
-        self.btn_save.setFont(font)
-        self.btn_save.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btn_save.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_save.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-save.png)")
-
-        self.verticalLayout_8.addWidget(self.btn_save)
-
-        self.btn_exit = QPushButton(self.topMenu)
-        self.btn_exit.setObjectName(u"btn_exit")
-        sizePolicy.setHeightForWidth(self.btn_exit.sizePolicy().hasHeightForWidth())
-        self.btn_exit.setSizePolicy(sizePolicy)
-        self.btn_exit.setMinimumSize(QSize(0, 45))
-        self.btn_exit.setFont(font)
-        self.btn_exit.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btn_exit.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_exit.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-x.png);")
-
-        self.verticalLayout_8.addWidget(self.btn_exit)
 
 
         self.verticalMenuLayout.addWidget(self.topMenu, 0, Qt.AlignmentFlag.AlignTop)
@@ -1010,7 +995,7 @@ class Ui_MainWindow(object):
         self.maximizeRestoreAppBtn.setMaximumSize(QSize(28, 28))
         font3 = QFont()
         font3.setFamilies([u"Segoe UI"])
-        font3.setPointSize(10)
+        font3.setPointSize(12)
         font3.setBold(False)
         font3.setItalic(False)
         font3.setStyleStrategy(QFont.PreferDefault)
@@ -1415,7 +1400,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.row_3)
 
         self.stackedWidget.addWidget(self.widgets)
-        self.streaming_page = StramingView()
+        self.streaming_page = QWidget()
         self.streaming_page.setObjectName(u"streaming_page")
         self.verticalLayout_20 = QVBoxLayout(self.streaming_page)
         self.verticalLayout_20.setObjectName(u"verticalLayout_20")
@@ -1426,7 +1411,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_20.addWidget(self.label01)
 
         self.stackedWidget.addWidget(self.streaming_page)
-        self.video_page = VideoView()
+        self.video_page = QWidget()
         self.video_page.setObjectName(u"video_page")
         self.verticalLayout_21 = QVBoxLayout(self.video_page)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
@@ -1437,7 +1422,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_21.addWidget(self.label02)
 
         self.stackedWidget.addWidget(self.video_page)
-        self.image_page = ImageView()
+        self.image_page = QWidget()
         self.image_page.setObjectName(u"image_page")
         self.verticalLayout_22 = QVBoxLayout(self.image_page)
         self.verticalLayout_22.setObjectName(u"verticalLayout_22")
@@ -1448,7 +1433,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_22.addWidget(self.label03)
 
         self.stackedWidget.addWidget(self.image_page)
-        self.filter_setting_page = FilterSettingView()
+        self.filter_setting_page = QWidget()
         self.filter_setting_page.setObjectName(u"filter_setting_page")
         self.verticalLayout_23 = QVBoxLayout(self.filter_setting_page)
         self.verticalLayout_23.setObjectName(u"verticalLayout_23")
@@ -1608,17 +1593,15 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.titleLeftApp.setText(QCoreApplication.translate("MainWindow", u"PyDracula", None))
+        self.titleLeftApp.setText(QCoreApplication.translate("MainWindow", u"CAMA", None))
         self.titleLeftDescription.setText(QCoreApplication.translate("MainWindow", u"Modern GUI / Flat Style", None))
-        self.toggleButton.setText(QCoreApplication.translate("MainWindow", u"Hide", None))
-        self.btn_home.setText(QCoreApplication.translate("MainWindow", u"Home", None))
+        self.toggleButton.setText(QCoreApplication.translate("MainWindow", u"\uba54\ub274", None))
+        self.btn_home.setText(QCoreApplication.translate("MainWindow", u"\ud648", None))
         self.btn_widgets.setText(QCoreApplication.translate("MainWindow", u"Widgets", None))
-        self.btn_streaming.setText(QCoreApplication.translate("MainWindow", u"New", None))
-        self.btn_video.setText(QCoreApplication.translate("MainWindow", u"New", None))
-        self.btn_image.setText(QCoreApplication.translate("MainWindow", u"New", None))
-        self.btn_filter_setting.setText(QCoreApplication.translate("MainWindow", u"New", None))
-        self.btn_save.setText(QCoreApplication.translate("MainWindow", u"Save", None))
-        self.btn_exit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
+        self.btn_streaming.setText(QCoreApplication.translate("MainWindow", u"\uc2a4\ud2b8\ub9ac\ubc0d", None))
+        self.btn_video.setText(QCoreApplication.translate("MainWindow", u"\ub3d9\uc601\uc0c1", None))
+        self.btn_image.setText(QCoreApplication.translate("MainWindow", u"\uc774\ubbf8\uc9c0", None))
+        self.btn_filter_setting.setText(QCoreApplication.translate("MainWindow", u"\ud544\ud130 \uc124\uc815", None))
         self.toggleLeftBox.setText(QCoreApplication.translate("MainWindow", u"Left Box", None))
         self.extraLabel.setText(QCoreApplication.translate("MainWindow", u"Left Box", None))
 #if QT_CONFIG(tooltip)
@@ -1634,18 +1617,18 @@ class Ui_MainWindow(object):
 "hr { height: 1px; border-width: 0; }\n"
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">PyDracula</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ffffff;\">An interface created using Python and PySide (support for PyQt), and with colors based on the Dracula theme created by Zen"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600; color:#ff79c6;\">PyDracula</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#ffffff;\">An interface created using Python and PySide (support for PyQt), and with colors based on the Dracula theme created by Zen"
                         "o Rocha.</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ffffff;\">MIT License</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#bd93f9;\">Created by: Wanderson M. Pimenta</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">Convert UI</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#ffffff;\">MIT License</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#bd93f9;\">Created by: Wanderson M. Pimenta</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600; color:#ff79c6;\">Convert UI</span></p>\n"
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">pyside6-uic main.ui &gt; ui_main.py</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-in"
-                        "dent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">Convert QRC</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0"
+                        "px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600; color:#ff79c6;\">Convert QRC</span></p>\n"
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">pyside6-rcc resources.qrc -o resources_rc.py</span></p></body></html>", None))
-        self.titleRightInfo.setText(QCoreApplication.translate("MainWindow", u"PyDracula APP - Theme with colors based on Dracula for Python.", None))
+        self.titleRightInfo.setText(QCoreApplication.translate("MainWindow", u"CAMA  Real-time Streaming Filtering Application", None))
 #if QT_CONFIG(tooltip)
         self.settingsTopBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Settings", None))
 #endif // QT_CONFIG(tooltip)
@@ -1735,7 +1718,7 @@ class Ui_MainWindow(object):
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
         self.btn_logout.setText(QCoreApplication.translate("MainWindow", u"Logout", None))
-        self.creditsLabel.setText(QCoreApplication.translate("MainWindow", u"By: Wanderson M. Pimenta", None))
-        self.version.setText(QCoreApplication.translate("MainWindow", u"v1.0.3", None))
+        self.creditsLabel.setText(QCoreApplication.translate("MainWindow", u"CAMA: Real-time Streaming Filtering Application", None))
+        self.version.setText(QCoreApplication.translate("MainWindow", u"v1.1.4", None))
     # retranslateUi
 

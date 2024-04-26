@@ -56,7 +56,6 @@ class MainWindow(QMainWindow):
         widgets.btn_video.clicked.connect(self.buttonClick)
         widgets.btn_image.clicked.connect(self.buttonClick)
         widgets.btn_filter_setting.clicked.connect(self.buttonClick)
-        widgets.btn_save.clicked.connect(self.buttonClick)
 
 
         self.show()
