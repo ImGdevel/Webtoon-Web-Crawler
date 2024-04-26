@@ -7,14 +7,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1034</width>
-    <height>568</height>
+    <width>1280</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>940</width>
-    <height>560</height>
+    <width>1280</width>
+    <height>800</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
    <property name="font">
     <font>
      <family>Segoe UI</family>
-     <pointsize>10</pointsize>
+     <pointsize>12</pointsize>
      <italic>false</italic>
      <bold>false</bold>
     </font>
@@ -39,7 +39,7 @@ DARK THEME - DRACULA COLOR BASED
 
 QWidget{
 	color: rgb(221, 221, 221);
-	font: 10pt &quot;Segoe UI&quot;;
+	font: 12pt &quot;Segoe UI&quot;;
 }
 
 /* /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ Left Menu */
 }
 #topLogo {
 	background-color: rgb(33, 37, 43);
-	background-image: url(:/images/images/images/PyDracula.png);
+	background-image: url(:/images/resources/images/PyDracula.png);
 	background-position: centered;
 	background-repeat: no-repeat;
 }
@@ -151,7 +151,7 @@ Extra Tab */
 #extraIcon {
 	background-position: center;
 	background-repeat: no-repeat;
-	background-image: url(:/icons/images/icons/icon_settings.png);
+	background-image: url(:/icons/resources/icons/icon_settings.png);
 }
 
 /* Label */
@@ -400,7 +400,7 @@ QCheckBox::indicator:hover {
 QCheckBox::indicator:checked {
     background: 3px solid rgb(52, 59, 72);
 	border: 3px solid rgb(52, 59, 72);	
-	background-image: url(:/icons/images/icons/cil-check-alt.png);
+	background-image: url(:/icons/resources/icons/cil-check-alt.png);
 }
 
 /* /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -441,7 +441,7 @@ QComboBox::drop-down {
 	border-left-style: solid;
 	border-top-right-radius: 3px;
 	border-bottom-right-radius: 3px;	
-	background-image: url(:/icons/images/icons/cil-arrow-bottom.png);
+	background-image: url(:/icons/resources/icons/cil-arrow-bottom.png);
 	background-position: center;
 	background-repeat: no-reperat;
  }
@@ -682,7 +682,7 @@ Button */
               </font>
              </property>
              <property name="text">
-              <string>PyDracula</string>
+              <string>CAMA</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
@@ -791,7 +791,7 @@ Button */
                   <property name="font">
                    <font>
                     <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
@@ -803,10 +803,10 @@ Button */
                    <enum>Qt::LayoutDirection::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/icon_menu.png);</string>
+                   <string notr="true">background-image: url(:/icons/resources/icons/icon_menu.png);</string>
                   </property>
                   <property name="text">
-                   <string>Hide</string>
+                   <string>메뉴</string>
                   </property>
                  </widget>
                 </item>
@@ -854,7 +854,7 @@ Button */
                   <property name="font">
                    <font>
                     <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
@@ -866,10 +866,10 @@ Button */
                    <enum>Qt::LayoutDirection::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-home.png);</string>
+                   <string notr="true">background-image: url(:/icons/resources/icons/cil-home.png);</string>
                   </property>
                   <property name="text">
-                   <string>Home</string>
+                   <string>홈</string>
                   </property>
                  </widget>
                 </item>
@@ -890,7 +890,7 @@ Button */
                   <property name="font">
                    <font>
                     <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
@@ -902,7 +902,7 @@ Button */
                    <enum>Qt::LayoutDirection::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-gamepad.png);</string>
+                   <string notr="true">background-image: url(:/icons/resources/icons/cil-gamepad.png);</string>
                   </property>
                   <property name="text">
                    <string>Widgets</string>
@@ -910,7 +910,7 @@ Button */
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="btn_new">
+                 <widget class="QPushButton" name="btn_streaming">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -926,7 +926,7 @@ Button */
                   <property name="font">
                    <font>
                     <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
@@ -938,15 +938,15 @@ Button */
                    <enum>Qt::LayoutDirection::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-file.png);</string>
+                   <string notr="true">background-image:url(:/icons/resources/icons/cil-headphones.png);</string>
                   </property>
                   <property name="text">
-                   <string>New</string>
+                   <string>스트리밍</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="btn_save">
+                 <widget class="QPushButton" name="btn_video">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -962,7 +962,7 @@ Button */
                   <property name="font">
                    <font>
                     <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
@@ -974,15 +974,15 @@ Button */
                    <enum>Qt::LayoutDirection::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-save.png)</string>
+                   <string notr="true">background-image: url(:/icons/resources/icons/cil-movie.png);</string>
                   </property>
                   <property name="text">
-                   <string>Save</string>
+                   <string>동영상</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="btn_exit">
+                 <widget class="QPushButton" name="btn_image">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -998,7 +998,7 @@ Button */
                   <property name="font">
                    <font>
                     <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
@@ -1010,10 +1010,46 @@ Button */
                    <enum>Qt::LayoutDirection::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-x.png);</string>
+                   <string notr="true">background-image: url(:/icons/resources/icons/cil-image1.png);</string>
                   </property>
                   <property name="text">
-                   <string>Exit</string>
+                   <string>이미지</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="btn_filter_setting">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>45</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>Segoe UI</family>
+                    <pointsize>12</pointsize>
+                    <italic>false</italic>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::LayoutDirection::LeftToRight</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background-image: url(:/icons/resources/icons/cil-library.png);</string>
+                  </property>
+                  <property name="text">
+                   <string>필터 설정</string>
                   </property>
                  </widget>
                 </item>
@@ -1061,7 +1097,7 @@ Button */
                   <property name="font">
                    <font>
                     <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
@@ -1073,7 +1109,7 @@ Button */
                    <enum>Qt::LayoutDirection::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/icon_settings.png);</string>
+                   <string notr="true">background-image: url(:/icons/resources/icons/icon_settings.png);</string>
                   </property>
                   <property name="text">
                    <string>Left Box</string>
@@ -1234,8 +1270,8 @@ Button */
                   <string/>
                  </property>
                  <property name="icon">
-                  <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
-                   <normaloff>:/icons/images/icons/icon_close.png</normaloff>:/icons/images/icons/icon_close.png</iconset>
+                  <iconset resource="resources.qrc">
+                   <normaloff>:/icons/resources/icons/icon_close.png</normaloff>:/icons/resources/icons/icon_close.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -1315,7 +1351,7 @@ Button */
                   <property name="font">
                    <font>
                     <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
@@ -1327,7 +1363,7 @@ Button */
                    <enum>Qt::LayoutDirection::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-share-boxed.png);</string>
+                   <string notr="true">background-image: url(:/icons/resources/icons/cil-share-boxed.png);</string>
                   </property>
                   <property name="text">
                    <string>Share</string>
@@ -1351,7 +1387,7 @@ Button */
                   <property name="font">
                    <font>
                     <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
@@ -1363,7 +1399,7 @@ Button */
                    <enum>Qt::LayoutDirection::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-equalizer.png);</string>
+                   <string notr="true">background-image: url(:/icons/resources/icons/cil-equalizer.png);</string>
                   </property>
                   <property name="text">
                    <string>Adjustments</string>
@@ -1387,7 +1423,7 @@ Button */
                   <property name="font">
                    <font>
                     <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
@@ -1399,7 +1435,7 @@ Button */
                    <enum>Qt::LayoutDirection::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-layers.png);</string>
+                   <string notr="true">background-image: url(:/icons/resources/icons/cil-layers.png);</string>
                   </property>
                   <property name="text">
                    <string>More</string>
@@ -1442,14 +1478,14 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600; color:#ff79c6;&quot;&gt;PyDracula&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;An interface created using Python and PySide (support for PyQt), and with colors based on the Dracula theme created by Zeno Rocha.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;MIT License&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#bd93f9;&quot;&gt;Created by: Wanderson M. Pimenta&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600; color:#ff79c6;&quot;&gt;Convert UI&lt;/span&gt;&lt;/p&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600; color:#ff79c6;&quot;&gt;PyDracula&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; color:#ffffff;&quot;&gt;An interface created using Python and PySide (support for PyQt), and with colors based on the Dracula theme created by Zeno Rocha.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; color:#ffffff;&quot;&gt;MIT License&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; color:#bd93f9;&quot;&gt;Created by: Wanderson M. Pimenta&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600; color:#ff79c6;&quot;&gt;Convert UI&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; color:#ffffff;&quot;&gt;pyside6-uic main.ui &amp;gt; ui_main.py&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600; color:#ff79c6;&quot;&gt;Convert QRC&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600; color:#ff79c6;&quot;&gt;Convert QRC&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; color:#ffffff;&quot;&gt;pyside6-rcc resources.qrc -o resources_rc.py&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                  </widget>
@@ -1580,13 +1616,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
                   <property name="font">
                    <font>
                     <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
                   </property>
                   <property name="text">
-                   <string>PyDracula APP - Theme with colors based on Dracula for Python.</string>
+                   <string>CAMA  Real-time Streaming Filtering Application</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
@@ -1650,8 +1686,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
-                    <normaloff>:/icons/images/icons/icon_settings.png</normaloff>:/icons/images/icons/icon_settings.png</iconset>
+                   <iconset resource="resources.qrc">
+                    <normaloff>:/icons/resources/icons/icon_settings.png</normaloff>:/icons/resources/icons/icon_settings.png</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -1685,8 +1721,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
-                    <normaloff>:/icons/images/icons/icon_minimize.png</normaloff>:/icons/images/icons/icon_minimize.png</iconset>
+                   <iconset resource="resources.qrc">
+                    <normaloff>:/icons/resources/icons/icon_minimize.png</normaloff>:/icons/resources/icons/icon_minimize.png</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -1713,7 +1749,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                   <property name="font">
                    <font>
                     <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <italic>false</italic>
                     <bold>false</bold>
                     <stylestrategy>PreferDefault</stylestrategy>
@@ -1729,8 +1765,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
-                    <normaloff>:/icons/images/icons/icon_maximize.png</normaloff>:/icons/images/icons/icon_maximize.png</iconset>
+                   <iconset resource="resources.qrc">
+                    <normaloff>:/icons/resources/icons/icon_maximize.png</normaloff>:/icons/resources/icons/icon_maximize.png</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -1764,8 +1800,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
-                    <normaloff>:/icons/images/icons/icon_close.png</normaloff>:/icons/images/icons/icon_close.png</iconset>
+                   <iconset resource="resources.qrc">
+                    <normaloff>:/icons/resources/icons/icon_close.png</normaloff>:/icons/resources/icons/icon_close.png</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -1866,7 +1902,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
-                       <string notr="true">background-image: url(:/images/images/images/PyDracula_vertical.png);
+                       <string notr="true">background-image: url(:/images/resources/images/PyDracula_vertical.png);
 background-position: center;
 background-repeat: no-repeat;</string>
                       </property>
@@ -1971,7 +2007,7 @@ background-repeat: no-repeat;</string>
                                   <property name="font">
                                    <font>
                                     <family>Segoe UI</family>
-                                    <pointsize>10</pointsize>
+                                    <pointsize>12</pointsize>
                                     <italic>false</italic>
                                     <bold>false</bold>
                                    </font>
@@ -2031,7 +2067,7 @@ background-repeat: no-repeat;</string>
                                     <property name="font">
                                      <font>
                                       <family>Segoe UI</family>
-                                      <pointsize>10</pointsize>
+                                      <pointsize>12</pointsize>
                                       <italic>false</italic>
                                       <bold>false</bold>
                                      </font>
@@ -2046,8 +2082,8 @@ background-repeat: no-repeat;</string>
                                      <string>Open</string>
                                     </property>
                                     <property name="icon">
-                                     <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
-                                      <normaloff>:/icons/images/icons/cil-folder-open.png</normaloff>:/icons/images/icons/cil-folder-open.png</iconset>
+                                     <iconset resource="resources.qrc">
+                                      <normaloff>:/icons/resources/icons/cil-folder-open.png</normaloff>:/icons/resources/icons/cil-folder-open.png</iconset>
                                     </property>
                                    </widget>
                                   </item>
@@ -2202,7 +2238,7 @@ background-repeat: no-repeat;</string>
                               <property name="font">
                                <font>
                                 <family>Segoe UI</family>
-                                <pointsize>10</pointsize>
+                                <pointsize>12</pointsize>
                                 <italic>false</italic>
                                 <bold>false</bold>
                                </font>
@@ -2268,8 +2304,8 @@ background-repeat: no-repeat;</string>
                                <string>Link Button</string>
                               </property>
                               <property name="icon">
-                               <iconset resource="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc">
-                                <normaloff>:/icons/images/icons/cil-link.png</normaloff>:/icons/images/icons/cil-link.png</iconset>
+                               <iconset resource="resources.qrc">
+                                <normaloff>:/icons/resources/icons/cil-link.png</normaloff>:/icons/resources/icons/cil-link.png</iconset>
                               </property>
                               <property name="description">
                                <string>Link description</string>
@@ -2711,18 +2747,20 @@ background-repeat: no-repeat;</string>
                        </item>
                       </layout>
                      </widget>
-                     <widget class="QWidget" name="new_page">
-                      <layout class="QVBoxLayout" name="verticalLayout_20">
-                       <item>
-                        <widget class="QLabel" name="label">
-                         <property name="text">
-                          <string>NEW PAGE TEST</string>
-                         </property>
-                         <property name="alignment">
-                          <set>Qt::AlignmentFlag::AlignCenter</set>
-                         </property>
-                        </widget>
-                       </item>
+                     <widget class="QWidget" name="streaming_page">
+                      <layout class="QVBoxLayout" name="streaming_layout">
+                      </layout>
+                     </widget>
+                     <widget class="QWidget" name="video_page">
+                      <layout class="QVBoxLayout" name="video_layout">
+                      </layout>
+                     </widget>
+                     <widget class="QWidget" name="image_page">
+                      <layout class="QVBoxLayout" name="image_layout">
+                      </layout>
+                     </widget>
+                     <widget class="QWidget" name="filter_setting_page">
+                      <layout class="QVBoxLayout" name="filter_setting_layout">
                       </layout>
                      </widget>
                     </widget>
@@ -2847,7 +2885,7 @@ background-repeat: no-repeat;</string>
                            <property name="font">
                             <font>
                              <family>Segoe UI</family>
-                             <pointsize>10</pointsize>
+                             <pointsize>12</pointsize>
                              <italic>false</italic>
                              <bold>false</bold>
                             </font>
@@ -2859,7 +2897,7 @@ background-repeat: no-repeat;</string>
                             <enum>Qt::LayoutDirection::LeftToRight</enum>
                            </property>
                            <property name="styleSheet">
-                            <string notr="true">background-image: url(:/icons/images/icons/cil-envelope-open.png);</string>
+                            <string notr="true">background-image: url(:/icons/resources/icons/cil-envelope-open.png);</string>
                            </property>
                            <property name="text">
                             <string>Message</string>
@@ -2883,7 +2921,7 @@ background-repeat: no-repeat;</string>
                            <property name="font">
                             <font>
                              <family>Segoe UI</family>
-                             <pointsize>10</pointsize>
+                             <pointsize>12</pointsize>
                              <italic>false</italic>
                              <bold>false</bold>
                             </font>
@@ -2895,7 +2933,7 @@ background-repeat: no-repeat;</string>
                             <enum>Qt::LayoutDirection::LeftToRight</enum>
                            </property>
                            <property name="styleSheet">
-                            <string notr="true">background-image: url(:/icons/images/icons/cil-print.png);</string>
+                            <string notr="true">background-image: url(:/icons/resources/icons/cil-print.png);</string>
                            </property>
                            <property name="text">
                             <string>Print</string>
@@ -2919,7 +2957,7 @@ background-repeat: no-repeat;</string>
                            <property name="font">
                             <font>
                              <family>Segoe UI</family>
-                             <pointsize>10</pointsize>
+                             <pointsize>12</pointsize>
                              <italic>false</italic>
                              <bold>false</bold>
                             </font>
@@ -2931,7 +2969,7 @@ background-repeat: no-repeat;</string>
                             <enum>Qt::LayoutDirection::LeftToRight</enum>
                            </property>
                            <property name="styleSheet">
-                            <string notr="true">background-image: url(:/icons/images/icons/cil-account-logout.png);</string>
+                            <string notr="true">background-image: url(:/icons/resources/icons/cil-account-logout.png);</string>
                            </property>
                            <property name="text">
                             <string>Logout</string>
@@ -3003,7 +3041,7 @@ background-repeat: no-repeat;</string>
                    </font>
                   </property>
                   <property name="text">
-                   <string>By: Wanderson M. Pimenta</string>
+                   <string>CAMA: Real-time Streaming Filtering Application</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
@@ -3013,7 +3051,7 @@ background-repeat: no-repeat;</string>
                 <item>
                  <widget class="QLabel" name="version">
                   <property name="text">
-                   <string>v1.0.3</string>
+                   <string>v1.1.4</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -3058,7 +3096,7 @@ background-repeat: no-repeat;</string>
   </widget>
  </widget>
  <resources>
-  <include location="../../Workspace/Test/Modern_GUI_PyDracula_PySide6_or_PyQt6/resources.qrc"/>
+  <include location="resources.qrc"/>
  </resources>
  <connections/>
 </ui>
