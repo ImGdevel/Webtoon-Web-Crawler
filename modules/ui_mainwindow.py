@@ -81,7 +81,7 @@ class Ui_MainWindow(object):
 "}\n"
 "#topLogo {\n"
 "	background-color: rgb(33, 37, 43);\n"
-"	background-image: url(:/images/images/images/PyDracula.png);\n"
+"	background-image: url(:/images/resources/images/PyDracula.png);\n"
 "	background-position: centered;\n"
 "	background-repeat: no-repeat;\n"
 "}\n"
@@ -102,8 +102,8 @@ class Ui_MainWindow(object):
 "	background-color: rgb(40, 44, 52);\n"
 "}\n"
 "#topMenu .QPushButton:pressed {	\n"
-"	background-color: rgb(18"
-                        "9, 147, 249);\n"
+"	background-color: rgb"
+                        "(189, 147, 249);\n"
 "	color: rgb(255, 255, 255);\n"
 "}\n"
 "#bottomMenu .QPushButton {	\n"
@@ -141,8 +141,8 @@ class Ui_MainWindow(object):
 "	background-color: rgb(40, 44, 52);\n"
 "}\n"
 "#toggleButton:pressed {\n"
-"	background-color: rgb("
-                        "189, 147, 249);\n"
+"	background-color: r"
+                        "gb(189, 147, 249);\n"
 "}\n"
 "\n"
 "/* Title Menu */\n"
@@ -162,7 +162,7 @@ class Ui_MainWindow(object):
 "#extraIcon {\n"
 "	background-position: center;\n"
 "	background-repeat: no-repeat;\n"
-"	background-image: url(:/icons/images/icons/icon_settings.png);\n"
+"	background-image: url(:/icons/resources/icons/icon_settings.png);\n"
 "}\n"
 "\n"
 "/* Label */\n"
@@ -175,8 +175,8 @@ class Ui_MainWindow(object):
 "\n"
 "/* Extra Content */\n"
 "#extraContent{\n"
-"	border"
-                        "-top: 3px solid rgb(40, 44, 52);\n"
+"	"
+                        "border-top: 3px solid rgb(40, 44, 52);\n"
 "}\n"
 "\n"
 "/* Extra Top Menus */\n"
@@ -208,8 +208,8 @@ class Ui_MainWindow(object):
 "\n"
 "/* Top Buttons */\n"
 "#rightButtons .QPushButton { background-color: rgba(255, 255, 255, 0); border: none;  border-radius: 5px; }\n"
-"#rightButtons .QPushButton:hover { background-color: rgb(44, 49, 57); border-sty"
-                        "le: solid; border-radius: 4px; }\n"
+"#rightButtons .QPushButton:hover { background-color: rgb(44, 49, 57); bord"
+                        "er-style: solid; border-radius: 4px; }\n"
 "#rightButtons .QPushButton:pressed { background-color: rgb(23, 26, 30); border-style: solid; border-radius: 4px; }\n"
 "\n"
 "/* Theme Settings */\n"
@@ -236,8 +236,8 @@ class Ui_MainWindow(object):
 "}\n"
 "#contentSettings .QPushButton:pressed {	\n"
 "	background-color: rgb(189, 147, 249);\n"
-"	color: rgb"
-                        "(255, 255, 255);\n"
+"	colo"
+                        "r: rgb(255, 255, 255);\n"
 "}\n"
 "\n"
 "/* /////////////////////////////////////////////////////////////////////////////////////////////////\n"
@@ -272,8 +272,8 @@ class Ui_MainWindow(object):
 "QHeaderView::section:horizontal\n"
 "{\n"
 "    border: 1px solid rgb(33, 37, 43);\n"
-"	background-co"
-                        "lor: rgb(33, 37, 43);\n"
+"	backgro"
+                        "und-color: rgb(33, 37, 43);\n"
 "	padding: 3px;\n"
 "	border-top-left-radius: 7px;\n"
 "    border-top-right-radius: 7px;\n"
@@ -307,8 +307,8 @@ class Ui_MainWindow(object):
 "	border-radius: 5px;\n"
 "	padding: 10px;\n"
 "	selection-color: rgb(255, 255, 255);\n"
-"	selection-background-c"
-                        "olor: rgb(255, 121, 198);\n"
+"	selection-backgr"
+                        "ound-color: rgb(255, 121, 198);\n"
 "}\n"
 "QPlainTextEdit  QScrollBar:vertical {\n"
 "    width: 8px;\n"
@@ -345,9 +345,9 @@ class Ui_MainWindow(object):
 "    border-bottom-right-radius: 4px;\n"
 "    subcontrol-position: right;\n"
 "    subcontrol-origin: margin;\n"
-"}\n"
 ""
-                        "QScrollBar::sub-line:horizontal {\n"
+                        "}\n"
+"QScrollBar::sub-line:horizontal {\n"
 "    border: none;\n"
 "    background: rgb(55, 63, 77);\n"
 "    width: 20px;\n"
@@ -383,8 +383,8 @@ class Ui_MainWindow(object):
 "	border-bottom-left-radius: 4px;\n"
 "    border-bottom-right-radius: 4px;\n"
 "     subcontrol-position: bottom;\n"
-"     su"
-                        "bcontrol-origin: margin;\n"
+" "
+                        "    subcontrol-origin: margin;\n"
 " }\n"
 " QScrollBar::sub-line:vertical {\n"
 "	border: none;\n"
@@ -418,8 +418,8 @@ class Ui_MainWindow(object):
 "QCheckBox::indicator:checked {\n"
 "    background: 3px solid rgb(52, 59, 72);\n"
 "	border: 3px solid rgb(52, 59, 72);	\n"
-"	back"
-                        "ground-image: url(:/icons/images/icons/cil-check-alt.png);\n"
+""
+                        "	background-image: url(:/icons/resources/icons/cil-check-alt.png);\n"
 "}\n"
 "\n"
 "/* /////////////////////////////////////////////////////////////////////////////////////////////////\n"
@@ -453,15 +453,15 @@ class Ui_MainWindow(object):
 "}\n"
 "QComboBox::drop-down {\n"
 "	subcontrol-origin: padding;\n"
-"	subco"
-                        "ntrol-position: top right;\n"
+""
+                        "	subcontrol-position: top right;\n"
 "	width: 25px; \n"
 "	border-left-width: 3px;\n"
 "	border-left-color: rgba(39, 44, 54, 150);\n"
 "	border-left-style: solid;\n"
 "	border-top-right-radius: 3px;\n"
 "	border-bottom-right-radius: 3px;	\n"
-"	background-image: url(:/icons/images/icons/cil-arrow-bottom.png);\n"
+"	background-image: url(:/icons/resources/icons/cil-arrow-bottom.png);\n"
 "	background-position: center;\n"
 "	background-repeat: no-reperat;\n"
 " }\n"
@@ -486,8 +486,8 @@ class Ui_MainWindow(object):
 "QSlider::handle:horizontal {\n"
 "    background-color: rgb(189, 147, 249);\n"
 "    border: none;\n"
-"    h"
-                        "eight: 10px;\n"
+""
+                        "    height: 10px;\n"
 "    width: 10px;\n"
 "    margin: 0px;\n"
 "	border-radius: 5px;\n"
@@ -525,8 +525,8 @@ class Ui_MainWindow(object):
 "\n"
 "/* /////////////////////////////////////////////////////////////////////////////////////////////////\n"
 "CommandLinkButton */\n"
-"QCommandLi"
-                        "nkButton {	\n"
+"QComm"
+                        "andLinkButton {	\n"
 "	color: rgb(255, 121, 198);\n"
 "	border-radius: 5px;\n"
 "	padding: 5px;\n"
@@ -598,9 +598,8 @@ class Ui_MainWindow(object):
         self.titleLeftApp.setObjectName(u"titleLeftApp")
         self.titleLeftApp.setGeometry(QRect(70, 8, 160, 20))
         font1 = QFont()
-        font1.setFamilies([u"Segoe UI"])
+        font1.setFamilies([u"Segoe UI Semibold"])
         font1.setPointSize(12)
-        font1.setBold(True)
         font1.setItalic(False)
         self.titleLeftApp.setFont(font1)
         self.titleLeftApp.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignTop)
@@ -646,7 +645,7 @@ class Ui_MainWindow(object):
         self.toggleButton.setFont(font)
         self.toggleButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.toggleButton.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.toggleButton.setStyleSheet(u"background-image: url(:/icons/images/icons/icon_menu.png);")
+        self.toggleButton.setStyleSheet(u"background-image: url(:/icons/resources/icons/icon_menu.png);")
 
         self.verticalLayout_4.addWidget(self.toggleButton)
 
@@ -669,7 +668,7 @@ class Ui_MainWindow(object):
         self.btn_home.setFont(font)
         self.btn_home.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_home.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_home.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-home.png);")
+        self.btn_home.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-home.png);")
 
         self.verticalLayout_8.addWidget(self.btn_home)
 
@@ -681,7 +680,7 @@ class Ui_MainWindow(object):
         self.btn_widgets.setFont(font)
         self.btn_widgets.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_widgets.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_widgets.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-gamepad.png);")
+        self.btn_widgets.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-gamepad.png);")
 
         self.verticalLayout_8.addWidget(self.btn_widgets)
 
@@ -693,7 +692,7 @@ class Ui_MainWindow(object):
         self.btn_streaming.setFont(font)
         self.btn_streaming.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_streaming.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_streaming.setStyleSheet(u"background-image:url(:/icons/images/icons/cil-headphones.png);")
+        self.btn_streaming.setStyleSheet(u"background-image:url(:/icons/resources/icons/cil-headphones.png);")
 
         self.verticalLayout_8.addWidget(self.btn_streaming)
 
@@ -705,7 +704,7 @@ class Ui_MainWindow(object):
         self.btn_video.setFont(font)
         self.btn_video.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_video.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_video.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-movie.png);")
+        self.btn_video.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-movie.png);")
 
         self.verticalLayout_8.addWidget(self.btn_video)
 
@@ -717,7 +716,7 @@ class Ui_MainWindow(object):
         self.btn_image.setFont(font)
         self.btn_image.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_image.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_image.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-image1.png);")
+        self.btn_image.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-image1.png);")
 
         self.verticalLayout_8.addWidget(self.btn_image)
 
@@ -729,7 +728,7 @@ class Ui_MainWindow(object):
         self.btn_filter_setting.setFont(font)
         self.btn_filter_setting.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_filter_setting.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_filter_setting.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-library.png);")
+        self.btn_filter_setting.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-library.png);")
 
         self.verticalLayout_8.addWidget(self.btn_filter_setting)
 
@@ -752,7 +751,7 @@ class Ui_MainWindow(object):
         self.toggleLeftBox.setFont(font)
         self.toggleLeftBox.setCursor(QCursor(Qt.PointingHandCursor))
         self.toggleLeftBox.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.toggleLeftBox.setStyleSheet(u"background-image: url(:/icons/images/icons/icon_settings.png);")
+        self.toggleLeftBox.setStyleSheet(u"background-image: url(:/icons/resources/icons/icon_settings.png);")
 
         self.verticalLayout_9.addWidget(self.toggleLeftBox)
 
@@ -811,7 +810,7 @@ class Ui_MainWindow(object):
         self.extraCloseColumnBtn.setMaximumSize(QSize(28, 28))
         self.extraCloseColumnBtn.setCursor(QCursor(Qt.PointingHandCursor))
         icon = QIcon()
-        icon.addFile(u":/icons/images/icons/icon_close.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u":/icons/resources/icons/icon_close.png", QSize(), QIcon.Normal, QIcon.Off)
         self.extraCloseColumnBtn.setIcon(icon)
         self.extraCloseColumnBtn.setIconSize(QSize(20, 20))
 
@@ -847,7 +846,7 @@ class Ui_MainWindow(object):
         self.btn_share.setFont(font)
         self.btn_share.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_share.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_share.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-share-boxed.png);")
+        self.btn_share.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-share-boxed.png);")
 
         self.verticalLayout_11.addWidget(self.btn_share)
 
@@ -859,7 +858,7 @@ class Ui_MainWindow(object):
         self.btn_adjustments.setFont(font)
         self.btn_adjustments.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_adjustments.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_adjustments.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-equalizer.png);")
+        self.btn_adjustments.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-equalizer.png);")
 
         self.verticalLayout_11.addWidget(self.btn_adjustments)
 
@@ -871,7 +870,7 @@ class Ui_MainWindow(object):
         self.btn_more.setFont(font)
         self.btn_more.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_more.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_more.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-layers.png);")
+        self.btn_more.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-layers.png);")
 
         self.verticalLayout_11.addWidget(self.btn_more)
 
@@ -971,7 +970,7 @@ class Ui_MainWindow(object):
         self.settingsTopBtn.setMaximumSize(QSize(28, 28))
         self.settingsTopBtn.setCursor(QCursor(Qt.PointingHandCursor))
         icon1 = QIcon()
-        icon1.addFile(u":/icons/images/icons/icon_settings.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon1.addFile(u":/icons/resources/icons/icon_settings.png", QSize(), QIcon.Normal, QIcon.Off)
         self.settingsTopBtn.setIcon(icon1)
         self.settingsTopBtn.setIconSize(QSize(20, 20))
 
@@ -983,7 +982,7 @@ class Ui_MainWindow(object):
         self.minimizeAppBtn.setMaximumSize(QSize(28, 28))
         self.minimizeAppBtn.setCursor(QCursor(Qt.PointingHandCursor))
         icon2 = QIcon()
-        icon2.addFile(u":/icons/images/icons/icon_minimize.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon2.addFile(u":/icons/resources/icons/icon_minimize.png", QSize(), QIcon.Normal, QIcon.Off)
         self.minimizeAppBtn.setIcon(icon2)
         self.minimizeAppBtn.setIconSize(QSize(20, 20))
 
@@ -1002,7 +1001,7 @@ class Ui_MainWindow(object):
         self.maximizeRestoreAppBtn.setFont(font3)
         self.maximizeRestoreAppBtn.setCursor(QCursor(Qt.PointingHandCursor))
         icon3 = QIcon()
-        icon3.addFile(u":/icons/images/icons/icon_maximize.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon3.addFile(u":/icons/resources/icons/icon_maximize.png", QSize(), QIcon.Normal, QIcon.Off)
         self.maximizeRestoreAppBtn.setIcon(icon3)
         self.maximizeRestoreAppBtn.setIconSize(QSize(20, 20))
 
@@ -1054,7 +1053,7 @@ class Ui_MainWindow(object):
         self.stackedWidget.setStyleSheet(u"background: transparent;")
         self.home = QWidget()
         self.home.setObjectName(u"home")
-        self.home.setStyleSheet(u"background-image: url(:/images/images/images/PyDracula_vertical.png);\n"
+        self.home.setStyleSheet(u"background-image: url(:/images/resources/images/PyDracula_vertical.png);\n"
 "background-position: center;\n"
 "background-repeat: no-repeat;")
         self.stackedWidget.addWidget(self.home)
@@ -1123,7 +1122,7 @@ class Ui_MainWindow(object):
         self.pushButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.pushButton.setStyleSheet(u"background-color: rgb(52, 59, 72);")
         icon4 = QIcon()
-        icon4.addFile(u":/icons/images/icons/cil-folder-open.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon4.addFile(u":/icons/resources/icons/cil-folder-open.png", QSize(), QIcon.Normal, QIcon.Off)
         self.pushButton.setIcon(icon4)
 
         self.gridLayout.addWidget(self.pushButton, 0, 1, 1, 1)
@@ -1248,7 +1247,7 @@ class Ui_MainWindow(object):
         self.commandLinkButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.commandLinkButton.setStyleSheet(u"")
         icon5 = QIcon()
-        icon5.addFile(u":/icons/images/icons/cil-link.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon5.addFile(u":/icons/resources/icons/cil-link.png", QSize(), QIcon.Normal, QIcon.Off)
         self.commandLinkButton.setIcon(icon5)
 
         self.gridLayout_2.addWidget(self.commandLinkButton, 1, 6, 1, 1)
@@ -1402,47 +1401,23 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.widgets)
         self.streaming_page = QWidget()
         self.streaming_page.setObjectName(u"streaming_page")
-        self.verticalLayout_20 = QVBoxLayout(self.streaming_page)
-        self.verticalLayout_20.setObjectName(u"verticalLayout_20")
-        self.label01 = QLabel(self.streaming_page)
-        self.label01.setObjectName(u"label01")
-        self.label01.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_20.addWidget(self.label01)
-
+        self.streaming_layout = QVBoxLayout(self.streaming_page)
+        self.streaming_layout.setObjectName(u"streaming_layout")
         self.stackedWidget.addWidget(self.streaming_page)
         self.video_page = QWidget()
         self.video_page.setObjectName(u"video_page")
-        self.verticalLayout_21 = QVBoxLayout(self.video_page)
-        self.verticalLayout_21.setObjectName(u"verticalLayout_21")
-        self.label02 = QLabel(self.video_page)
-        self.label02.setObjectName(u"label02")
-        self.label02.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_21.addWidget(self.label02)
-
+        self.video_layout = QVBoxLayout(self.video_page)
+        self.video_layout.setObjectName(u"video_layout")
         self.stackedWidget.addWidget(self.video_page)
         self.image_page = QWidget()
         self.image_page.setObjectName(u"image_page")
-        self.verticalLayout_22 = QVBoxLayout(self.image_page)
-        self.verticalLayout_22.setObjectName(u"verticalLayout_22")
-        self.label03 = QLabel(self.image_page)
-        self.label03.setObjectName(u"label03")
-        self.label03.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_22.addWidget(self.label03)
-
+        self.image_layout = QVBoxLayout(self.image_page)
+        self.image_layout.setObjectName(u"image_layout")
         self.stackedWidget.addWidget(self.image_page)
         self.filter_setting_page = QWidget()
         self.filter_setting_page.setObjectName(u"filter_setting_page")
-        self.verticalLayout_23 = QVBoxLayout(self.filter_setting_page)
-        self.verticalLayout_23.setObjectName(u"verticalLayout_23")
-        self.label = QLabel(self.filter_setting_page)
-        self.label.setObjectName(u"label")
-        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_23.addWidget(self.label)
-
+        self.filter_setting_layout = QVBoxLayout(self.filter_setting_page)
+        self.filter_setting_layout.setObjectName(u"filter_setting_layout")
         self.stackedWidget.addWidget(self.filter_setting_page)
 
         self.verticalLayout_15.addWidget(self.stackedWidget)
@@ -1492,7 +1467,7 @@ class Ui_MainWindow(object):
         self.btn_message.setFont(font)
         self.btn_message.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_message.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_message.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-envelope-open.png);")
+        self.btn_message.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-envelope-open.png);")
 
         self.verticalLayout_14.addWidget(self.btn_message)
 
@@ -1504,7 +1479,7 @@ class Ui_MainWindow(object):
         self.btn_print.setFont(font)
         self.btn_print.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_print.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_print.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-print.png);")
+        self.btn_print.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-print.png);")
 
         self.verticalLayout_14.addWidget(self.btn_print)
 
@@ -1516,7 +1491,7 @@ class Ui_MainWindow(object):
         self.btn_logout.setFont(font)
         self.btn_logout.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_logout.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_logout.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-account-logout.png);")
+        self.btn_logout.setStyleSheet(u"background-image: url(:/icons/resources/icons/cil-account-logout.png);")
 
         self.verticalLayout_14.addWidget(self.btn_logout)
 
@@ -1711,10 +1686,6 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Line", None));
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
-        self.label01.setText(QCoreApplication.translate("MainWindow", u"streaming page", None))
-        self.label02.setText(QCoreApplication.translate("MainWindow", u"video page", None))
-        self.label03.setText(QCoreApplication.translate("MainWindow", u"image page", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"filter setting page", None))
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
         self.btn_logout.setText(QCoreApplication.translate("MainWindow", u"Logout", None))

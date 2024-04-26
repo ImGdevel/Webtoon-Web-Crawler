@@ -6,6 +6,7 @@ from PySide6.QtCore import QFile
 from modules import Ui_MainWindow
 from modules import *
 from widgets import *
+from views import *
 os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
 
 widgets = None
@@ -49,6 +50,12 @@ class MainWindow(QMainWindow):
             UIFunctions.toggleRightBox(self, True)
         widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
 
+        # SET PAGE
+        widgets.streaming_layout.addWidget(StramingView())
+        widgets.video_layout.addWidget(VideoView())
+        widgets.image_layout.addWidget(ImageView())
+        widgets.filter_setting_layout.addWidget(FilterSettingView())
+
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
@@ -56,7 +63,6 @@ class MainWindow(QMainWindow):
         widgets.btn_video.clicked.connect(self.buttonClick)
         widgets.btn_image.clicked.connect(self.buttonClick)
         widgets.btn_filter_setting.clicked.connect(self.buttonClick)
-
 
         self.show()
 
@@ -76,7 +82,7 @@ class MainWindow(QMainWindow):
         # SET HOME PAGE AND SELECT MENU
         # ///////////////////////////////////////////////////////////////
         widgets.stackedWidget.setCurrentWidget(widgets.home)
-        widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
+        widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))               
 
 
 
