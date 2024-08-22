@@ -52,29 +52,26 @@ class WebtoonScraper:
     def scrape_webtoon_info(self, webtoon_element) -> Dict[str, str]:
         try:
             # 평점 추출
-            rating = webtoon_element.find_element(By.CLASS_NAME, RATING_CLASS).text.strip()
+            rating = WebDriverWait(webtoon_element, 1).until(
+                EC.presence_of_element_located((By.CLASS_NAME, RATING_CLASS))
+            ).text.strip()
 
             # 링크 추출 및 이동
             title_element = webtoon_element.find_element(By.CLASS_NAME, TITLE_AREA_CLASS)
             title_element.click()
 
-            WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, TITLE_AREA_CLASS)))
+            WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.CLASS_NAME, TITLE_AREA_CLASS)))
             soup = bs(self.driver.page_source, 'html.parser')
 
             title = soup.find('h2', {'class': 'EpisodeListInfo__title--mYLjC'}).text.strip()
             day = soup.find('div', {'class': 'ContentMetaInfo__meta_info--GbTg4'}).find('em', {'class': 'ContentMetaInfo__info_item--utGrf'}).text.strip()
             thumbnail_url = soup.find('div', {'class': 'Poster__thumbnail_area--gviWY'}).find('img')['src']
-            #author = soup.find('span', {'class': 'wrt_nm'}).text.strip()[8:].replace(' / ', ', ')
-            #genre = soup.find('span', {'class': 'genre'}).text.strip()
             story = soup.find('div', {'class': 'EpisodeListInfo__summary_wrap--ZWNW5'}).find('p').text.strip()
 
             return {
                 "title": title,
                 "day": day,
-                "rating": rating,
                 "thumbnail_url": thumbnail_url,
-                #"author": author,
-                #"genre": genre,
                 "story": story,
                 "url": self.driver.current_url
             }
@@ -83,7 +80,7 @@ class WebtoonScraper:
             return None
         finally:
             self.driver.back()
-            sleep(0.1)
+            sleep(0.5)  # A small delay to allow the page to load
 
 class WebtoonRepository:
     def __init__(self):
@@ -121,11 +118,19 @@ class WebtoonCrawler:
             self.scraper.open_page(url)
             webtoon_elements = self.scraper.get_webtoon_elements()
 
-            for i, webtoon_element in enumerate(webtoon_elements):
-                print(f"Processing: {i + 1} / {len(webtoon_elements)}")
-                webtoon_data = self.scraper.scrape_webtoon_info(webtoon_element)
-                if webtoon_data:
-                    self.repository.save(webtoon_data)
+            for i in range(3):
+                try:
+                    print(f"Processing: {i + 1} / {len(webtoon_elements)}")
+
+                    # Re-fetch the webtoon element to avoid StaleElementReferenceException
+                    webtoon_elements = self.scraper.get_webtoon_elements()
+                    webtoon_data = self.scraper.scrape_webtoon_info(webtoon_elements[i])
+
+                    if webtoon_data:
+                        self.repository.save(webtoon_data)
+                except StaleElementReferenceException:
+                    print(f"StaleElementReferenceException encountered on element {i + 1}. Retrying...")
+                    continue
 
 def main():
     driver = WebDriverFactory.create_chrome_driver(CHROMEDRIVER_PATH)

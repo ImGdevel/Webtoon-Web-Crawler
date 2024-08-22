@@ -49,9 +49,6 @@ class WebtoonScraper:
             WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.CLASS_NAME, TITLE_AREA_CLASS)))
 
             current_url = self.driver.current_url
-            if "nidlogin.login" in current_url:
-                print(f"Login required for this webtoon. Skipping: {current_url}")
-                return None
             
             soup = bs(self.driver.page_source, 'html.parser')
 
