@@ -71,6 +71,7 @@ class WebtoonScraper:
             return {
                 "title": title,
                 "day": day,
+                "rating": rating,
                 "thumbnail_url": thumbnail_url,
                 "story": story,
                 "url": self.driver.current_url
@@ -117,10 +118,10 @@ class WebtoonCrawler:
         for url in urls:
             self.scraper.open_page(url)
             webtoon_elements = self.scraper.get_webtoon_elements()
-
-            for i in range(3):
+            webtoon_list_len = 3#len(webtoon_elements)
+            for i in range(webtoon_list_len):
                 try:
-                    print(f"Processing: {i + 1} / {len(webtoon_elements)}")
+                    print(f"Processing: {i + 1} / {webtoon_list_len}")
 
                     # Re-fetch the webtoon element to avoid StaleElementReferenceException
                     webtoon_elements = self.scraper.get_webtoon_elements()
