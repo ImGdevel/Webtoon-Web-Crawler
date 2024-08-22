@@ -81,6 +81,7 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     def scrape_webtoon_info(self, webtoon_element) -> dict:
         try:
+
             rating = WebDriverWait(webtoon_element, 1).until(
                 EC.presence_of_element_located((By.CLASS_NAME, self.RATING_CLASS))
             ).text.strip()
@@ -158,11 +159,25 @@ class NaverWebtoonScraper(WebtoonScraper):
 
 # KaKaoWebtoonScraper 구현
 class KaKaoWebtoonScraper(WebtoonScraper):
+    PLATFORM_NAME = "kakao"
+    
     KAKAO_WEBTOON_URLS = [
-        'https://webtoon.kakao.com/original'
+        'https://webtoon.kakao.com/?tab=mon',
+        'https://webtoon.kakao.com/?tab=tue',
+        'https://webtoon.kakao.com/?tab=wed',
+        'https://webtoon.kakao.com/?tab=thu',
+        'https://webtoon.kakao.com/?tab=fri',
+        'https://webtoon.kakao.com/?tab=sat',
+        'https://webtoon.kakao.com/?tab=sun',
+        'https://webtoon.kakao.com/?tab=complete'  # 완결 웹툰
     ]
-    # 이 부분에 다른 필요한 상수들을 추가하세요
 
+    # 웹툰 목록 관련 상수
+    BUTTON_CLASS = "relative px-10 py-0 px-12 rounded-8 text-[12px] relative h-30 flex-shrink-0 bg-white light:bg-black"
+    WEBTOON_LIST_CONTAINER_CLASS = "flex flex-wrap gap-4 content-start"
+    WEBTOON_ITEM_CLASS = "flex-grow-0 overflow-hidden flex-[calc((100%-12px)/4)]"
+    WEBTOON_LINK_CLASS = ".w-full.h-full.relative.overflow-hidden.rounded-8.before\\:absolute.before\\:inset-0.before\\:bg-grey-01.before\\:-z-1"
+    
     def __init__(self, driver: webdriver.Chrome):
         self.driver = driver
 
@@ -174,12 +189,80 @@ class KaKaoWebtoonScraper(WebtoonScraper):
         WebDriverWait(self.driver, 3).until(lambda d: d.execute_script('return document.readyState') == 'complete')
 
     def get_webtoon_elements(self) -> list:
-        # KaKao 웹툰 사이트의 웹툰 엘리먼트를 찾는 로직 구현
-        pass
+        """웹툰 목록을 클릭 후, 웹툰 요소를 추출합니다."""
+        try:
+            # div 요소를 먼저 찾고, 그 안의 첫 번째 버튼을 찾습니다.
+            container_div = WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".w-fit.flex.overflow-x-scroll.no-scrollbar.scrolling-touch.space-x-6"))
+            )
+            
+            # div 내의 첫 번째 버튼을 찾습니다.
+            button = container_div.find_element(By.TAG_NAME, "button")
+
+            # JavaScript를 통해 클릭 시도
+            self.driver.execute_script("arguments[0].click();", button)
+            sleep(1)  # 버튼 클릭 후 로딩 대기
+
+            # 웹툰 목록 컨테이너 확인 후, 웹툰 요소 추출
+            container = WebDriverWait(self.driver, 3).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".flex.flex-wrap.gap-4.content-start"))
+            )
+
+            # 올바르게 CSS 선택자 작성
+            return container.find_elements(By.CSS_SELECTOR, ".flex-grow-0.overflow-hidden.flex-\\[calc\\(\\(100\\%\\-12px\\)\\/4\\)\\]")
+        
+        except TimeoutException:
+            print("TimeoutException: Could not find or click button. Skipping...")
+            return []
 
     def scrape_webtoon_info(self, webtoon_element) -> dict:
-        # KaKao 웹툰 정보를 스크래핑하는 로직 구현
-        pass
+        """웹툰 정보 스크래핑을 위한 클릭과 정보 추출."""
+        print("정보 추출 시작~")
+        try:
+            # CSS_SELECTOR로 클래스 이름을 이용해 요소 선택
+            link_element = webtoon_element.find_element(By.CSS_SELECTOR, self.WEBTOON_LINK_CLASS)
+            
+            # href 속성 가져오기
+            href = link_element.get_attribute("href")
+            if href:
+                # 상대 경로를 절대 경로로 변환
+                base_url = "https://webtoon.kakao.com"
+                full_url = base_url + href
+
+                print(full_url)
+                self.driver.get(href)
+
+                # 페이지 로딩을 기다림
+                WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".w-full.h-full.relative.overflow-hidden.rounded-8.before\\:absolute.before\\:inset-0.before\\:bg-grey-01.before\\:-z-1")))
+
+                # 여기서부터 상세 페이지 정보를 추출
+                # 추출할 데이터는 다음에 알려주신다고 하였으니 추후 추가합니다.
+
+                # 가상 데이터 반환 (추후 수정 필요)
+                return {
+                    "id": 0,  # 실제 ID 대신 임시로 사용
+                    "unique_id": None,  # 추후 고유 ID 추출
+                    "title": "Sample Title",
+                    "day": "월",
+                    "rating": "9.9",
+                    "thumbnail_url": "http://example.com/thumbnail.jpg",
+                    "story": "Sample Story",
+                    "url": self.driver.current_url,
+                    "age_rating": "전체연령가",
+                    "authors": [{"name": "Sample Author", "role": "Writer", "link": "/author_link"}],
+                    "genres": ["Action", "Fantasy"],
+                    "episode_count": 100,
+                    "first_episode_link": "http://example.com/first_episode"
+                }
+
+        except TimeoutException:
+            print("TimeoutException: Could not load webtoon page. Skipping...")
+            return None
+        finally:
+            self.driver.back()
+            sleep(0.5)
+
+
 
 # Repository 인터페이스 정의
 class WebtoonRepository(ABC):
@@ -227,7 +310,12 @@ class WebtoonCrawler:
         for url in self.scraper.get_urls():
             self.scraper.open_page(url)
             webtoon_elements = self.scraper.get_webtoon_elements()
-            webtoon_list_len = 1 #len(webtoon_elements)
+
+            if not webtoon_elements:
+                print("No webtoon elements found. Exiting...")
+                continue
+        
+            webtoon_list_len = 3 #len(webtoon_elements)
             for i in range(webtoon_list_len):
                 try:
                     print(f"Processing: {i + 1} / {webtoon_list_len}")
@@ -247,7 +335,7 @@ def main():
     driver = driver_factory.create_driver()
     repository = JsonWebtoonRepository()
 
-    scraper_type = 'naver'  # 'kakao'를 입력하면 KaKaoWebtoonScraper를 사용할 수 있습니다.
+    scraper_type = 'kakao'  # 'kakao'를 입력하면 KaKaoWebtoonScraper를 사용할 수 있습니다.
 
     if scraper_type == 'naver':
         scraper = NaverWebtoonScraper(driver)

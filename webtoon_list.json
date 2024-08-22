@@ -1,73 +1,26 @@
 [
     {
         "id": 0,
-        "unique_id": 758037,
-        "title": "참교육",
-        "day": "월",
-        "rating": "9.88",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/758037/thumbnail/thumbnail_IMAG21_15cb2611-34c0-4f02-a689-41d0b1016579.jpg",
-        "story": "무너진 교권을 지키기 위해 교권보호국 소속 나화진의 참교육이 시작된다!\n<부활남> 채용택 작가 X <신석기녀> 한가람 작가의 신작!",
-        "url": "https://comic.naver.com/webtoon/list?titleId=758037&tab=mon",
-        "age_rating": "15세",
+        "unique_id": null,
+        "title": "Sample Title",
+        "day": "월, 월, 월, 월, 월, 월, 월",
+        "rating": "9.9",
+        "thumbnail_url": "http://example.com/thumbnail.jpg",
+        "story": "Sample Story",
+        "url": "https://webtoon.kakao.com/",
+        "age_rating": "전체연령가",
         "authors": [
             {
-                "name": "채용택",
-                "role": "글",
-                "link": "/artistTitle?id=301243"
-            },
-            {
-                "name": "한가람",
-                "role": "그림",
-                "link": "https://comic.naver.com/community/u/_0borm?lastPage=EpisodeList"
+                "name": "Sample Author",
+                "role": "Writer",
+                "link": "/author_link"
             }
         ],
         "genres": [
-            "액션",
-            "사이다",
-            "참교육",
-            "블루스트링",
-            "학원물",
-            "먼치킨",
-            "다크히어로"
+            "Action",
+            "Fantasy"
         ],
-        "episode_count": 159,
-        "first_episode_link": "https://comic.naver.com/webtoon/detail?titleId=758037&no=1&week=mon"
-    },
-    {
-        "id": 1,
-        "unique_id": 783053,
-        "title": "김부장",
-        "day": "화",
-        "rating": "9.58",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/783053/thumbnail/thumbnail_IMAG21_d7732f14-26da-4e35-8762-660cc87b53f1.jpg",
-        "story": "“제발 안경 쓴 아저씨는 건들지 말자…”\n오직 자신의 딸 '민지'를 위해 특수요원직을 관두고 평범함을 선택한 가장 김부장.\n그러던 어느 날 민지가 소리소문 없이 사라지고, 김부장은 자신을 감시하는 국가를 적으로 돌리면서까지 딸을 찾아나서기 시작하는데...\n[외모지상주의], [싸움독학] 그리고 [인생존망]의 세계관을 잇는 공식 스핀오프 작품!",
-        "url": "https://comic.naver.com/webtoon/list?titleId=783053&tab=tue",
-        "age_rating": "15세",
-        "authors": [
-            {
-                "name": "박만사",
-                "role": "글",
-                "link": "https://comic.naver.com/community/u/bakmansa?lastPage=EpisodeList"
-            },
-            {
-                "name": "남자의 이야기",
-                "role": "글",
-                "link": "https://comic.naver.com/community/u/MANSSTORY?lastPage=EpisodeList"
-            },
-            {
-                "name": "정종택",
-                "role": "그림",
-                "link": "https://comic.naver.com/community/u/cymhteak?lastPage=EpisodeList"
-            }
-        ],
-        "genres": [
-            "액션",
-            "사이다",
-            "다크히어로",
-            "먼치킨",
-            "느와르"
-        ],
-        "episode_count": 152,
-        "first_episode_link": "https://comic.naver.com/webtoon/detail?titleId=783053&no=1&week=tue"
+        "episode_count": 100,
+        "first_episode_link": "http://example.com/first_episode"
     }
 ]
