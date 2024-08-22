@@ -12,22 +12,16 @@ from selenium.common.exceptions import StaleElementReferenceException, TimeoutEx
 import json
 
 # 전역 상수로 HTML 클래스 이름을 설정하여 직관적인 변수명 사용
-NAVER_WEBTOON_URLS = [
-    'https://comic.naver.com/webtoon?tab=mon',
-    'https://comic.naver.com/webtoon?tab=tue',
-    'https://comic.naver.com/webtoon?tab=wed',
-    'https://comic.naver.com/webtoon?tab=thu',
-    'https://comic.naver.com/webtoon?tab=fri',
-    'https://comic.naver.com/webtoon?tab=sat',
-    'https://comic.naver.com/webtoon?tab=sun',
-    'https://comic.naver.com/webtoon?tab=dailyPlus',
-    'https://comic.naver.com/webtoon?tab=finish'
-]
+NAVER_WEBTOON_URL = 'https://comic.naver.com/webtoon/weekday'
 CHROMEDRIVER_PATH = 'C:/chromedriver-win64/chromedriver.exe'
-CONTENT_LIST_CLASS = "ContentList__content_list--q5KXY"
-ITEM_CLASS = "item"
-RATING_CLASS = "Rating__star_area--dFzsb"
 TITLE_AREA_CLASS = "ContentTitle__title_area--x24vt"
+TITLE_CLASS = 'EpisodeListInfo__title--mYLjC'
+DAY_TAB_CLASS = 'category_tab'
+ON_DAY_CLASS = 'on'
+THUMBNAIL_CLASS = 'Poster__thumbnail_area--gviWY Poster__type193x250--Ge81Q'
+AUTHOR_CLASS = 'wrt_nm'
+GENRE_CLASS = 'genre'
+STORY_CLASS = 'EpisodeListInfo__summary_wrap--ZWNW5'
 
 class WebDriverFactory:
     @staticmethod
@@ -44,46 +38,46 @@ class WebtoonScraper:
         self.driver.get(url)
         WebDriverWait(self.driver, 3).until(lambda d: d.execute_script('return document.readyState') == 'complete')
 
-    def get_webtoon_elements(self) -> List[webdriver.remote.webelement.WebElement]:
-        return WebDriverWait(self.driver, 3).until(
-            EC.presence_of_all_elements_located((By.CLASS_NAME, ITEM_CLASS))
+    def get_titles(self) -> List[webdriver.remote.webelement.WebElement]:
+        return WebDriverWait(self.driver, 1).until(
+            EC.presence_of_all_elements_located((By.CLASS_NAME, TITLE_AREA_CLASS))
         )
 
-    def scrape_webtoon_info(self, webtoon_element) -> Dict[str, str]:
+    def scrape_webtoon_info(self, title_element) -> Dict[str, str]:
+        title_element.click()
         try:
-            # 평점 추출
-            rating = webtoon_element.find_element(By.CLASS_NAME, RATING_CLASS).text.strip()
+            WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.CLASS_NAME, TITLE_AREA_CLASS)))
 
-            # 링크 추출 및 이동
-            title_element = webtoon_element.find_element(By.CLASS_NAME, TITLE_AREA_CLASS)
-            title_element.click()
-
-            WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, TITLE_AREA_CLASS)))
+            current_url = self.driver.current_url
+            if "nidlogin.login" in current_url:
+                print(f"Login required for this webtoon. Skipping: {current_url}")
+                return None
+            
             soup = bs(self.driver.page_source, 'html.parser')
 
-            title = soup.find('h2', {'class': 'EpisodeListInfo__title--mYLjC'}).text.strip()
+            title = soup.find('h2', {'class': TITLE_CLASS}).text.strip() if soup.find('h2', {'class': TITLE_CLASS}) else ""
+            #day = soup.find('ul', {'class': DAY_TAB_CLASS}).find('li', {'class': ON_DAY_CLASS}).text.strip()[0:1] if soup.find('ul', {'class': DAY_TAB_CLASS}) else ""
             day = soup.find('div', {'class': 'ContentMetaInfo__meta_info--GbTg4'}).find('em', {'class': 'ContentMetaInfo__info_item--utGrf'}).text.strip()
-            thumbnail_url = soup.find('div', {'class': 'Poster__thumbnail_area--gviWY'}).find('img')['src']
-            #author = soup.find('span', {'class': 'wrt_nm'}).text.strip()[8:].replace(' / ', ', ')
-            #genre = soup.find('span', {'class': 'genre'}).text.strip()
-            story = soup.find('div', {'class': 'EpisodeListInfo__summary_wrap--ZWNW5'}).find('p').text.strip()
-
+            thumbnail_url = soup.find('div', {'class': THUMBNAIL_CLASS}).find('img')['src'] if soup.find('div', {'class': THUMBNAIL_CLASS}) else ""
+            author = soup.find('span', {'class': AUTHOR_CLASS}).text.strip()[8:].replace(' / ', ', ') if soup.find('span', {'class': AUTHOR_CLASS}) else ""
+            genre = soup.find('span', {'class': GENRE_CLASS}).text.strip() if soup.find('span', {'class': GENRE_CLASS}) else ""
+            story = soup.find('div', {'class': STORY_CLASS}).find('p').text.strip() if soup.find('div', {'class': STORY_CLASS}) else ""
+            
             return {
                 "title": title,
                 "day": day,
-                "rating": rating,
                 "thumbnail_url": thumbnail_url,
-                #"author": author,
-                #"genre": genre,
+                "author": author,
+                "genre": genre,
                 "story": story,
-                "url": self.driver.current_url
+                "url": current_url
             }
         except TimeoutException:
-            print("TimeoutException: Could not load webtoon page. Skipping...")
+            print(f"TimeoutException: Could not load webtoon page. Skipping...")
             return None
         finally:
             self.driver.back()
-            sleep(0.1)
+            sleep(0.01)
 
 class WebtoonRepository:
     def __init__(self):
@@ -116,16 +110,34 @@ class WebtoonCrawler:
         self.scraper = scraper
         self.repository = repository
 
-    def run(self, urls: List[str]):
-        for url in urls:
-            self.scraper.open_page(url)
-            webtoon_elements = self.scraper.get_webtoon_elements()
+    def run(self, url: str):
+        self.scraper.open_page(url)
+        titles = self.scraper.get_titles()
+        lenth = 10  # 예시로 30개의 제목만 처리
+        for i in range(lenth):
+            print(f"Process: {i + 1} / {len(titles)}", end="\r")
+            try:
+                titles = self.scraper.get_titles()  
+                title_element = titles[i]
 
-            for i, webtoon_element in enumerate(webtoon_elements):
-                print(f"Processing: {i + 1} / {len(webtoon_elements)}")
-                webtoon_data = self.scraper.scrape_webtoon_info(webtoon_element)
+                webtoon_data = self._retry_click_and_scrape(title_element)
                 if webtoon_data:
                     self.repository.save(webtoon_data)
+
+            except StaleElementReferenceException:
+                print(f"StaleElementReferenceException: Element is stale at index {i}. Retrying...")
+                continue
+            except TimeoutException:
+                print(f"TimeoutException: Could not find title element. Skipping...")
+                continue
+
+    def _retry_click_and_scrape(self, title_element, retries=3):
+        for _ in range(retries):
+            try:
+                return self.scraper.scrape_webtoon_info(title_element)
+            except StaleElementReferenceException:
+                sleep(0.01)
+        raise StaleElementReferenceException("Element is stale after multiple retries.")
 
 def main():
     driver = WebDriverFactory.create_chrome_driver(CHROMEDRIVER_PATH)
@@ -134,7 +146,7 @@ def main():
     crawler = WebtoonCrawler(scraper, repository)
 
     try:
-        crawler.run(NAVER_WEBTOON_URLS)
+        crawler.run(NAVER_WEBTOON_URL)
     finally:
         repository.save_to_json("webtoon_list")
         input("프로그램을 종료하려면 엔터를 누르세요...")
