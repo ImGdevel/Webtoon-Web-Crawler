@@ -1,5 +1,7 @@
 [
     {
+        "id": 0,
+        "unique_id": 758037,
         "title": "참교육",
         "day": "월",
         "rating": "9.88",
@@ -19,26 +21,21 @@
                 "link": "https://comic.naver.com/community/u/_0borm?lastPage=EpisodeList"
             }
         ],
-        "id": 0
-    },
-    {
-        "title": "똑 닮은 딸",
-        "day": "월",
-        "rating": "9.98",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/774866/thumbnail/thumbnail_IMAG21_b03cd4bd-bc74-4469-a501-20896bcc887f.jpg",
-        "story": "'우리 엄마가 살인마인 것 같다.' \n성적 우수, 품행 단정, 모범적인 자식인 길소명은 엄마가 요구하는 기준에 맞춰 완벽한 딸로 살아왔다.\n그러나 남동생이 강물에서 시체로 떠오른 그 날, 소명의 머릿속엔 섬뜩한 의혹이 피어오른다.\n자식의 인생에 방해되는 모든 것을 없애려는 엄마와 그녀에게서 벗어나려는 딸, 두 사람의 잔혹한 모녀 스릴러!\n2020 지상최대공모전 2기 우수상 수상작.",
-        "url": "https://comic.naver.com/webtoon/list?titleId=774866&tab=mon",
-        "age_rating": "15세",
-        "authors": [
-            {
-                "name": "이담",
-                "role": "글/그림",
-                "link": "https://comic.naver.com/community/u/_dboz2?lastPage=EpisodeList"
-            }
+        "genres": [
+            "액션",
+            "사이다",
+            "참교육",
+            "블루스트링",
+            "학원물",
+            "먼치킨",
+            "다크히어로"
         ],
-        "id": 1
+        "episode_count": 159,
+        "first_episode_link": "https://comic.naver.com/webtoon/detail?titleId=758037&no=1&week=mon"
     },
     {
+        "id": 1,
+        "unique_id": 783053,
         "title": "김부장",
         "day": "화",
         "rating": "9.58",
@@ -63,226 +60,14 @@
                 "link": "https://comic.naver.com/community/u/cymhteak?lastPage=EpisodeList"
             }
         ],
-        "id": 2
-    },
-    {
-        "title": "화산귀환",
-        "day": "수",
-        "rating": "9.90",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/769209/thumbnail/thumbnail_IMAG21_3511dcdd-6e33-4171-8839-598d6d266215.jpg",
-        "story": "대 화산파 13대 제자.천하삼대검수 매화검존 청명. \n천하를 혼란에 빠뜨린 고금제일마 천마의 목을 치고 십만대산의 정상에서 영면.\n백 년의 시간을 뛰어넘어 아이의 몸으로 다시 살아나다.\n......뭐? 화산이 망해? 이게 뭔 개소리야!?",
-        "url": "https://comic.naver.com/webtoon/list?titleId=769209&tab=wed",
-        "age_rating": "15세",
-        "authors": [
-            {
-                "name": "LICO",
-                "role": "글/그림",
-                "link": "/artistTitle?id=322253"
-            },
-            {
-                "name": "비가",
-                "role": "원작",
-                "link": "/artistTitle?id=344545"
-            }
+        "genres": [
+            "액션",
+            "사이다",
+            "다크히어로",
+            "먼치킨",
+            "느와르"
         ],
-        "id": 3
-    },
-    {
-        "title": "전지적 독자 시점",
-        "day": "수",
-        "rating": "9.95",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/747269/thumbnail/thumbnail_IMAG21_aabd9952-ff45-47a2-a543-33f19a5c6708.jpg",
-        "story": "'이건 내가 아는 그 전개다'\n한순간에 세계가 멸망하고, 새로운 세상이 펼쳐졌다.\n오직 나만이 완주했던 소설 세계에서 평범했던 독자의 새로운 삶이 시작된다.",
-        "url": "https://comic.naver.com/webtoon/list?titleId=747269&tab=wed",
-        "age_rating": "15세",
-        "authors": [
-            {
-                "name": "UMI",
-                "role": "글",
-                "link": "/artistTitle?id=334079"
-            },
-            {
-                "name": "슬리피-C",
-                "role": "그림",
-                "link": "/artistTitle?id=334080"
-            },
-            {
-                "name": "싱숑",
-                "role": "원작",
-                "link": "/artistTitle?id=347597"
-            }
-        ],
-        "id": 4
-    },
-    {
-        "title": "육아일기",
-        "day": "목, 목",
-        "rating": "9.95",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/812354/thumbnail/thumbnail_IMAG21_be53c95b-d800-4275-8869-e9b9a8413ce8.jpg",
-        "story": "이젠 갠플이 아니라 팀플이다!  \n조별 과제와 차원이 다른 인생을 건 팀플이 시작된다. \n1인가구에서 2인가구로 2인가구에서 3인 가구로 인생 난이도가 급격히 상승한 자까 작가의 일상 이야기",
-        "url": "https://comic.naver.com/webtoon/list?titleId=812354&tab=thu",
-        "age_rating": "전체연령가",
-        "authors": [
-            {
-                "name": "자까",
-                "role": "글/그림",
-                "link": "https://comic.naver.com/community/u/_kbz9r?lastPage=EpisodeList"
-            }
-        ],
-        "id": 5
-    },
-    {
-        "title": "나노마신",
-        "day": "목",
-        "rating": "9.86",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/747271/thumbnail/thumbnail_IMAG21_75c6a3cc-c4d1-4b51-a945-029aff772a63.jpg",
-        "story": "갖은 멸시와 목숨의 위협을 받던 마교의 사생아 천여운, \n미래에서 나타난 후손이 천여운의 몸에 나노 머신을 주입한 후 그의 인생이 송두리째 바뀐다.\n마교를 넘어 무림 최고의 자리에 오르기 위한 천여운의 거침없는 이야기가 시작된다!",
-        "url": "https://comic.naver.com/webtoon/list?titleId=747271&tab=thu",
-        "age_rating": "15세",
-        "authors": [
-            {
-                "name": "현절무",
-                "role": "글",
-                "link": "/artistTitle?id=334605"
-            },
-            {
-                "name": "금강불괴",
-                "role": "그림",
-                "link": "/artistTitle?id=334606"
-            },
-            {
-                "name": "한중월야",
-                "role": "원작",
-                "link": "/artistTitle?id=347598"
-            }
-        ],
-        "id": 6
-    },
-    {
-        "title": "외모지상주의",
-        "day": "금",
-        "rating": "9.45",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/641253/thumbnail/thumbnail_IMAG21_01672165-03c8-44b1-ba0e-ef82c9cfcd10.jpg",
-        "story": "못생기고 뚱뚱하다고 괴롭힘을 당하며  루저 인생만 살아온 내가 잘생겨졌다는 이유로 인싸가 됐다.\n\n어느 날 자고 일어났더니 갑자기 완벽한 외모와 몸을 지닌 사람이 되어 깨어난다면?",
-        "url": "https://comic.naver.com/webtoon/list?titleId=641253&tab=fri",
-        "age_rating": "15세",
-        "authors": [
-            {
-                "name": "박태준",
-                "role": "글/그림",
-                "link": "https://comic.naver.com/community/u/_nboqf?lastPage=EpisodeList"
-            }
-        ],
-        "id": 7
-    },
-    {
-        "title": "역대급 영지 설계사",
-        "day": "금",
-        "rating": "9.98",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/777767/thumbnail/thumbnail_IMAG21_cc85f891-272b-450a-b642-cffe1568ab71.jpg",
-        "story": "소설 속 귀족이 된 토목공학도 김수호. \n그런데 뭐? 내 영지가 곧 망할 거라고? \n그럼 살려야지. 설계하고, 건설하고, 분양해서. \n[전 대륙이 기다려온 특별한 기회! 퍼펙트한 교통, 최상의 학군, 쾌적한 숲세권, 원스톱 프리미엄 영지 라이프의 프론테라 남작령이 여러분을 기다립니다. 선착순 분양계약중!]",
-        "url": "https://comic.naver.com/webtoon/list?titleId=777767&tab=fri",
-        "age_rating": "전체연령가",
-        "authors": [
-            {
-                "name": "이현민",
-                "role": "글",
-                "link": "/artistTitle?id=171384"
-            },
-            {
-                "name": "김현수",
-                "role": "그림",
-                "link": "/artistTitle?id=348731"
-            },
-            {
-                "name": "문백경",
-                "role": "원작",
-                "link": "/artistTitle?id=331721"
-            }
-        ],
-        "id": 8
-    },
-    {
-        "title": "아수라",
-        "day": "토",
-        "rating": "9.95",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/826670/thumbnail/thumbnail_IMAG21_ecfd3f55-b872-45a8-9837-a94d1dcb9f72.jpg",
-        "story": "최초로 대륙을 통일한 절대자로부터 불사의 비밀을 알아오라는 명을 받고 떠난 이가 있었다.\n세상의 모든 곳을 찾아다녀서라도 반드시 불사의 비밀을 알아올 것으로 믿었던 그는\n절대자가 죽고 제국이 몰락할 때까지 끝내 돌아오지 않았고, 수많은 억측만을 남긴 채 사람들의 기억 속에서도 차츰 잊혀져갔다.\n그리고 오랜 시간이 흐른 뒤...",
-        "url": "https://comic.naver.com/webtoon/list?titleId=826670&tab=sat",
-        "age_rating": "15세",
-        "authors": [
-            {
-                "name": "류기운",
-                "role": "글",
-                "link": "/artistTitle?id=293267"
-            },
-            {
-                "name": "문정후",
-                "role": "그림",
-                "link": "/artistTitle?id=293268"
-            }
-        ],
-        "id": 9
-    },
-    {
-        "title": "입학용병",
-        "day": "일",
-        "rating": "9.90",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/758150/thumbnail/thumbnail_IMAG21_4135492154714961716.jpg",
-        "story": "어린 시절 비행기 추락 사고의 유일한 생존자 유이진. \n살아남기 위해 용병으로 살아가던 유이진은 10년 후, 가족이 있는 고향으로 돌아왔다.",
-        "url": "https://comic.naver.com/webtoon/list?titleId=758150&tab=sun",
-        "age_rating": "12세",
-        "authors": [
-            {
-                "name": "YC",
-                "role": "글",
-                "link": "/artistTitle?id=339324"
-            },
-            {
-                "name": "락현",
-                "role": "그림",
-                "link": "/artistTitle?id=339325"
-            }
-        ],
-        "id": 10
-    },
-    {
-        "title": "버닝이펙트",
-        "day": "화",
-        "rating": "9.82",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/829011/thumbnail/thumbnail_IMAG21_b380cc6c-3602-4c91-b6c9-73d57b5cc203.jpg",
-        "story": "\"죄를 지은 자, 죄질의 경중을 막론하고 사형에 처한다.\"\n\n인구 수 폭증과 범죄율 증가로, 정부는 특단의 법을 내놓는다.\n'범죄자는 이유 불문하고 처단'.\n\n길거리에 침만 뱉어도 죽을지 모르는 도시에서\n시민들은 불안함에 시달리고 이를 두고 볼 수 없었던\n자들이 혁명을 일으킨다.\n\n혁명단 <제볼트>의 '버너'.\n정부의 검, 관리자 '그레이트'.\n\n이 둘을 중심으로 점점 번져가는 정부와 혁명단의 싸움.\n법을 집행하는 자와 세상을 뒤엎으려는 자들의\n치열한 전쟁이 시작된다.\n\n과연 버너 일행은 강력한 관리자들을 꺾고\n즉결 처형 제도를 무너트릴 수 있을 것인가?!",
-        "url": "https://comic.naver.com/webtoon/list?titleId=829011",
-        "age_rating": "15세",
-        "authors": [
-            {
-                "name": "박태현",
-                "role": "글/그림",
-                "link": "https://comic.naver.com/community/u/great?lastPage=EpisodeList"
-            }
-        ],
-        "id": 11
-    },
-    {
-        "title": "수요웹툰의 나강림",
-        "day": "화",
-        "rating": "9.78",
-        "thumbnail_url": "https://image-comic.pstatic.net/webtoon/771718/thumbnail/thumbnail_IMAG21_8d86de3e-15d5-464e-b448-cbd73b1bd71c.jpg",
-        "story": "평소 웹툰을 즐겨보는 고등학생 나강림. \n어느날 그의 눈앞에 웹툰 속에서 봤던 여주인공이 나타나는 기이한 일이 펼쳐진다.\n심지어 웹툰에서와 똑같은 사건이 그녀를 위기로 몰아넣는데,\n문제는 그 사건으로부터 그녀를 구해줄 주인공이 현실에는 없다는 것!\n결국 나강림은 주인공 역할을 대신하여 그녀들을 구하기 위해 시간을 반복하며 구른다.",
-        "url": "https://comic.naver.com/webtoon/list?titleId=771718",
-        "age_rating": "15세",
-        "authors": [
-            {
-                "name": "이경민",
-                "role": "글",
-                "link": "https://comic.naver.com/community/u/_gboua?lastPage=EpisodeList"
-            },
-            {
-                "name": "송준혁",
-                "role": "그림",
-                "link": "/artistTitle?id=327998"
-            }
-        ],
-        "id": 12
+        "episode_count": 152,
+        "first_episode_link": "https://comic.naver.com/webtoon/detail?titleId=783053&no=1&week=tue"
     }
 ]

@@ -46,6 +46,8 @@ class WebtoonScraper(ABC):
 
 # NaverWebtoonScraper 구현
 class NaverWebtoonScraper(WebtoonScraper):
+    PLATFORM_NAME = "naver"
+
     NAVER_WEBTOON_URLS = [
         'https://comic.naver.com/webtoon?tab=mon',
         'https://comic.naver.com/webtoon?tab=tue',
@@ -107,6 +109,23 @@ class NaverWebtoonScraper(WebtoonScraper):
                     "link": author_link
                 })
 
+            # 장르 추출
+            genre_elements = soup.find('div', {'class': 'TagGroup__tag_group--uUJza'}).find_all('a', {'class': 'TagGroup__tag--xu0OH'})
+            genres = [genre.text.strip().replace('#', '') for genre in genre_elements]
+
+            # 고유 ID 추출 및 int 형식으로 저장
+            url = self.driver.current_url
+            id_match = re.search(r'titleId=(\d+)', url)
+            unique_id = int(id_match.group(1)) if id_match else None
+
+            # 회차 수 추출
+            episode_count_element = soup.find('div', {'class': 'EpisodeListView__count--fTMc5'})
+            episode_count = int(re.search(r'\d+', episode_count_element.text).group()) if episode_count_element else None
+
+            # 웹툰 1화 보기 링크 추출 및 접두사 추가
+            first_episode_link = soup.find('a', {'class': 'EpisodeListUser__item--Fjp4R EpisodeListUser__view--PaVFx'})['href']
+            full_first_episode_link = f"https://comic.naver.com{first_episode_link}"
+
             rating = re.search(r'\d+\.\d+', rating).group(0)
             day_match = re.search(r'(월|화|수|목|금|토|일)|완결', day_age)
             day = day_match.group(0) if day_match else None
@@ -115,14 +134,19 @@ class NaverWebtoonScraper(WebtoonScraper):
             age_rating = age_rating_match.group(0) if age_rating_match else None
 
             return {
+                "id": 0,
+                "unique_id": unique_id,  # 고유 ID를 int 형식으로 저장
                 "title": title,
                 "day": day,
                 "rating": rating,
                 "thumbnail_url": thumbnail_url,
                 "story": story,
-                "url": self.driver.current_url,
+                "url": url,
                 "age_rating": age_rating,
-                "authors": authors  # 작가 정보 추가
+                "authors": authors,
+                "genres": genres,
+                "episode_count": episode_count,  # 회차 수 추가
+                "first_episode_link": full_first_episode_link  # 1화 링크 (접두사 추가)
             }
         except TimeoutException:
             print("TimeoutException: Could not load webtoon page. Skipping...")
@@ -130,6 +154,7 @@ class NaverWebtoonScraper(WebtoonScraper):
         finally:
             self.driver.back()
             sleep(0.5)
+
 
 # KaKaoWebtoonScraper 구현
 class KaKaoWebtoonScraper(WebtoonScraper):
@@ -202,7 +227,7 @@ class WebtoonCrawler:
         for url in self.scraper.get_urls():
             self.scraper.open_page(url)
             webtoon_elements = self.scraper.get_webtoon_elements()
-            webtoon_list_len = 2 #len(webtoon_elements)
+            webtoon_list_len = 1 #len(webtoon_elements)
             for i in range(webtoon_list_len):
                 try:
                     print(f"Processing: {i + 1} / {webtoon_list_len}")
