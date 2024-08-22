@@ -10,6 +10,7 @@ from time import sleep
 from typing import List, Dict
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 import json
+import re
 
 # 전역 상수로 HTML 클래스 이름을 설정하여 직관적인 변수명 사용
 NAVER_WEBTOON_URLS = [
@@ -64,9 +65,20 @@ class WebtoonScraper:
             soup = bs(self.driver.page_source, 'html.parser')
 
             title = soup.find('h2', {'class': 'EpisodeListInfo__title--mYLjC'}).text.strip()
-            day = soup.find('div', {'class': 'ContentMetaInfo__meta_info--GbTg4'}).find('em', {'class': 'ContentMetaInfo__info_item--utGrf'}).text.strip()
+            day_age = soup.find('div', {'class': 'ContentMetaInfo__meta_info--GbTg4'}).find('em', {'class': 'ContentMetaInfo__info_item--utGrf'}).text.strip()
             thumbnail_url = soup.find('div', {'class': 'Poster__thumbnail_area--gviWY'}).find('img')['src']
             story = soup.find('div', {'class': 'EpisodeListInfo__summary_wrap--ZWNW5'}).find('p').text.strip()
+
+                    # 별점에서 숫자만 추출
+            rating = re.search(r'\d+\.\d+', rating).group(0)
+            
+            # day에서 요일 또는 '완결' 추출
+            day_match = re.search(r'(월|화|수|목|금|토|일)|완결', day_age)
+            day = day_match.group(0) if day_match else None
+            
+            # age_rating에서 연령 정보 추출
+            age_rating_match = re.search(r'(전체연령가|\d+세)', day_age)
+            age_rating = age_rating_match.group(0) if age_rating_match else None
 
             return {
                 "title": title,
@@ -74,7 +86,8 @@ class WebtoonScraper:
                 "rating": rating,
                 "thumbnail_url": thumbnail_url,
                 "story": story,
-                "url": self.driver.current_url
+                "url": self.driver.current_url,
+                "age_rating": age_rating
             }
         except TimeoutException:
             print("TimeoutException: Could not load webtoon page. Skipping...")
