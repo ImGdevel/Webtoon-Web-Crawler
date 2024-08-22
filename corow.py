@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup as bs
 from time import sleep
 from typing import List, Dict
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+import json
 
 # 전역 상수로 HTML 클래스 이름을 설정하여 직관적인 변수명 사용
 NAVER_WEBTOON_URL = 'https://comic.naver.com/webtoon/weekday'
@@ -20,7 +21,7 @@ ON_DAY_CLASS = 'on'
 THUMBNAIL_CLASS = 'Poster__thumbnail_area--gviWY Poster__type193x250--Ge81Q'
 AUTHOR_CLASS = 'wrt_nm'
 GENRE_CLASS = 'genre'
-STORY_CLASS = 'detail'
+STORY_CLASS = 'EpisodeListInfo__summary_wrap--ZWNW5'
 
 class WebDriverFactory:
     @staticmethod
@@ -35,17 +36,17 @@ class WebtoonScraper:
 
     def open_page(self, url: str):
         self.driver.get(url)
-        WebDriverWait(self.driver, 10).until(lambda d: d.execute_script('return document.readyState') == 'complete')
+        WebDriverWait(self.driver, 3).until(lambda d: d.execute_script('return document.readyState') == 'complete')
 
     def get_titles(self) -> List[webdriver.remote.webelement.WebElement]:
-        return WebDriverWait(self.driver, 10).until(
+        return WebDriverWait(self.driver, 1).until(
             EC.presence_of_all_elements_located((By.CLASS_NAME, TITLE_AREA_CLASS))
         )
 
     def scrape_webtoon_info(self, title_element) -> Dict[str, str]:
         title_element.click()
         try:
-            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, TITLE_AREA_CLASS)))
+            WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.CLASS_NAME, TITLE_AREA_CLASS)))
 
             current_url = self.driver.current_url
             if "nidlogin.login" in current_url:
@@ -100,12 +101,9 @@ class WebtoonRepository:
                 webtoon['day'] += ', ' + webtoon_data['day']
                 break
 
-    def save_to_csv(self, filename: str):
-        keys = ["id", "title", "day", "thumbnail_url", "author", "genre", "story", "url"]
-        with open(f"{filename}.csv", "w", newline="", encoding="utf-8") as output_file:
-            dict_writer = csv.DictWriter(output_file, fieldnames=keys)
-            dict_writer.writeheader()
-            dict_writer.writerows(self.webtoons)
+    def save_to_json(self, filename: str):
+        with open(f"{filename}.json", "w", encoding="utf-8") as output_file:
+            json.dump(self.webtoons, output_file, ensure_ascii=False, indent=4)
 
 class WebtoonCrawler:
     def __init__(self, scraper: WebtoonScraper, repository: WebtoonRepository):
@@ -115,7 +113,7 @@ class WebtoonCrawler:
     def run(self, url: str):
         self.scraper.open_page(url)
         titles = self.scraper.get_titles()
-        lenth = 30  # 예시로 30개의 제목만 처리
+        lenth = 10  # 예시로 30개의 제목만 처리
         for i in range(lenth):
             print(f"Process: {i + 1} / {len(titles)}", end="\r")
             try:
@@ -147,12 +145,10 @@ def main():
     repository = WebtoonRepository()
     crawler = WebtoonCrawler(scraper, repository)
 
-    input("크롤링을 시작하려면 엔터를 누르세요...")
-
     try:
         crawler.run(NAVER_WEBTOON_URL)
     finally:
-        repository.save_to_csv("webtoon_list")
+        repository.save_to_json("webtoon_list")
         input("프로그램을 종료하려면 엔터를 누르세요...")
         driver.quit()
 

@@ -82,7 +82,7 @@ for i in range(100):
 
     # 기타 정보 추출 (썸네일, 작가, 장르, 줄거리 등)
     thumbnail_url = soup.find('div', {'class': 'Poster__thumbnail_area--gviWY Poster__type193x250--Ge81Q'}).find('img')['src']
-    #author = soup.find('span', {'class': 'wrt_nm'}).text.strip()[8:].replace(' / ', ', ')
+    author = soup.find('span', {'class': 'wrt_nm'}).text.strip()[8:].replace(' / ', ', ')
     #genre = soup.find('span', {'class': 'genre'}).text.strip()
     #story = soup.find('div', {'class': 'detail'}).find('p').text.strip()
 
