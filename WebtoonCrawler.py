@@ -94,6 +94,19 @@ class NaverWebtoonScraper(WebtoonScraper):
             thumbnail_url = soup.find('div', {'class': 'Poster__thumbnail_area--gviWY'}).find('img')['src']
             story = soup.find('div', {'class': 'EpisodeListInfo__summary_wrap--ZWNW5'}).find('p').text.strip()
 
+            # 작가 정보 추출
+            author_elements = soup.find_all('span', {'class': 'ContentMetaInfo__category--WwrCp'})
+            authors = []
+            for author_element in author_elements:
+                author_name = author_element.find('a').text.strip()
+                author_role = author_element.find(text=True, recursive=False).strip().replace("::after", "").replace(".", "")
+                author_link = author_element.find('a')['href']
+                authors.append({
+                    "name": author_name,
+                    "role": author_role,
+                    "link": author_link
+                })
+
             rating = re.search(r'\d+\.\d+', rating).group(0)
             day_match = re.search(r'(월|화|수|목|금|토|일)|완결', day_age)
             day = day_match.group(0) if day_match else None
@@ -108,7 +121,8 @@ class NaverWebtoonScraper(WebtoonScraper):
                 "thumbnail_url": thumbnail_url,
                 "story": story,
                 "url": self.driver.current_url,
-                "age_rating": age_rating
+                "age_rating": age_rating,
+                "authors": authors  # 작가 정보 추가
             }
         except TimeoutException:
             print("TimeoutException: Could not load webtoon page. Skipping...")
