@@ -3,32 +3,12 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup as bs
 from time import sleep
 import re
-import json
-import requests
 
-
-# WebDriverFactory를 인터페이스로 정의하여 확장성을 높임
-class WebDriverFactory(ABC):
-    @abstractmethod
-    def create_driver(self) -> webdriver.Chrome:
-        pass
-
-class ChromeWebDriverFactory(WebDriverFactory):
-    def __init__(self, chromedriver_path: str):
-        self.chromedriver_path = chromedriver_path
-
-    def create_driver(self) -> webdriver.Chrome:
-        chrome_service = Service(self.chromedriver_path)
-        chrome_options = Options()
-        return webdriver.Chrome(service=chrome_service, options=chrome_options)
-
-# WebtoonScraper 인터페이스 정의
+# WebtoonScraper 인터페이스
 class WebtoonScraper(ABC):
     @abstractmethod
     def get_urls(self) -> list:
@@ -46,7 +26,7 @@ class WebtoonScraper(ABC):
     def scrape_webtoon_info(self, webtoon_element) -> dict:
         pass
 
-# NaverWebtoonScraper 구현
+
 class NaverWebtoonScraper(WebtoonScraper):
     PLATFORM_NAME = "naver"
 
@@ -266,7 +246,7 @@ class KaKaoWebtoonScraper(WebtoonScraper):
                         authors.append({
                             "name": name.strip(),
                             "role": role,
-                            "link": "/author_link"  # 링크 정보가 없다면 기본값 사용
+                            "link": "/author_link"
                         })
 
                 return {
@@ -293,93 +273,3 @@ class KaKaoWebtoonScraper(WebtoonScraper):
                 self.driver.back()
             sleep(0.5)
 
-
-# Repository 인터페이스 정의
-class WebtoonRepository(ABC):
-    @abstractmethod
-    def save(self, webtoon_data: dict):
-        pass
-
-    @abstractmethod
-    def save_to_json(self, filename: str):
-        pass
-
-class JsonWebtoonRepository(WebtoonRepository):
-    def __init__(self):
-        self.webtoons = []
-        self.webtoon_id = 0
-
-    def save(self, webtoon_data: dict):
-        if self._exists(webtoon_data["title"]):
-            self._update_day(webtoon_data)
-        else:
-            webtoon_data["id"] = self.webtoon_id
-            self.webtoons.append(webtoon_data)
-            self.webtoon_id += 1
-
-    def _exists(self, title: str) -> bool:
-        return any(webtoon['title'] == title for webtoon in self.webtoons)
-
-    def _update_day(self, webtoon_data: dict):
-        for webtoon in self.webtoons:
-            if webtoon['title'] == webtoon_data['title']:
-                webtoon['day'] += ', ' + webtoon_data['day']
-                break
-
-    def save_to_json(self, filename: str):
-        with open(f"{filename}.json", "w", encoding="utf-8") as output_file:
-            json.dump(self.webtoons, output_file, ensure_ascii=False, indent=4)
-
-# Crawler 클래스는 웹스크래퍼와 레포지토리에 의존
-class WebtoonCrawler:
-    def __init__(self, scraper: WebtoonScraper, repository: WebtoonRepository):
-        self.scraper = scraper
-        self.repository = repository
-
-    def run(self):
-        for url in self.scraper.get_urls():
-            self.scraper.open_page(url)
-            webtoon_elements = self.scraper.get_webtoon_elements()
-
-            if not webtoon_elements:
-                print("No webtoon elements found. Exiting...")
-                continue
-        
-            webtoon_list_len = 3 #len(webtoon_elements)
-            for i in range(webtoon_list_len):
-                try:
-                    print(f"Processing: {i + 1} / {webtoon_list_len}")
-
-                    webtoon_elements = self.scraper.get_webtoon_elements()
-                    webtoon_data = self.scraper.scrape_webtoon_info(webtoon_elements[i])
-
-                    if webtoon_data:
-                        self.repository.save(webtoon_data)
-                except StaleElementReferenceException:
-                    print(f"StaleElementReferenceException encountered on element {i + 1}. Retrying...")
-                    continue
-
-# Factory Method를 사용하는 메인 함수
-def main():
-    driver_factory = ChromeWebDriverFactory('C:/chromedriver-win64/chromedriver.exe')
-    driver = driver_factory.create_driver()
-    repository = JsonWebtoonRepository()
-
-    scraper_type = 'kakao'
-
-    if scraper_type == 'naver':
-        scraper = NaverWebtoonScraper(driver)
-    elif scraper_type == 'kakao':
-        scraper = KaKaoWebtoonScraper(driver)
-
-    crawler = WebtoonCrawler(scraper, repository)
-
-    try:
-        crawler.run()
-    finally:
-        repository.save_to_json(scraper_type+"_webtoon_list")
-        input("프로그램을 종료하려면 엔터를 누르세요...")
-        driver.quit()
-
-if __name__ == "__main__":
-    main()
