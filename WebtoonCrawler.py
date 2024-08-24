@@ -163,14 +163,14 @@ class KaKaoWebtoonScraper(WebtoonScraper):
     PLATFORM_NAME = "kakao"
     
     KAKAO_WEBTOON_URLS = [
-        'https://webtoon.kakao.com/?tab=mon',
-        'https://webtoon.kakao.com/?tab=tue',
-        'https://webtoon.kakao.com/?tab=wed',
-        'https://webtoon.kakao.com/?tab=thu',
-        'https://webtoon.kakao.com/?tab=fri',
-        'https://webtoon.kakao.com/?tab=sat',
+        #'https://webtoon.kakao.com/?tab=mon',
+        #'https://webtoon.kakao.com/?tab=tue',
+        #'https://webtoon.kakao.com/?tab=wed',
+        #'https://webtoon.kakao.com/?tab=thu',
+        #'https://webtoon.kakao.com/?tab=fri',
+        #'https://webtoon.kakao.com/?tab=sat',
         'https://webtoon.kakao.com/?tab=sun',
-        'https://webtoon.kakao.com/?tab=complete'
+        #'https://webtoon.kakao.com/?tab=complete'
     ]
 
     # 웹툰 목록 관련 상수
@@ -178,12 +178,16 @@ class KaKaoWebtoonScraper(WebtoonScraper):
     CONTAINER_DIV_SELECTOR = ".w-fit.flex.overflow-x-scroll.no-scrollbar.scrolling-touch.space-x-6"
     WEBTOON_CONTAINER_SELECTOR = ".flex.flex-wrap.gap-4.content-start"
     WEBTOON_ELEMENT_SELECTOR = ".flex-grow-0.overflow-hidden.flex-\\[calc\\(\\(100\\%\\-12px\\)\\/4\\)\\]"
+    TITLE_SELECTOR_X = '.whitespace-pre-wrap.break-all.break-words.support-break-word.overflow-hidden.text-ellipsis.s22-semibold-white.text-center.leading-26'
 
-    TITLE_SELECTOR = '.whitespace-pre-wrap.break-all.break-words.support-break-word.overflow-hidden.text-ellipsis.s22-semibold-white.text-center.leading-26'
+    TITLE_SELECTOR = 'whitespace-pre-wrap break-all break-words support-break-word overflow-hidden text-ellipsis !whitespace-nowrap s22-semibold-white text-center leading-26'
     STORY_SELECTOR = 'whitespace-pre-wrap break-all break-words support-break-word s13-regular-white leading-20 overflow-hidden'
     DAY_SELECTOR = 'whitespace-pre-wrap break-all break-words support-break-word font-badge !whitespace-nowrap rounded-5 s10-bold-black bg-white px-5 !text-[11px]'
 
     GENRE_SELECTOR = 'whitespace-pre-wrap break-all break-words support-break-word overflow-hidden text-ellipsis !whitespace-nowrap s14-medium-white'
+    EPISODE_COUNT_SELECTOR = 'whitespace-pre-wrap break-all break-words support-break-word overflow-hidden text-ellipsis !whitespace-nowrap leading-14 s12-regular-white'
+    FIRST_EPISODE_LINK_SELECTOR = 'relative px-10 py-0 w-full h-44 rounded-6 bg-white/10 mb-8'
+    AUTHORS_SELECTOR = 'div.rounded-12.p-18.bg-white\\10.mb-8 > dl > div.flex.mb-8'
 
     def __init__(self, driver: webdriver.Chrome):
         self.driver = driver
@@ -218,49 +222,75 @@ class KaKaoWebtoonScraper(WebtoonScraper):
     def scrape_webtoon_info(self, webtoon_element) -> dict:
         try:
             link_element = webtoon_element.find_element(By.CSS_SELECTOR, self.WEBTOON_LINK_CLASS)
-            href = link_element.get_attribute("href")
-            if href:
-                info_url = href + "?tab=profile"
-                self.driver.get(info_url)
-
+            url = link_element.get_attribute("href")
+            deapth_count = 0
+            
+            if url:
+                self.driver.get(url)
+                deapth_count = 1
                 WebDriverWait(self.driver, 1).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, self.TITLE_SELECTOR))
+                    EC.presence_of_element_located((By.CSS_SELECTOR, self.TITLE_SELECTOR_X))
                 )
                 soup = bs(self.driver.page_source, 'html.parser')
 
-                title_element = soup.find('p', {'class': ' '.join(self.TITLE_SELECTOR.split('.'))})
-                title = title_element.text.strip() if title_element else "Unknown Title"
-                print(title)
+                title = soup.find('p', {'class': self.TITLE_SELECTOR}).text.strip()
 
-                story = soup.find('p', {'class': self.STORY_SELECTOR }).text.strip()
-                day = soup.find('p', {'class': self.DAY_SELECTOR }).text.strip()
-                print(day)
+                episode_count = soup.find('p', {'class': self.EPISODE_COUNT_SELECTOR}).text.strip()
 
-                genre_elements = soup.find_all('a', {'class': self.GENRE_SELECTOR})
-                print(genre_elements)
+                id_match = re.search(r'titleId=(\d+)', url)
+                unique_id = int(id_match.group(1)) if id_match else None
 
+                # 정보탭에서 데이터 추출
+                info_url = url + "?tab=profile"
+                self.driver.get(info_url)
+                deapth_count = 2
+                soup = bs(self.driver.page_source, 'html.parser')
+                WebDriverWait(self.driver, 1).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, self.TITLE_SELECTOR_X))
+                )
+
+                story = soup.find('p', {'class': self.STORY_SELECTOR}).text.strip()
+                day = soup.find('p', {'class': self.DAY_SELECTOR}).text.strip()
+
+                # 장르 추출
+                genre_elements = soup.find_all('p', {'class': self.GENRE_SELECTOR})
                 genres = [genre.text.strip().replace('#', '') for genre in genre_elements]
 
+                # 작가 정보 추출
+                author_elements = soup.select('div.flex.mb-8')
+                authors = []
+                for element in author_elements:
+                    role = element.find('dt').text.strip()
+                    names = element.find('dd').text.strip().split(',')
+                    for name in names:
+                        authors.append({
+                            "name": name.strip(),
+                            "role": role,
+                            "link": "/author_link"  # 링크 정보가 없다면 기본값 사용
+                        })
+
                 return {
-                    "unique_id": None,
+                    "unique_id": unique_id,
                     "title": title,
                     "day": day,
-                    "rating": "9.9",
+                    "rating": 0,
                     "thumbnail_url": "http://example.com/thumbnail.jpg",
+                    "thumbnail_url2": "http://example.com/thumbnail.jpg",
                     "story": story,
-                    "url": self.driver.current_url,
+                    "url": url,
                     "age_rating": "전체연령가",
-                    "authors": [{"name": "Sample Author", "role": "Writer", "link": "/author_link"}],
+                    "authors": authors,
                     "genres": genres,
-                    "episode_count": 100,
-                    "first_episode_link": "http://example.com/first_episode"
+                    "episode_count": episode_count,
+                    "first_episode_link": ""
                 }
 
         except TimeoutException:
             print("TimeoutException: Could not load webtoon page. Skipping...")
             return None
         finally:
-            self.driver.back()
+            for i in range(deapth_count):
+                self.driver.back()
             sleep(0.5)
 
 
@@ -315,7 +345,7 @@ class WebtoonCrawler:
                 print("No webtoon elements found. Exiting...")
                 continue
         
-            webtoon_list_len = 1 #len(webtoon_elements)
+            webtoon_list_len = 3 #len(webtoon_elements)
             for i in range(webtoon_list_len):
                 try:
                     print(f"Processing: {i + 1} / {webtoon_list_len}")
