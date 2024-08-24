@@ -17,9 +17,6 @@ def main():
 
     crawler = WebtoonCrawler(scraper, repository)
 
-    scraper.open_page('https://comic.naver.com/webtoon?tab=mon')
-    input("로그인 완료 후 엔터를 누르세요...")
-
     try:
         crawler.run()
     finally:

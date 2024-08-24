@@ -88,7 +88,9 @@ class NaverWebtoonScraper(WebtoonScraper):
             title_element = webtoon_element.find_element(By.CLASS_NAME, self.TITLE_AREA_CLASS)
             title_element.click()
 
-            WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_AREA_CLASS)))
+            WebDriverWait(self.driver, 1).until(
+                EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_AREA_CLASS))
+            )
             soup = bs(self.driver.page_source, 'html.parser')
 
             title = soup.find('h2', {'class': 'EpisodeListInfo__title--mYLjC'}).text.strip()
@@ -153,7 +155,7 @@ class NaverWebtoonScraper(WebtoonScraper):
             return None
         finally:
             self.driver.back()
-            sleep(0.5)
+            sleep(0.01)
 
 
 class KaKaoWebtoonScraper(WebtoonScraper):
