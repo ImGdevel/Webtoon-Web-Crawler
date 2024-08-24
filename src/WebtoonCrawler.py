@@ -18,7 +18,7 @@ class WebtoonCrawler:
                 print("No webtoon elements found. Exiting...")
                 continue
         
-            webtoon_list_len = 3 #len(webtoon_elements)
+            webtoon_list_len = 10 # len(webtoon_elements)
             for i in range(webtoon_list_len):
                 try:
                     print(f"Processing: {i + 1} / {webtoon_list_len}")

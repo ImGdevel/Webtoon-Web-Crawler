@@ -38,8 +38,8 @@ class NaverWebtoonScraper(WebtoonScraper):
         'https://comic.naver.com/webtoon?tab=fri',
         'https://comic.naver.com/webtoon?tab=sat',
         'https://comic.naver.com/webtoon?tab=sun',
-        'https://comic.naver.com/webtoon?tab=dailyPlus',
-        'https://comic.naver.com/webtoon?tab=finish'
+        #'https://comic.naver.com/webtoon?tab=dailyPlus',
+        #'https://comic.naver.com/webtoon?tab=finish'
     ]
     CONTENT_LIST_CLASS = "ContentList__content_list--q5KXY"
     ITEM_CLASS = "item"
@@ -55,6 +55,23 @@ class NaverWebtoonScraper(WebtoonScraper):
     def open_page(self, url: str):
         self.driver.get(url)
         WebDriverWait(self.driver, 3).until(lambda d: d.execute_script('return document.readyState') == 'complete')
+        
+        # 특정 URL에서만 스크롤 기능을 사용
+        if 'tab=finish' in url:
+            self.scroll_to_load_all_content()
+
+    def scroll_to_load_all_content(self):
+        last_height = self.driver.execute_script("return document.body.scrollHeight")
+
+        while True:
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            sleep(2)  # 로딩 시간 대기
+
+            new_height = self.driver.execute_script("return document.body.scrollHeight")
+
+            if new_height == last_height:
+                break
+            last_height = new_height
 
     def get_webtoon_elements(self) -> list:
         return WebDriverWait(self.driver, 3).until(
