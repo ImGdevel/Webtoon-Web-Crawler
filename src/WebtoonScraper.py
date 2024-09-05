@@ -137,18 +137,18 @@ class NaverWebtoonScraper(WebtoonScraper):
 
             return {
                 "id": 0,
-                "unique_id": unique_id,
+                "uniqueId": unique_id,
                 "title": title,
                 "day": day,
                 "rating": rating,
-                "thumbnail_url": thumbnail_url,
+                "thumbnailUrl": thumbnail_url,
                 "story": story,
                 "url": url,
-                "age_rating": age_rating,
+                "ageRating": age_rating,
                 "authors": authors,
                 "genres": genres,
-                "episode_count": episode_count,
-                "first_episode_link": full_first_episode_link
+                "episodeCount": episode_count,
+                "firstEpisodeLink": full_first_episode_link
             }
         except TimeoutException:
             print("TimeoutException: Could not load webtoon page. Skipping...")
@@ -269,19 +269,19 @@ class KaKaoWebtoonScraper(WebtoonScraper):
                         })
 
                 return {
-                    "unique_id": unique_id,
+                    "uniqueId": unique_id,
                     "title": title,
                     "day": day,
                     "rating": 0,
-                    "thumbnail_url": "http://example.com/thumbnail.jpg",
-                    "thumbnail_url2": "http://example.com/thumbnail.jpg",
+                    "thumbnailUrl": "http://example.com/thumbnail.jpg",
+                    "thumbnailUrl2": "http://example.com/thumbnail.jpg",
                     "story": story,
                     "url": url,
-                    "age_rating": "전체연령가",
+                    "ageRating": "전체연령가",
                     "authors": authors,
                     "genres": genres,
-                    "episode_count": episode_count,
-                    "first_episode_link": ""
+                    "episodeCount": episode_count,
+                    "firstEpisodeLink": ""
                 }
 
         except TimeoutException:
