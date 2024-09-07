@@ -39,7 +39,7 @@ class NaverWebtoonScraper(WebtoonScraper):
         'https://comic.naver.com/webtoon?tab=sat',
         'https://comic.naver.com/webtoon?tab=sun',
         #'https://comic.naver.com/webtoon?tab=dailyPlus',
-        #'https://comic.naver.com/webtoon?tab=finish'
+        'https://comic.naver.com/webtoon?tab=finish'
     ]
     CONTENT_LIST_CLASS = "ContentList__content_list--q5KXY"
     ITEM_CLASS = "item"
@@ -85,6 +85,10 @@ class NaverWebtoonScraper(WebtoonScraper):
                 EC.presence_of_element_located((By.CLASS_NAME, self.RATING_CLASS))
             ).text.strip()
 
+            title = WebDriverWait(webtoon_element, 1).until(
+                EC.presence_of_element_located((By.CLASS_NAME, 'ContentTitle__title--e3qXt'))
+            ).text.strip()
+
             title_element = webtoon_element.find_element(By.CLASS_NAME, self.TITLE_AREA_CLASS)
             title_element.click()
 
@@ -93,7 +97,17 @@ class NaverWebtoonScraper(WebtoonScraper):
             )
             soup = bs(self.driver.page_source, 'html.parser')
 
-            title = soup.find('h2', {'class': 'EpisodeListInfo__title--mYLjC'}).text.strip()
+            # button = WebDriverWait(self.driver, 1).until(
+            #     EC.presence_of_element_located(
+            #         (By.XPATH, '(//div[@class="EpisodeListView__tab_control--qqhjW"]//button[@class="EpisodeListView__button_tab--NUsn2"])[2]')
+            #     )
+            # )
+            # button.click()
+
+            #firstEpisodeButton = soup.find_element(By.CLASS_NAME, 'EpisodeListView__button_tab--NUsn2')
+            #firstEpisodeButton.click()
+
+            #title = soup.find('h2', {'class': 'EpisodeListInfo__title--mYLjC'}).text.strip()
             day_age = soup.find('div', {'class': 'ContentMetaInfo__meta_info--GbTg4'}).find('em', {'class': 'ContentMetaInfo__info_item--utGrf'}).text.strip()
             thumbnail_url = soup.find('div', {'class': 'Poster__thumbnail_area--gviWY'}).find('img')['src']
             story = soup.find('div', {'class': 'EpisodeListInfo__summary_wrap--ZWNW5'}).find('p').text.strip()
@@ -132,14 +146,30 @@ class NaverWebtoonScraper(WebtoonScraper):
             day_match = re.search(r'(월|화|수|목|금|토|일)|완결', day_age)
             day = day_match.group(0) if day_match else None
 
+            absence = soup.find('i', {'class': 'EpisodeListInfo__icon_hiatus--kbQXO'})
+
+            status = ""
+            if absence and absence.text == '휴재':
+                status = '휴재'
+            elif day_match:
+                if day_match.group(0) == '완결':
+                    status = '완결'
+                else:
+                    status = '연재'
+            else:
+                status = ""
+
             age_rating_match = re.search(r'(전체연령가|\d+세)', day_age)
             age_rating = age_rating_match.group(0) if age_rating_match else None
+
+            #first_day = soup.find('span', {'class': 'Rating__star_area--dFzsb'}).find('span', {'class': 'date'}).text.strip()
 
             return {
                 "id": 0,
                 "uniqueId": unique_id,
                 "title": title,
                 "day": day,
+                "status": status,
                 "rating": rating,
                 "thumbnailUrl": thumbnail_url,
                 "story": story,
@@ -148,7 +178,8 @@ class NaverWebtoonScraper(WebtoonScraper):
                 "authors": authors,
                 "genres": genres,
                 "episodeCount": episode_count,
-                "firstEpisodeLink": full_first_episode_link
+                "firstEpisodeLink": full_first_episode_link,
+                #"firsy_day": first_day
             }
         except TimeoutException:
             print("TimeoutException: Could not load webtoon page. Skipping...")
