@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup as bs
+from datetime import datetime
 from time import sleep
 import re
 
@@ -38,7 +39,7 @@ class NaverWebtoonScraper(WebtoonScraper):
         'https://comic.naver.com/webtoon?tab=fri',
         'https://comic.naver.com/webtoon?tab=sat',
         'https://comic.naver.com/webtoon?tab=sun',
-        #'https://comic.naver.com/webtoon?tab=dailyPlus',
+        'https://comic.naver.com/webtoon?tab=dailyPlus',
         'https://comic.naver.com/webtoon?tab=finish'
     ]
     CONTENT_LIST_CLASS = "ContentList__content_list--q5KXY"
@@ -60,12 +61,32 @@ class NaverWebtoonScraper(WebtoonScraper):
         if 'tab=finish' in url:
             self.scroll_to_load_all_content()
 
+    def scroll_to_load_content(self, count):
+
+        # 현재 페이지의 스크롤 높이 저장
+        last_height = self.driver.execute_script("return document.body.scrollHeight")
+
+        for _ in range(int(count)):
+            # 페이지를 아래로 스크롤
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            sleep(1)  # 로딩 시간을 대기
+
+            # 새로운 스크롤 높이 저장
+            new_height = self.driver.execute_script("return document.body.scrollHeight")
+
+            # 스크롤 높이가 변하지 않으면 루프 종료
+            if new_height == last_height:
+                break
+
+            last_height = new_height
+
+
     def scroll_to_load_all_content(self):
         last_height = self.driver.execute_script("return document.body.scrollHeight")
 
         while True:
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            sleep(2)  # 로딩 시간 대기
+            sleep(1.5)  # 로딩 시간 대기
 
             new_height = self.driver.execute_script("return document.body.scrollHeight")
 
@@ -80,38 +101,35 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     def scrape_webtoon_info(self, webtoon_element) -> dict:
         try:
-
+            # 등급 정보를 가져옴
             rating = WebDriverWait(webtoon_element, 1).until(
                 EC.presence_of_element_located((By.CLASS_NAME, self.RATING_CLASS))
             ).text.strip()
 
+            # 제목 정보를 가져옴
             title = WebDriverWait(webtoon_element, 1).until(
                 EC.presence_of_element_located((By.CLASS_NAME, 'ContentTitle__title--e3qXt'))
             ).text.strip()
 
+            # 제목 요소 클릭
             title_element = webtoon_element.find_element(By.CLASS_NAME, self.TITLE_AREA_CLASS)
             title_element.click()
+            back_count = 1  # 페이지를 나중에 되돌리기 위해 back_count 설정
 
+            # 페이지가 로드될 때까지 대기
             WebDriverWait(self.driver, 1).until(
                 EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_AREA_CLASS))
             )
             soup = bs(self.driver.page_source, 'html.parser')
 
-            # button = WebDriverWait(self.driver, 1).until(
-            #     EC.presence_of_element_located(
-            #         (By.XPATH, '(//div[@class="EpisodeListView__tab_control--qqhjW"]//button[@class="EpisodeListView__button_tab--NUsn2"])[2]')
-            #     )
-            # )
-            # button.click()
+            #back_count = 2  # 모든 작업이 성공적으로 완료되면 back_count를 2로 설정
 
-            #firstEpisodeButton = soup.find_element(By.CLASS_NAME, 'EpisodeListView__button_tab--NUsn2')
-            #firstEpisodeButton.click()
-
-            #title = soup.find('h2', {'class': 'EpisodeListInfo__title--mYLjC'}).text.strip()
+            # 이후의 모든 데이터 추출 코드는 그대로 유지
             day_age = soup.find('div', {'class': 'ContentMetaInfo__meta_info--GbTg4'}).find('em', {'class': 'ContentMetaInfo__info_item--utGrf'}).text.strip()
+            
             thumbnail_url = soup.find('div', {'class': 'Poster__thumbnail_area--gviWY'}).find('img')['src']
             story = soup.find('div', {'class': 'EpisodeListInfo__summary_wrap--ZWNW5'}).find('p').text.strip()
-
+            
             # 작가 정보 추출
             author_elements = soup.find_all('span', {'class': 'ContentMetaInfo__category--WwrCp'})
             authors = []
@@ -124,7 +142,7 @@ class NaverWebtoonScraper(WebtoonScraper):
                     "role": author_role,
                     "link": author_link
                 })
-
+            
             # 장르 추출
             genre_elements = soup.find('div', {'class': 'TagGroup__tag_group--uUJza'}).find_all('a', {'class': 'TagGroup__tag--xu0OH'})
             genres = [genre.text.strip().replace('#', '') for genre in genre_elements]
@@ -143,7 +161,16 @@ class NaverWebtoonScraper(WebtoonScraper):
             full_first_episode_link = f"https://comic.naver.com{first_episode_link}"
 
             rating = re.search(r'\d+\.\d+', rating).group(0)
-            day_match = re.search(r'(월|화|수|목|금|토|일)|완결', day_age)
+            day_match = re.search(r'\b완결\b', day_age)
+            if day_match:
+                print("일치하는 패턴:", day_match.group())
+            else:
+                # "완결"이 없으면 다른 패턴 검사
+                day_match = re.search(r'(월|화|수|목|금|토|일)', day_age)
+                if day_match:
+                    print("일치하는 패턴:", day_match.group())
+                else:
+                    print("일치하는 패턴이 없습니다.")
             day = day_match.group(0) if day_match else None
 
             absence = soup.find('i', {'class': 'EpisodeListInfo__icon_hiatus--kbQXO'})
@@ -162,7 +189,8 @@ class NaverWebtoonScraper(WebtoonScraper):
             age_rating_match = re.search(r'(전체연령가|\d+세)', day_age)
             age_rating = age_rating_match.group(0) if age_rating_match else None
 
-            #first_day = soup.find('span', {'class': 'Rating__star_area--dFzsb'}).find('span', {'class': 'date'}).text.strip()
+            first_day = soup.find('div', {'class': 'EpisodeListList__meta_info--Cgquz'}).find('span', {'class': 'date'}).text.strip()
+            first_day_date = datetime.strptime(first_day, "%y.%m.%d").isoformat()
 
             return {
                 "id": 0,
@@ -179,14 +207,17 @@ class NaverWebtoonScraper(WebtoonScraper):
                 "genres": genres,
                 "episodeCount": episode_count,
                 "firstEpisodeLink": full_first_episode_link,
-                #"firsy_day": first_day
+                "firstDay": first_day_date,
             }
         except TimeoutException:
             print("TimeoutException: Could not load webtoon page. Skipping...")
             return None
         finally:
-            self.driver.back()
+            # 오류에 따라 적절한 횟수로 뒤로 가기 실행
+            for _ in range(back_count):
+                self.driver.back()
             sleep(0.01)
+
 
 
 class KaKaoWebtoonScraper(WebtoonScraper):

@@ -1,3 +1,4 @@
 .env
 *.pyc
 *webtoon_list.json
+*.json
