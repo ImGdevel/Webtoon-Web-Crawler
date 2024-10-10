@@ -167,10 +167,7 @@ class NaverWebtoonScraper(WebtoonScraper):
             else:
                 # "완결"이 없으면 다른 패턴 검사
                 day_match = re.search(r'(월|화|수|목|금|토|일)', day_age)
-                if day_match:
-                    print("일치하는 패턴:", day_match.group())
-                else:
-                    print("일치하는 패턴이 없습니다.")
+
             day = day_match.group(0) if day_match else None
 
             absence = soup.find('i', {'class': 'EpisodeListInfo__icon_hiatus--kbQXO'})
@@ -186,8 +183,15 @@ class NaverWebtoonScraper(WebtoonScraper):
             else:
                 status = ""
 
-            age_rating_match = re.search(r'(전체연령가|\d+세)', day_age)
-            age_rating = age_rating_match.group(0) if age_rating_match else None
+            age_rating_match = re.search(r'(전체연령가|(\d+)세)', day_age)
+
+            if age_rating_match:
+                if age_rating_match.group(1) == '전체연령가':
+                    age_rating = 'ALL'
+                else:
+                    age_rating = age_rating_match.group(2)
+            else:
+                age_rating = None
 
             first_day = soup.find('div', {'class': 'EpisodeListList__meta_info--Cgquz'}).find('span', {'class': 'date'}).text.strip()
             first_day_date = datetime.strptime(first_day, "%y.%m.%d").isoformat()
@@ -195,6 +199,7 @@ class NaverWebtoonScraper(WebtoonScraper):
             return {
                 "id": 0,
                 "uniqueId": unique_id,
+                "platform" : self.PLATFORM_NAME,
                 "title": title,
                 "day": day,
                 "status": status,
