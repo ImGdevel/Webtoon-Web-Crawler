@@ -3,7 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, WebDriverException
 from bs4 import BeautifulSoup as bs
 from datetime import datetime
 from time import sleep
@@ -44,14 +44,14 @@ class NaverWebtoonScraper(WebtoonScraper):
     PLATFORM_NAME = "NAVER"
 
     NAVER_WEBTOON_URLS = [
-        'https://comic.naver.com/webtoon?tab=mon',
-        'https://comic.naver.com/webtoon?tab=tue',
-        'https://comic.naver.com/webtoon?tab=wed',
-        'https://comic.naver.com/webtoon?tab=thu',
-        'https://comic.naver.com/webtoon?tab=fri',
-        'https://comic.naver.com/webtoon?tab=sat',
-        'https://comic.naver.com/webtoon?tab=sun',
-        'https://comic.naver.com/webtoon?tab=dailyPlus',
+        #'https://comic.naver.com/webtoon?tab=mon',
+        #'https://comic.naver.com/webtoon?tab=tue',
+        #'https://comic.naver.com/webtoon?tab=wed',
+        #'https://comic.naver.com/webtoon?tab=thu',
+        #'https://comic.naver.com/webtoon?tab=fri',
+        #'https://comic.naver.com/webtoon?tab=sat',
+        #'https://comic.naver.com/webtoon?tab=sun',
+        #'https://comic.naver.com/webtoon?tab=dailyPlus',
         'https://comic.naver.com/webtoon?tab=finish'
     ]
     
@@ -81,7 +81,10 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     def open_page(self, url: str):
         self.driver.get(url)
-        WebDriverWait(self.driver, 3).until(lambda d: d.execute_script('return document.readyState') == 'complete')
+        # 페이지가 완전히 로드될 때까지 대기
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_CLASS))
+        )
         
         # 특정 URL에서만 스크롤 기능을 사용
         if 'tab=finish' in url:
@@ -110,7 +113,7 @@ class NaverWebtoonScraper(WebtoonScraper):
 
         while True:
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            sleep(1.5)  # 로딩 시간 대기
+            sleep(0.5)
 
             new_height = self.driver.execute_script("return document.body.scrollHeight")
 
@@ -158,10 +161,11 @@ class NaverWebtoonScraper(WebtoonScraper):
                 "firstDay": self.get_first_day(soup),
                 "lastUpdateDay": last_update_day,
             }
-        except TimeoutException:
-            print("TimeoutException: Could not load webtoon page. Skipping...")
-            self.failed_webtoons.append(webtoon_element)
-            return None
+        except (TimeoutException, WebDriverException) as e:
+            print(f"Exception encountered: {e}. Attempting to scroll and reload...")
+            self.scroll_to_load_content(1)  # 스크롤을 한 칸 내림
+            sleep(1)  # 잠시 대기
+            return self.scrape_webtoon_info(webtoon_element)  # 다시 시도
         finally:
             self.go_back()
 
