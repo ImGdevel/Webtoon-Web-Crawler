@@ -1,7 +1,7 @@
 import requests
 import json
 
-url = 'http://localhost:8080/api/webtoon-request'
+url = 'http://localhost:8080/api/public/webtoon-request'
 headers = {
     'Content-Type': 'application/json'
 }

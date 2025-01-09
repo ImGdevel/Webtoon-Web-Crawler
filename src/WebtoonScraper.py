@@ -97,7 +97,7 @@ class NaverWebtoonScraper(WebtoonScraper):
         for _ in range(int(count)):
             # 페이지를 아래로 스크롤
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            sleep(1)  # 로딩 시간을 대기
+            sleep(0.5)  # 로딩 시간을 대기
 
             # 새로운 스크롤 높이 저장
             new_height = self.driver.execute_script("return document.body.scrollHeight")
@@ -122,7 +122,7 @@ class NaverWebtoonScraper(WebtoonScraper):
             last_height = new_height
 
     def get_webtoon_elements(self) -> list:
-        return WebDriverWait(self.driver, 3).until(
+        return WebDriverWait(self.driver, 10).until(
             EC.presence_of_all_elements_located((By.CLASS_NAME, self.ITEM_CLASS))
         )
 
@@ -162,9 +162,7 @@ class NaverWebtoonScraper(WebtoonScraper):
                 "lastUpdateDay": last_update_day,
             }
         except (TimeoutException, WebDriverException) as e:
-            print(f"Exception encountered: {e}. Attempting to scroll and reload...")
-            self.scroll_to_load_content(1)  # 스크롤을 한 칸 내림
-            sleep(1)  # 잠시 대기
+            print(f"Exception encountered: {e}. Refreshing the page...")
             return self.scrape_webtoon_info(webtoon_element)  # 다시 시도
         finally:
             self.go_back()
@@ -174,7 +172,7 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     def get_rating(self, webtoon_element):
         # 등급 정보를 가져옴
-        rating_text = WebDriverWait(webtoon_element, 1).until(
+        rating_text = WebDriverWait(webtoon_element, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, self.RATING_CLASS))
         ).text.strip()
         
@@ -183,7 +181,7 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     def get_title(self, webtoon_element):
         # 제목 정보를 가져옴
-        title = WebDriverWait(webtoon_element, 1).until(
+        title = WebDriverWait(webtoon_element, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_CLASS))
         ).text.strip()
         title_element = webtoon_element.find_element(By.CLASS_NAME, self.TITLE_AREA_CLASS)
@@ -192,7 +190,7 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     def load_webtoon_page(self, webtoon_element):
         # 페이지가 로드될 때까지 대기
-        WebDriverWait(self.driver, 1).until(
+        WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_AREA_CLASS))
         )
         return bs(self.driver.page_source, 'html.parser')
