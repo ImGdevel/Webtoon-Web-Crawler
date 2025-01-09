@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup as bs
 from datetime import datetime
 from time import sleep
 import re
+from enum import Enum
 
 # WebtoonScraper 인터페이스
 class WebtoonScraper(ABC):
@@ -28,8 +29,19 @@ class WebtoonScraper(ABC):
         pass
 
 
+class SerializationStatus(Enum):
+    ONGOING = "ONGOING"
+    PAUSED = "PAUSED"
+    COMPLETED = "COMPLETED"
+
+class AgeRating(Enum):
+    ALL = "ALL"
+    AGE_12 = "AGE_12"
+    AGE_15 = "AGE_15"
+    AGE_19 = "AGE_19"
+
 class NaverWebtoonScraper(WebtoonScraper):
-    PLATFORM_NAME = "naver"
+    PLATFORM_NAME = "NAVER"
 
     NAVER_WEBTOON_URLS = [
         'https://comic.naver.com/webtoon?tab=mon',
@@ -43,7 +55,6 @@ class NaverWebtoonScraper(WebtoonScraper):
         'https://comic.naver.com/webtoon?tab=finish'
     ]
     
-    # 클래스 변수로 하드코딩된 값들을 분리
     CONTENT_LIST_CLASS = "ContentList__content_list--q5KXY"
     ITEM_CLASS = "item"
     RATING_CLASS = "Rating__star_area--dFzsb"
@@ -54,8 +65,6 @@ class NaverWebtoonScraper(WebtoonScraper):
     SUMMARY_CLASS = 'EpisodeListInfo__summary_wrap--ZWNW5'
     EPISODE_COUNT_CLASS = 'EpisodeListView__count--fTMc5'
     FIRST_EPISODE_LINK_CLASS = 'EpisodeListUser__item--Fjp4R EpisodeListUser__view--PaVFx'
-    
-    # 추가된 클래스 변수
     TITLE_CLASS = 'ContentTitle__title--e3qXt'
     AUTHOR_CLASS = 'ContentMetaInfo__category--WwrCp'
     TAG_GROUP_CLASS = 'TagGroup__tag_group--uUJza'
@@ -159,9 +168,12 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     def get_rating(self, webtoon_element):
         # 등급 정보를 가져옴
-        return WebDriverWait(webtoon_element, 1).until(
+        rating_text = WebDriverWait(webtoon_element, 1).until(
             EC.presence_of_element_located((By.CLASS_NAME, self.RATING_CLASS))
         ).text.strip()
+        
+        # "별점\n" 부분 제거하고 숫자만 반환 후 float로 변환
+        return float(rating_text.replace("별점\n", "").strip())
 
     def get_title(self, webtoon_element):
         # 제목 정보를 가져옴
@@ -226,14 +238,21 @@ class NaverWebtoonScraper(WebtoonScraper):
     def get_status(self, day_age, soup):
         absence = soup.find('i', {'class': self.EPISODE_LIST_INFO_CLASS})
         if absence and absence.text == '휴재':
-            return '휴재'
+            return SerializationStatus.PAUSED.value
         day_match = re.search(r'\b완결\b', day_age)
-        return '완결' if day_match else '연재' if day_match else ""
+        return SerializationStatus.COMPLETED.value if day_match else SerializationStatus.ONGOING.value
 
     def get_age_rating(self, day_age):
-        age_rating_match = re.search(r'(전체연령가|(\d+)세)', day_age)
+        age_rating_match = re.search(r'(전체연령가|12세|15세|19세)', day_age)
         if age_rating_match:
-            return 'ALL' if age_rating_match.group(1) == '전체연령가' else age_rating_match.group(2)
+            if age_rating_match.group(1) == '전체연령가':
+                return AgeRating.ALL.value
+            elif age_rating_match.group(1) == '12세':
+                return AgeRating.AGE_12.value
+            elif age_rating_match.group(1) == '15세':
+                return AgeRating.AGE_15.value
+            elif age_rating_match.group(1) == '19세':
+                return AgeRating.AGE_19.value
         return None
 
     def get_first_day(self, soup):
