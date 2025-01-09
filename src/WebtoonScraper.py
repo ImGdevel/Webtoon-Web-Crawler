@@ -137,6 +137,7 @@ class NaverWebtoonScraper(WebtoonScraper):
             unique_id = self.get_unique_id()
             episode_count = self.get_episode_count(soup)
             full_first_episode_link = self.get_first_episode_link(soup)
+            last_update_day = self.get_last_update_day(soup)
 
             return {
                 "id": 0,
@@ -155,6 +156,7 @@ class NaverWebtoonScraper(WebtoonScraper):
                 "episodeCount": episode_count,
                 "firstEpisodeLink": full_first_episode_link,
                 "firstDay": self.get_first_day(soup),
+                "lastUpdateDay": last_update_day,
             }
         except TimeoutException:
             print("TimeoutException: Could not load webtoon page. Skipping...")
@@ -258,6 +260,14 @@ class NaverWebtoonScraper(WebtoonScraper):
     def get_first_day(self, soup):
         first_day = soup.find('div', {'class': self.EPISODE_LIST_META_INFO_CLASS}).find('span', {'class': 'date'}).text.strip()
         return datetime.strptime(first_day, "%y.%m.%d").isoformat()
+
+    
+    def get_last_update_day(self, soup):
+        last_update_element = soup.find('div', {'class': self.EPISODE_LIST_META_INFO_CLASS}).find('span', {'class': 'date'})
+        if last_update_element:
+            last_update_str = last_update_element.text.strip()
+            return datetime.strptime(last_update_str, "%y.%m.%d").date().isoformat()  
+
 
     def go_back(self):
         for _ in range(1):
