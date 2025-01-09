@@ -65,6 +65,7 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     def __init__(self, driver: webdriver.Chrome):
         self.driver = driver
+        self.failed_webtoons = []
 
     def get_urls(self) -> list:
         return self.NAVER_WEBTOON_URLS
@@ -148,9 +149,13 @@ class NaverWebtoonScraper(WebtoonScraper):
             }
         except TimeoutException:
             print("TimeoutException: Could not load webtoon page. Skipping...")
+            self.failed_webtoons.append(webtoon_element)
             return None
         finally:
             self.go_back()
+
+    def get_failed_webtoons(self) -> list:
+        return self.failed_webtoons
 
     def get_rating(self, webtoon_element):
         # 등급 정보를 가져옴
