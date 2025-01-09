@@ -42,10 +42,26 @@ class NaverWebtoonScraper(WebtoonScraper):
         'https://comic.naver.com/webtoon?tab=dailyPlus',
         'https://comic.naver.com/webtoon?tab=finish'
     ]
+    
+    # 클래스 변수로 하드코딩된 값들을 분리
     CONTENT_LIST_CLASS = "ContentList__content_list--q5KXY"
     ITEM_CLASS = "item"
     RATING_CLASS = "Rating__star_area--dFzsb"
     TITLE_AREA_CLASS = "ContentTitle__title_area--x24vt"
+    META_INFO_CLASS = 'ContentMetaInfo__meta_info--GbTg4'
+    META_INFO_ITEM_CLASS = 'ContentMetaInfo__info_item--utGrf'
+    THUMBNAIL_CLASS = 'Poster__thumbnail_area--gviWY'
+    SUMMARY_CLASS = 'EpisodeListInfo__summary_wrap--ZWNW5'
+    EPISODE_COUNT_CLASS = 'EpisodeListView__count--fTMc5'
+    FIRST_EPISODE_LINK_CLASS = 'EpisodeListUser__item--Fjp4R EpisodeListUser__view--PaVFx'
+    
+    # 추가된 클래스 변수
+    TITLE_CLASS = 'ContentTitle__title--e3qXt'
+    AUTHOR_CLASS = 'ContentMetaInfo__category--WwrCp'
+    TAG_GROUP_CLASS = 'TagGroup__tag_group--uUJza'
+    TAG_CLASS = 'TagGroup__tag--xu0OH'
+    EPISODE_LIST_INFO_CLASS = 'EpisodeListInfo__icon_hiatus--kbQXO'
+    EPISODE_LIST_META_INFO_CLASS = 'EpisodeListList__meta_info--Cgquz'
 
     def __init__(self, driver: webdriver.Chrome):
         self.driver = driver
@@ -62,7 +78,6 @@ class NaverWebtoonScraper(WebtoonScraper):
             self.scroll_to_load_all_content()
 
     def scroll_to_load_content(self, count):
-
         # 현재 페이지의 스크롤 높이 저장
         last_height = self.driver.execute_script("return document.body.scrollHeight")
 
@@ -79,7 +94,6 @@ class NaverWebtoonScraper(WebtoonScraper):
                 break
 
             last_height = new_height
-
 
     def scroll_to_load_all_content(self):
         last_height = self.driver.execute_script("return document.body.scrollHeight")
@@ -101,128 +115,130 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     def scrape_webtoon_info(self, webtoon_element) -> dict:
         try:
-            # 등급 정보를 가져옴
-            rating = WebDriverWait(webtoon_element, 1).until(
-                EC.presence_of_element_located((By.CLASS_NAME, self.RATING_CLASS))
-            ).text.strip()
+            rating = self.get_rating(webtoon_element)
+            title = self.get_title(webtoon_element)
+            soup = self.load_webtoon_page(webtoon_element)
 
-            # 제목 정보를 가져옴
-            title = WebDriverWait(webtoon_element, 1).until(
-                EC.presence_of_element_located((By.CLASS_NAME, 'ContentTitle__title--e3qXt'))
-            ).text.strip()
-
-            # 제목 요소 클릭
-            title_element = webtoon_element.find_element(By.CLASS_NAME, self.TITLE_AREA_CLASS)
-            title_element.click()
-            back_count = 1  # 페이지를 나중에 되돌리기 위해 back_count 설정
-
-            # 페이지가 로드될 때까지 대기
-            WebDriverWait(self.driver, 1).until(
-                EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_AREA_CLASS))
-            )
-            soup = bs(self.driver.page_source, 'html.parser')
-
-            #back_count = 2  # 모든 작업이 성공적으로 완료되면 back_count를 2로 설정
-
-            # 이후의 모든 데이터 추출 코드는 그대로 유지
-            day_age = soup.find('div', {'class': 'ContentMetaInfo__meta_info--GbTg4'}).find('em', {'class': 'ContentMetaInfo__info_item--utGrf'}).text.strip()
-            
-            thumbnail_url = soup.find('div', {'class': 'Poster__thumbnail_area--gviWY'}).find('img')['src']
-            story = soup.find('div', {'class': 'EpisodeListInfo__summary_wrap--ZWNW5'}).find('p').text.strip()
-            
-            # 작가 정보 추출
-            author_elements = soup.find_all('span', {'class': 'ContentMetaInfo__category--WwrCp'})
-            authors = []
-            for author_element in author_elements:
-                author_name = author_element.find('a').text.strip()
-                author_role = author_element.find(text=True, recursive=False).strip().replace("::after", "").replace(".", "")
-                author_link = author_element.find('a')['href']
-                authors.append({
-                    "name": author_name,
-                    "role": author_role,
-                    "link": author_link
-                })
-            
-            # 장르 추출
-            genre_elements = soup.find('div', {'class': 'TagGroup__tag_group--uUJza'}).find_all('a', {'class': 'TagGroup__tag--xu0OH'})
-            genres = [genre.text.strip().replace('#', '') for genre in genre_elements]
-
-            # 고유 ID 추출 및 int 형식으로 저장
-            url = self.driver.current_url
-            id_match = re.search(r'titleId=(\d+)', url)
-            unique_id = int(id_match.group(1)) if id_match else None
-
-            # 회차 수 추출
-            episode_count_element = soup.find('div', {'class': 'EpisodeListView__count--fTMc5'})
-            episode_count = int(re.search(r'\d+', episode_count_element.text).group()) if episode_count_element else None
-
-            # 웹툰 1화 보기 링크 추출 및 접두사 추가
-            first_episode_link = soup.find('a', {'class': 'EpisodeListUser__item--Fjp4R EpisodeListUser__view--PaVFx'})['href']
-            full_first_episode_link = f"https://comic.naver.com{first_episode_link}"
-
-            rating = re.search(r'\d+\.\d+', rating).group(0)
-            day_match = re.search(r'\b완결\b', day_age)
-            if day_match:
-                print("일치하는 패턴:", day_match.group())
-            else:
-                # "완결"이 없으면 다른 패턴 검사
-                day_match = re.search(r'(월|화|수|목|금|토|일)', day_age)
-
-            day = day_match.group(0) if day_match else None
-
-            absence = soup.find('i', {'class': 'EpisodeListInfo__icon_hiatus--kbQXO'})
-
-            status = ""
-            if absence and absence.text == '휴재':
-                status = '휴재'
-            elif day_match:
-                if day_match.group(0) == '완결':
-                    status = '완결'
-                else:
-                    status = '연재'
-            else:
-                status = ""
-
-            age_rating_match = re.search(r'(전체연령가|(\d+)세)', day_age)
-
-            if age_rating_match:
-                if age_rating_match.group(1) == '전체연령가':
-                    age_rating = 'ALL'
-                else:
-                    age_rating = age_rating_match.group(2)
-            else:
-                age_rating = None
-
-            first_day = soup.find('div', {'class': 'EpisodeListList__meta_info--Cgquz'}).find('span', {'class': 'date'}).text.strip()
-            first_day_date = datetime.strptime(first_day, "%y.%m.%d").isoformat()
+            day_age = self.get_day_age(soup)
+            thumbnail_url = self.get_thumbnail_url(soup)
+            story = self.get_story(soup)
+            authors = self.get_authors(soup)
+            genres = self.get_genres(soup)
+            unique_id = self.get_unique_id()
+            episode_count = self.get_episode_count(soup)
+            full_first_episode_link = self.get_first_episode_link(soup)
 
             return {
                 "id": 0,
                 "uniqueId": unique_id,
-                "platform" : self.PLATFORM_NAME,
+                "platform": self.PLATFORM_NAME,
                 "title": title,
-                "day": day,
-                "status": status,
+                "day": self.get_day(day_age),
+                "status": self.get_status(day_age, soup),
                 "rating": rating,
                 "thumbnailUrl": thumbnail_url,
                 "story": story,
-                "url": url,
-                "ageRating": age_rating,
+                "url": self.driver.current_url,
+                "ageRating": self.get_age_rating(day_age),
                 "authors": authors,
                 "genres": genres,
                 "episodeCount": episode_count,
                 "firstEpisodeLink": full_first_episode_link,
-                "firstDay": first_day_date,
+                "firstDay": self.get_first_day(soup),
             }
         except TimeoutException:
             print("TimeoutException: Could not load webtoon page. Skipping...")
             return None
         finally:
-            # 오류에 따라 적절한 횟수로 뒤로 가기 실행
-            for _ in range(back_count):
-                self.driver.back()
-            sleep(0.01)
+            self.go_back()
 
+    def get_rating(self, webtoon_element):
+        # 등급 정보를 가져옴
+        return WebDriverWait(webtoon_element, 1).until(
+            EC.presence_of_element_located((By.CLASS_NAME, self.RATING_CLASS))
+        ).text.strip()
+
+    def get_title(self, webtoon_element):
+        # 제목 정보를 가져옴
+        title = WebDriverWait(webtoon_element, 1).until(
+            EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_CLASS))
+        ).text.strip()
+        title_element = webtoon_element.find_element(By.CLASS_NAME, self.TITLE_AREA_CLASS)
+        title_element.click()
+        return title
+
+    def load_webtoon_page(self, webtoon_element):
+        # 페이지가 로드될 때까지 대기
+        WebDriverWait(self.driver, 1).until(
+            EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_AREA_CLASS))
+        )
+        return bs(self.driver.page_source, 'html.parser')
+
+    def get_day_age(self, soup):
+        return soup.find('div', {'class': self.META_INFO_CLASS}).find('em', {'class': self.META_INFO_ITEM_CLASS}).text.strip()
+
+    def get_thumbnail_url(self, soup):
+        return soup.find('div', {'class': self.THUMBNAIL_CLASS}).find('img')['src']
+
+    def get_story(self, soup):
+        return soup.find('div', {'class': self.SUMMARY_CLASS}).find('p').text.strip()
+
+    def get_authors(self, soup):
+        author_elements = soup.find_all('span', {'class': self.AUTHOR_CLASS})
+        authors = []
+        for author_element in author_elements:
+            author_name = author_element.find('a').text.strip()
+            author_role = author_element.find(text=True, recursive=False).strip().replace("::after", "").replace(".", "")
+            author_link = author_element.find('a')['href']
+            authors.append({
+                "name": author_name,
+                "role": author_role,
+                "link": author_link
+            })
+        return authors
+
+    def get_genres(self, soup):
+        genre_elements = soup.find('div', {'class': self.TAG_GROUP_CLASS}).find_all('a', {'class': self.TAG_CLASS})
+        return [genre.text.strip().replace('#', '') for genre in genre_elements]
+
+    def get_unique_id(self):
+        url = self.driver.current_url
+        id_match = re.search(r'titleId=(\d+)', url)
+        return int(id_match.group(1)) if id_match else None
+
+    def get_episode_count(self, soup):
+        episode_count_element = soup.find('div', {'class': self.EPISODE_COUNT_CLASS})
+        return int(re.search(r'\d+', episode_count_element.text).group()) if episode_count_element else None
+
+    def get_first_episode_link(self, soup):
+        first_episode_link = soup.find('a', {'class': self.FIRST_EPISODE_LINK_CLASS})['href']
+        return f"https://comic.naver.com{first_episode_link}"
+
+    def get_day(self, day_age):
+        day_match = re.search(r'(월|화|수|목|금|토|일)', day_age)
+        return day_match.group(0) if day_match else None
+
+    def get_status(self, day_age, soup):
+        absence = soup.find('i', {'class': self.EPISODE_LIST_INFO_CLASS})
+        if absence and absence.text == '휴재':
+            return '휴재'
+        day_match = re.search(r'\b완결\b', day_age)
+        return '완결' if day_match else '연재' if day_match else ""
+
+    def get_age_rating(self, day_age):
+        age_rating_match = re.search(r'(전체연령가|(\d+)세)', day_age)
+        if age_rating_match:
+            return 'ALL' if age_rating_match.group(1) == '전체연령가' else age_rating_match.group(2)
+        return None
+
+    def get_first_day(self, soup):
+        first_day = soup.find('div', {'class': self.EPISODE_LIST_META_INFO_CLASS}).find('span', {'class': 'date'}).text.strip()
+        return datetime.strptime(first_day, "%y.%m.%d").isoformat()
+
+    def go_back(self):
+        for _ in range(1):
+            self.driver.back()
+        sleep(0.01)
 
 
 class KaKaoWebtoonScraper(WebtoonScraper):
