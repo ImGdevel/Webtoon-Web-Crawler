@@ -1,6 +1,7 @@
 from src.WebDriver.WebDriverFactory import ChromeWebDriverFactory
 from src.Repository.WebtoonRepository import JsonWebtoonRepository
-from src.Scraper.WebtoonScraper import NaverWebtoonScraper, KaKaoWebtoonScraper
+from src.Scraper.KaKaoWebtoonScraper import KaKaoWebtoonScraper
+from src.Scraper.NaverWebtoonScraper import NaverWebtoonScraper
 from src.Crawler.WebtoonCrawler import WebtoonCrawler
 
 def main():
