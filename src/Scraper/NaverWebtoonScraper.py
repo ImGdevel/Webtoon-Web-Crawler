@@ -15,7 +15,7 @@ class NaverWebtoonScraper(WebtoonScraper):
     PLATFORM_NAME = "NAVER"
 
     NAVER_WEBTOON_URLS = [
-        #'https://comic.naver.com/webtoon?tab=mon',
+        'https://comic.naver.com/webtoon?tab=mon',
         #'https://comic.naver.com/webtoon?tab=tue',
         #'https://comic.naver.com/webtoon?tab=wed',
         #'https://comic.naver.com/webtoon?tab=thu',
@@ -23,7 +23,7 @@ class NaverWebtoonScraper(WebtoonScraper):
         #'https://comic.naver.com/webtoon?tab=sat',
         #'https://comic.naver.com/webtoon?tab=sun',
         #'https://comic.naver.com/webtoon?tab=dailyPlus',
-        'https://comic.naver.com/webtoon?tab=finish'
+        #'https://comic.naver.com/webtoon?tab=finish'
     ]
     
     CONTENT_LIST_CLASS = "ContentList__content_list--q5KXY"
