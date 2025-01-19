@@ -9,7 +9,7 @@ from datetime import datetime
 from time import sleep
 import re
 from .WebtoonScraper import WebtoonScraper
-from .enum import AgeRating, SerializationStatus
+from src.Model.enum import AgeRating, SerializationStatus
 
 class KaKaoWebtoonScraper(WebtoonScraper):
     PLATFORM_NAME = "kakao"

@@ -9,7 +9,8 @@ from datetime import datetime
 from time import sleep
 import re
 from .WebtoonScraper import WebtoonScraper
-from .enum import AgeRating, SerializationStatus
+from src.Model import WebtoonCreateRequestDTO, AuthorDTO, GenreDTO
+from src.Model.enum import AgeRating, SerializationStatus
 
 class NaverWebtoonScraper(WebtoonScraper):
     PLATFORM_NAME = "NAVER"
@@ -52,28 +53,22 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     def open_page(self, url: str):
         self.driver.get(url)
-        # 페이지가 완전히 로드될 때까지 대기
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_CLASS))
         )
         
-        # 특정 URL에서만 스크롤 기능을 사용
         if 'tab=finish' in url:
             self.scroll_to_load_all_content()
 
     def scroll_to_load_content(self, count):
-        # 현재 페이지의 스크롤 높이 저장
         last_height = self.driver.execute_script("return document.body.scrollHeight")
 
         for _ in range(int(count)):
-            # 페이지를 아래로 스크롤
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            sleep(0.5)  # 로딩 시간을 대기
+            sleep(0.5)
 
-            # 새로운 스크롤 높이 저장
             new_height = self.driver.execute_script("return document.body.scrollHeight")
 
-            # 스크롤 높이가 변하지 않으면 루프 종료
             if new_height == last_height:
                 break
 
@@ -97,7 +92,7 @@ class NaverWebtoonScraper(WebtoonScraper):
             EC.presence_of_all_elements_located((By.CLASS_NAME, self.ITEM_CLASS))
         )
 
-    def scrape_webtoon_info(self, webtoon_element) -> dict:
+    def scrape_webtoon_info(self, webtoon_element) -> WebtoonCreateRequestDTO:
         try:
             rating = self.get_rating(webtoon_element)
             title = self.get_title(webtoon_element)
@@ -106,52 +101,57 @@ class NaverWebtoonScraper(WebtoonScraper):
             day_age = self.get_day_age(soup)
             thumbnail_url = self.get_thumbnail_url(soup)
             story = self.get_story(soup)
-            authors = self.get_authors(soup)
-            genres = self.get_genres(soup)
+            authors = self.get_authors(soup) 
+            genres = self.get_genres(soup) 
             unique_id = self.get_unique_id()
             episode_count = self.get_episode_count(soup)
-            full_first_episode_link = self.get_first_episode_link(soup)
             last_update_day = self.get_last_update_day(soup)
 
-            return {
-                "id": 0,
-                "uniqueId": unique_id,
-                "platform": self.PLATFORM_NAME,
-                "title": title,
-                "day": self.get_day(day_age),
-                "status": self.get_status(day_age, soup),
-                "rating": rating,
-                "thumbnailUrl": thumbnail_url,
-                "story": story,
-                "url": self.driver.current_url,
-                "ageRating": self.get_age_rating(day_age),
-                "authors": authors,
-                "genres": genres,
-                "episodeCount": episode_count,
-                "firstEpisodeLink": full_first_episode_link,
-                "firstDay": self.get_first_day(soup),
-                "lastUpdateDay": last_update_day,
-            }
+            authors_list = [AuthorDTO(
+                name=author['name'],
+                role=author['role'],
+                link=author['link']
+            ) for author in authors]
+
+            genres_list = [GenreDTO(
+                name=genre
+            ) for genre in genres]
+
+            return WebtoonCreateRequestDTO(
+                title=title,
+                external_id=str(unique_id),
+                platform=self.PLATFORM_NAME,
+                day_of_week=self.get_day(day_age),
+                thumbnail_url=thumbnail_url,
+                link=self.driver.current_url,
+                age_rating=self.get_age_rating(day_age),
+                description=story,
+                serialization_status=self.get_status(day_age, soup),
+                episode_count=episode_count,
+                platform_rating=rating,
+                publish_start_date=self.get_first_day(soup),
+                last_updated_date=last_update_day,
+                authors=authors_list,
+                genres=genres_list
+            )
         except (TimeoutException, WebDriverException) as e:
             print(f"Exception encountered: {e}. Refreshing the page...")
-            return self.scrape_webtoon_info(webtoon_element)  # 다시 시도
+            return self.scrape_webtoon_info(webtoon_element) 
         finally:
             self.go_back()
+
 
     def get_failed_webtoons(self) -> list:
         return self.failed_webtoons
 
     def get_rating(self, webtoon_element):
-        # 등급 정보를 가져옴
         rating_text = WebDriverWait(webtoon_element, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, self.RATING_CLASS))
         ).text.strip()
         
-        # "별점\n" 부분 제거하고 숫자만 반환 후 float로 변환
         return float(rating_text.replace("별점\n", "").strip())
 
     def get_title(self, webtoon_element):
-        # 제목 정보를 가져옴
         title = WebDriverWait(webtoon_element, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_CLASS))
         ).text.strip()
@@ -160,7 +160,6 @@ class NaverWebtoonScraper(WebtoonScraper):
         return title
 
     def load_webtoon_page(self, webtoon_element):
-        # 페이지가 로드될 때까지 대기
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_AREA_CLASS))
         )
@@ -213,7 +212,7 @@ class NaverWebtoonScraper(WebtoonScraper):
     def get_status(self, day_age, soup):
         absence = soup.find('i', {'class': self.EPISODE_LIST_INFO_CLASS})
         if absence and absence.text == '휴재':
-            return SerializationStatus.PAUSED.value
+            return SerializationStatus.HIATUS.value
         day_match = re.search(r'\b완결\b', day_age)
         return SerializationStatus.COMPLETED.value if day_match else SerializationStatus.ONGOING.value
 
@@ -240,7 +239,6 @@ class NaverWebtoonScraper(WebtoonScraper):
         if last_update_element:
             last_update_str = last_update_element.text.strip()
             return datetime.strptime(last_update_str, "%y.%m.%d").date().isoformat()  
-
 
     def go_back(self):
         for _ in range(1):
