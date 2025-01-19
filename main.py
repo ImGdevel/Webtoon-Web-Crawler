@@ -1,7 +1,7 @@
-from src.WebDriverFactory import ChromeWebDriverFactory
-from src.WebtoonRepository import JsonWebtoonRepository
-from src.WebtoonScraper import NaverWebtoonScraper, KaKaoWebtoonScraper
-from src.WebtoonCrawler import WebtoonCrawler
+from src.WebDriver.WebDriverFactory import ChromeWebDriverFactory
+from src.Repository.WebtoonRepository import JsonWebtoonRepository
+from src.Scraper.WebtoonScraper import NaverWebtoonScraper, KaKaoWebtoonScraper
+from src.Crawler.WebtoonCrawler import WebtoonCrawler
 
 def main():
     driver_factory = ChromeWebDriverFactory('C:/chromedriver-win64/chromedriver.exe')

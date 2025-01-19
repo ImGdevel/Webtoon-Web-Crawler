@@ -1,6 +1,6 @@
-from src.WebDriverFactory import ChromeWebDriverFactory
-from src.WebtoonRepository import WebtoonRepository
-from src.WebtoonScraper import WebtoonScraper
+from src.WebDriver.WebDriverFactory import ChromeWebDriverFactory
+from src.Repository.WebtoonRepository import WebtoonRepository
+from src.Scraper.WebtoonScraper import WebtoonScraper
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.common.exceptions import WebDriverException
 
@@ -19,7 +19,7 @@ class WebtoonCrawler:
                 print("No webtoon elements found. Exiting...")
                 continue
         
-            webtoon_list_len = 300 #len(webtoon_elements)
+            webtoon_list_len = len(webtoon_elements)
             for i in range(webtoon_list_len):
                 try:
                     print(f"Processing: {i + 1} / {webtoon_list_len}")
@@ -34,5 +34,5 @@ class WebtoonCrawler:
                     continue
                 except WebDriverException as e:
                     print(f"WebDriverException encountered: {e}. Retrying...")
-                    self.scraper.driver.refresh()  # 페이지 새로고침
+                    self.scraper.driver.refresh()
                     continue
