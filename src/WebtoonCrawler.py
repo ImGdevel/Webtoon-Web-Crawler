@@ -1,18 +1,16 @@
 from src.WebDriver.WebDriverFactory import ChromeWebDriverFactory
-from src.Repository.WebtoonRepository import WebtoonRepository
-from src.Scraper.WebtoonScraper import WebtoonScraper
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.common.exceptions import WebDriverException
 from src.WebDriver.WebDriverFactory import ChromeWebDriverFactory
-from src.Repository.WebtoonRepository import JsonWebtoonRepository
+from src.Repository.WebtoonRepositoryFactory import WebtoonRepositoryFactory
 from src.Scraper.WebtoonScraperFactory import WebtoonScraperFactory
 from selenium.common.exceptions import StaleElementReferenceException, WebDriverException
 
 class WebtoonCrawler:
-    def __init__(self, scraper_type: str, driver_path: str, repository_path: str):
+    def __init__(self, scraper_type: str, driver_path: str, repository_type: str):
         self.driver_factory = ChromeWebDriverFactory(driver_path)
         self.driver = self.driver_factory.create_driver()
-        self.repository = JsonWebtoonRepository()
+        self.repository = WebtoonRepositoryFactory.create_repository(repository_type)
         self.scraper = WebtoonScraperFactory.create_scraper(scraper_type, self.driver)
 
     def run(self):
@@ -43,5 +41,5 @@ class WebtoonCrawler:
                     continue
 
     def save_and_cleanup(self, scraper_type: str):
-        self.repository.save_to_json(scraper_type + "_webtoon_list")
+        self.repository.save_to_file(scraper_type + "_webtoon_list")
         self.driver.quit()

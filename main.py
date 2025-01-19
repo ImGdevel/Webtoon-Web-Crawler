@@ -3,7 +3,7 @@ from src.WebtoonCrawler import WebtoonCrawler
 def main():
     scraper_type = 'naver'
     driver_path = 'C:/chromedriver-win64/chromedriver.exe'
-    repository_path = 'webtoon_data.json'
+    repository_path = 'json'
 
     crawler = WebtoonCrawler(scraper_type, driver_path, repository_path)
 
