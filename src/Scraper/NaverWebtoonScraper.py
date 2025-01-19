@@ -9,7 +9,7 @@ from datetime import datetime
 from time import sleep
 import re
 from .WebtoonScraper import WebtoonScraper
-from .enums import AgeRating, SerializationStatus
+from .enum import AgeRating, SerializationStatus
 
 class NaverWebtoonScraper(WebtoonScraper):
     PLATFORM_NAME = "NAVER"

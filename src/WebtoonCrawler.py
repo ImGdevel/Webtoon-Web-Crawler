@@ -1,10 +1,7 @@
-from src.WebDriver.WebDriverFactory import ChromeWebDriverFactory
-from selenium.common.exceptions import StaleElementReferenceException
-from selenium.common.exceptions import WebDriverException
-from src.WebDriver.WebDriverFactory import ChromeWebDriverFactory
-from src.Repository.WebtoonRepositoryFactory import WebtoonRepositoryFactory
-from src.Scraper.WebtoonScraperFactory import WebtoonScraperFactory
 from selenium.common.exceptions import StaleElementReferenceException, WebDriverException
+from src.WebDriver import ChromeWebDriverFactory
+from src.Repository import WebtoonRepositoryFactory
+from src.Scraper import WebtoonScraperFactory
 
 class WebtoonCrawler:
     def __init__(self, scraper_type: str, driver_path: str, repository_type: str):
