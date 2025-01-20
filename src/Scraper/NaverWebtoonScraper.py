@@ -48,7 +48,7 @@ class NaverWebtoonScraper(WebtoonScraper):
     EPISODE_LIST_META_INFO_CLASS = 'EpisodeListList__meta_info--Cgquz'
 
     SCROLL_SLEEP_TIME = 0.5
-    WATTING_LOAD_PAGE = 1
+    WATTING_LOAD_PAGE = 3
 
     def __init__(self, driver):
         logger.info("Initializing NaverWebtoonScraper")
