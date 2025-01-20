@@ -36,29 +36,38 @@ class WebtoonCrawler:
                     logger.warning(f"No webtoon elements found for URL: {url}")
                     continue
 
-                self._process_elements(webtoon_elements)
+                self._process_elements(webtoon_elements, url)
             except WebDriverException as e:
                 logger.error(f"WebDriverException encountered while processing URL {url}: {e}")
+                self.scraper.open_page(url)
                 continue
 
-    def _process_elements(self, webtoon_elements):
-        webtoon_list_len = len(webtoon_elements)
-        for i in range(webtoon_list_len):
-            try:
-                logger.info(f"Processing: {i + 1} / {webtoon_list_len}")
+    def _process_elements(self, webtoon_elements, url):
+        for i in range(len(webtoon_elements)):
+            retry_count = 0
+            max_retries = 3
+            while retry_count < max_retries:
+                try:
+                    logger.info(f"Processing webtoon element {i + 1}/{len(webtoon_elements)} (Attempt {retry_count + 1})")
 
-                webtoon_elements = self.scraper.get_webtoon_elements()
-                webtoon_data = self.scraper.scrape_webtoon_info(webtoon_elements[i])
+                    # 요소를 다시 가져와야 최신 DOM 상태를 유지
+                    webtoon_elements = self.scraper.get_webtoon_elements()
+                    webtoon_data = self.scraper.scrape_webtoon_info(webtoon_elements[i])
 
-                if webtoon_data:
-                    self.repository.save(webtoon_data)
-            except StaleElementReferenceException:
-                logger.error(f"StaleElementReferenceException encountered on element {i + 1}. Retrying...")
-                continue
-            except WebDriverException as e:
-                logger.error(f"WebDriverException encountered: {e}. Retrying...")
-                self.scraper.driver.refresh()
-                continue
+                    if webtoon_data:
+                        self.repository.save(webtoon_data)
+                    break
+                except StaleElementReferenceException:
+                    retry_count += 1
+                    logger.warning(f"Stale element encountered on element {i + 1}. Retrying... ({retry_count}/{max_retries})")
+                    if retry_count >= max_retries:
+                        logger.error(f"Max retries reached for element {i + 1}. Skipping...")
+                        self.scraper.open_page(url)
+                except WebDriverException as e:
+                    logger.error(f"WebDriverException encountered: {e}. Returning to URL...")
+                    self.scraper.open_page(url)
+                    break
+
 
     def save_and_cleanup(self):
         try:
