@@ -1,5 +1,4 @@
-from abc import ABC, abstractmethod
-from selenium import webdriver
+import logging
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -11,6 +10,10 @@ import re
 from .WebtoonScraper import WebtoonScraper
 from src.Model import WebtoonCreateRequestDTO, AuthorDTO, GenreDTO
 from src.Model.enum import AgeRating, SerializationStatus
+
+# 로그 설정
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
 class NaverWebtoonScraper(WebtoonScraper):
     PLATFORM_NAME = "NAVER"
@@ -44,53 +47,48 @@ class NaverWebtoonScraper(WebtoonScraper):
     EPISODE_LIST_INFO_CLASS = 'EpisodeListInfo__icon_hiatus--kbQXO'
     EPISODE_LIST_META_INFO_CLASS = 'EpisodeListList__meta_info--Cgquz'
 
-    def __init__(self, driver: webdriver.Chrome):
+    SCROLL_SLEEP_TIME = 0.5
+
+    def __init__(self, driver):
+        logger.info("Initializing NaverWebtoonScraper")
         self.driver = driver
         self.failed_webtoons = []
 
-    def get_urls(self) -> list:
+    def get_urls(self):
         return self.NAVER_WEBTOON_URLS
 
-    def open_page(self, url: str):
-        self.driver.get(url)
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_CLASS))
-        )
-        
-        if 'tab=finish' in url:
-            self.scroll_to_load_all_content()
+    def open_page(self, url):
+        try:
+            logger.info(f"Opening page: {url}")
+            self.driver.get(url)
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_CLASS))
+            )
+            if 'tab=finish' in url:
+                self._scroll_to_load_all_content()
+        except TimeoutException:
+            logger.error(f"Timeout while opening page: {url}")
+            raise
 
-    def scroll_to_load_content(self, count):
+    def _scroll_to_load_all_content(self):
         last_height = self.driver.execute_script("return document.body.scrollHeight")
-
-        for _ in range(int(count)):
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            sleep(0.5)
-
-            new_height = self.driver.execute_script("return document.body.scrollHeight")
-
-            if new_height == last_height:
-                break
-
-            last_height = new_height
-
-    def scroll_to_load_all_content(self):
-        last_height = self.driver.execute_script("return document.body.scrollHeight")
-
         while True:
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            sleep(0.5)
-
+            sleep(self.SCROLL_SLEEP_TIME)
             new_height = self.driver.execute_script("return document.body.scrollHeight")
-
             if new_height == last_height:
+                logger.info("All content loaded")
                 break
             last_height = new_height
 
-    def get_webtoon_elements(self) -> list:
-        return WebDriverWait(self.driver, 10).until(
-            EC.presence_of_all_elements_located((By.CLASS_NAME, self.ITEM_CLASS))
-        )
+    def get_webtoon_elements(self):
+        try:
+            return WebDriverWait(self.driver, 10).until(
+                EC.presence_of_all_elements_located((By.CLASS_NAME, self.ITEM_CLASS))
+            )
+        except TimeoutException:
+            logger.warning("Timeout while retrieving webtoon elements")
+            return []
 
     def scrape_webtoon_info(self, webtoon_element) -> WebtoonCreateRequestDTO:
         try:
@@ -135,8 +133,8 @@ class NaverWebtoonScraper(WebtoonScraper):
                 genres=genres_list
             )
         except (TimeoutException, WebDriverException) as e:
-            print(f"Exception encountered: {e}. Refreshing the page...")
-            return self.scrape_webtoon_info(webtoon_element) 
+            logger.error(f"Error scraping webtoon info: {e}")
+            return None
         finally:
             self.go_back()
 
