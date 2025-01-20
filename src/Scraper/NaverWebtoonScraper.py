@@ -20,7 +20,7 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     NAVER_WEBTOON_URLS = [
         'https://comic.naver.com/webtoon?tab=mon',
-        #'https://comic.naver.com/webtoon?tab=tue',
+        'https://comic.naver.com/webtoon?tab=tue',
         #'https://comic.naver.com/webtoon?tab=wed',
         #'https://comic.naver.com/webtoon?tab=thu',
         #'https://comic.naver.com/webtoon?tab=fri',
@@ -160,7 +160,6 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     def load_webtoon_page(self):
         try:
-            logger.info("Loading webtoon page")
             WebDriverWait(self.driver, self.WATTING_LOAD_PAGE).until(
                 EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_AREA_CLASS))
             )
