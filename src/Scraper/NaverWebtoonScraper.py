@@ -48,6 +48,7 @@ class NaverWebtoonScraper(WebtoonScraper):
     EPISODE_LIST_META_INFO_CLASS = 'EpisodeListList__meta_info--Cgquz'
 
     SCROLL_SLEEP_TIME = 0.5
+    WATTING_LOAD_PAGE = 1
 
     def __init__(self, driver):
         logger.info("Initializing NaverWebtoonScraper")
@@ -61,7 +62,7 @@ class NaverWebtoonScraper(WebtoonScraper):
         try:
             logger.info(f"Opening page: {url}")
             self.driver.get(url)
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, self.WATTING_LOAD_PAGE).until(
                 EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_CLASS))
             )
             if 'tab=finish' in url:
@@ -83,7 +84,7 @@ class NaverWebtoonScraper(WebtoonScraper):
 
     def get_webtoon_elements(self):
         try:
-            return WebDriverWait(self.driver, 10).until(
+            return WebDriverWait(self.driver, self.WATTING_LOAD_PAGE).until(
                 EC.presence_of_all_elements_located((By.CLASS_NAME, self.ITEM_CLASS))
             )
         except TimeoutException:
@@ -94,7 +95,7 @@ class NaverWebtoonScraper(WebtoonScraper):
         try:
             rating = self.get_rating(webtoon_element)
             title = self.get_title(webtoon_element)
-            soup = self.load_webtoon_page(webtoon_element)
+            soup = self.load_webtoon_page()
 
             day_age = self.get_day_age(soup)
             thumbnail_url = self.get_thumbnail_url(soup)
@@ -143,25 +144,40 @@ class NaverWebtoonScraper(WebtoonScraper):
         return self.failed_webtoons
 
     def get_rating(self, webtoon_element):
-        rating_text = WebDriverWait(webtoon_element, 10).until(
+        rating_text = WebDriverWait(webtoon_element, self.WATTING_LOAD_PAGE).until(
             EC.presence_of_element_located((By.CLASS_NAME, self.RATING_CLASS))
         ).text.strip()
         
         return float(rating_text.replace("별점\n", "").strip())
 
     def get_title(self, webtoon_element):
-        title = WebDriverWait(webtoon_element, 10).until(
+        title = WebDriverWait(webtoon_element, self.WATTING_LOAD_PAGE).until(
             EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_CLASS))
         ).text.strip()
         title_element = webtoon_element.find_element(By.CLASS_NAME, self.TITLE_AREA_CLASS)
         title_element.click()
         return title
 
-    def load_webtoon_page(self, webtoon_element):
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_AREA_CLASS))
-        )
-        return bs(self.driver.page_source, 'html.parser')
+    def load_webtoon_page(self):
+        try:
+            logger.info("Loading webtoon page")
+            WebDriverWait(self.driver, self.WATTING_LOAD_PAGE).until(
+                EC.presence_of_element_located((By.CLASS_NAME, self.TITLE_AREA_CLASS))
+            )
+            return bs(self.driver.page_source, 'html.parser')
+        except TimeoutException as e:
+            logger.error(f"Timeout while loading webtoon page: {str(e)}")
+            self.failed_webtoons.append(self.driver.current_url)
+            raise
+        except WebDriverException as e:
+            logger.error(f"WebDriver exception while loading webtoon page: {str(e)}")
+            self.failed_webtoons.append(self.driver.current_url)
+            raise
+        except Exception as e:
+            logger.error(f"Unexpected error while loading webtoon page: {str(e)}") 
+            self.failed_webtoons.append(self.driver.current_url)
+            raise
+
 
     def get_day_age(self, soup):
         return soup.find('div', {'class': self.META_INFO_CLASS}).find('em', {'class': self.META_INFO_ITEM_CLASS}).text.strip()
