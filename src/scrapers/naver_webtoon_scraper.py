@@ -9,6 +9,7 @@ from models.author import AuthorDTO
 from models.serialization_status import SerializationStatus
 from logger import Logger
 from .i_webtoon_scraper import IWebtoonScraper
+from selenium.common.exceptions import TimeoutException
 
 logger = Logger()
 
@@ -150,7 +151,11 @@ class NaverWebtoonScraper(IWebtoonScraper):
         try:
             logger.log("info", f"웹툰 페이지 접속: {url}")
             self.driver.get(url)
-            
+
+            if "nid.naver.com" in self.driver.current_url:
+                logger.log("warning", f"성인 인증이 필요한 웹툰입니다: {url}")
+                return False, None
+
             title = self.get_title()
             external_id = self.get_unique_id()
             thumbnail_url = self.get_thumbnail_url()
@@ -182,6 +187,12 @@ class NaverWebtoonScraper(IWebtoonScraper):
             else:
                 logger.log("warning", "필수 정보를 찾을 수 없습니다.")
                 return False, None
+        except TimeoutException:
+            if "nid.naver.com" in self.driver.current_url:
+                logger.log("warning", f"성인 인증이 필요한 웹툰입니다 (Timeout 발생): {url}")
+                return False, None
+            logger.log("error", f"크롤링 오류 (TimeoutException): {url}")
+            return False, None
         except Exception as e:
             logger.log("error", f"크롤링 오류: {e}")
-            return False, None 
+            return False, None
