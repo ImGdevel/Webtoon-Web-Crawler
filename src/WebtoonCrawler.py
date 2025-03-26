@@ -1,6 +1,7 @@
 import os
 import time
 import json
+import re
 from logger import Logger 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -50,47 +51,88 @@ class ChromeWebDriverManager:
 
 class WebtoonDTO:
     """웹툰 정보를 저장하는 데이터 객체"""
-    def __init__(self, url: str, thumbnail_url: str):
+    def __init__(self, url, title, external_id, platform, day_of_week, thumbnail_url, link, age_rating, description, serialization_status, episode_count):
         self.url = url
+        self.title = title
+        self.external_id = external_id
+        self.platform = platform
+        self.day_of_week = day_of_week
         self.thumbnail_url = thumbnail_url
+        self.link = link
+        self.age_rating = age_rating
+        self.description = description
+        self.serialization_status = serialization_status
+        self.episode_count = episode_count
 
     def to_dict(self):
-        return {"url": self.url, "thumbnail": self.thumbnail_url}
+        return {
+            "url": self.url,
+            "title": self.title,
+            "externalId": self.external_id,
+            "platform": self.platform,
+            "dayOfWeek": self.day_of_week,
+            "thumbnailUrl": self.thumbnail_url,
+            "link": self.link,
+            "ageRating": self.age_rating,
+            "description": self.description,
+            "serializationStatus": self.serialization_status,
+            "episodeCount": self.episode_count
+        }
 
 class WebtoonScraper:
     """웹툰 정보를 크롤링하는 클래스"""
 
-    THUMBNAIL_CLASS = 'Poster__thumbnail_area--gviWY'
+    TITLE_CLASS = "EpisodeListInfo__title--mYLjC"
+    THUMBNAIL_CLASS = "Poster__thumbnail_area--gviWY"
+    SUMMARY_CLASS = "EpisodeListInfo__summary_wrap--ZWNW5"
+    EPISODE_COUNT_CLASS = "EpisodeListView__count--fTMc5"
     WAITING_LOAD_PAGE = 5  # 최대 대기 시간 (초)
 
     def __init__(self, driver):
         self.driver = driver
 
-    def get_thumbnail_url(self):
-        """웹툰 썸네일 URL을 추출하는 메서드"""
-        try:
-            img_element = WebDriverWait(self.driver, self.WAITING_LOAD_PAGE).until(
-                EC.presence_of_element_located((By.CLASS_NAME, self.THUMBNAIL_CLASS))
-            )
-            soup = BeautifulSoup(self.driver.page_source, "html.parser")
-            img_tag = soup.find('div', {'class': self.THUMBNAIL_CLASS}).find('img')
-            return img_tag['src'].strip() if img_tag and 'src' in img_tag.attrs else None
-        except Exception:
-            return None
+    def wait_for_element(self, class_name):
+        return WebDriverWait(self.driver, self.WAITING_LOAD_PAGE).until(
+            EC.presence_of_element_located((By.CLASS_NAME, class_name))
+        )
 
-    def fetch_webtoon(self, url: str):
+    def get_title(self):
+        element = self.wait_for_element(self.TITLE_CLASS)
+        return element.text.strip()
+
+    def get_thumbnail_url(self):
+        element = self.wait_for_element(self.THUMBNAIL_CLASS)
+        return element.find_element(By.TAG_NAME, 'img').get_attribute('src')
+
+    def get_story(self):
+        element = self.wait_for_element(self.SUMMARY_CLASS)
+        return element.find_element(By.TAG_NAME, 'p').text.strip()
+
+    def get_unique_id(self, url):
+        id_match = re.search(r'titleId=(\d+)', url)
+        return int(id_match.group(1)) if id_match else None
+
+    def get_episode_count(self):
+        element = self.wait_for_element(self.EPISODE_COUNT_CLASS)
+        return int(re.search(r'\d+', element.text).group()) if element else None
+
+    def fetch_webtoon(self, url):
         """웹툰 정보를 가져와 WebtoonDTO 객체로 반환"""
         try:
             logger.log("info", f"웹툰 페이지 접속: {url}")
             self.driver.get(url)
             
+            title = self.get_title()
+            external_id = self.get_unique_id(url)
             thumbnail_url = self.get_thumbnail_url()
+            description = self.get_story()
+            episode_count = self.get_episode_count()
             
-            if thumbnail_url:
-                logger.log("info", f"썸네일 URL: {thumbnail_url}")
-                return True, WebtoonDTO(url, thumbnail_url)
+            if title and external_id and thumbnail_url:
+                webtoon_data = WebtoonDTO(url, title, external_id, "Naver", None, thumbnail_url, url, None, description, None, episode_count)
+                return True, webtoon_data
             else:
-                logger.log("warning", "썸네일을 찾을 수 없습니다.")
+                logger.log("warning", "필수 정보를 찾을 수 없습니다.")
                 return False, None
         except Exception as e:
             logger.log("error", f"크롤링 오류: {e}")
