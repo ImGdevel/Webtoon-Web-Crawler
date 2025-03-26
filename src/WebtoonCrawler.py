@@ -5,6 +5,9 @@ from logger import Logger
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 
@@ -35,6 +38,10 @@ class ChromeWebDriverManager:
         options = Options()
         if self.headless:
             options.add_argument("--headless")
+            options.add_argument("--disable-gpu")
+            options.add_argument("--window-size=1920x1080")
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
 
         service = Service(self.driver_path)
         driver = webdriver.Chrome(service=service, options=options)
@@ -54,13 +61,18 @@ class WebtoonScraper:
     """웹툰 정보를 크롤링하는 클래스"""
 
     THUMBNAIL_CLASS = 'Poster__thumbnail_area--gviWY'
+    WAITING_LOAD_PAGE = 5  # 최대 대기 시간 (초)
 
     def __init__(self, driver):
         self.driver = driver
 
-    def get_thumbnail_url(self, soup):
+    def get_thumbnail_url(self):
         """웹툰 썸네일 URL을 추출하는 메서드"""
         try:
+            img_element = WebDriverWait(self.driver, self.WAITING_LOAD_PAGE).until(
+                EC.presence_of_element_located((By.CLASS_NAME, self.THUMBNAIL_CLASS))
+            )
+            soup = BeautifulSoup(self.driver.page_source, "html.parser")
             img_tag = soup.find('div', {'class': self.THUMBNAIL_CLASS}).find('img')
             return img_tag['src'].strip() if img_tag and 'src' in img_tag.attrs else None
         except Exception:
@@ -71,26 +83,23 @@ class WebtoonScraper:
         try:
             logger.log("info", f"웹툰 페이지 접속: {url}")
             self.driver.get(url)
-            time.sleep(2)  # 페이지 로딩 대기
             
-            soup = BeautifulSoup(self.driver.page_source, "html.parser")
-            thumbnail_url = self.get_thumbnail_url(soup)
+            thumbnail_url = self.get_thumbnail_url()
             
             if thumbnail_url:
                 logger.log("info", f"썸네일 URL: {thumbnail_url}")
-                return WebtoonDTO(url, thumbnail_url)
+                return True, WebtoonDTO(url, thumbnail_url)
             else:
                 logger.log("warning", "썸네일을 찾을 수 없습니다.")
-                return None
+                return False, None
         except Exception as e:
             logger.log("error", f"크롤링 오류: {e}")
-            return None
+            return False, None
 
-def save_to_json(webtoon_list, filename="webtoon_data.json"):
+def save_to_json(data_list, filename):
     """크롤링된 데이터를 JSON 파일로 저장"""
-    data = [webtoon.to_dict() for webtoon in webtoon_list if webtoon]
     with open(filename, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
+        json.dump(data_list, f, indent=4, ensure_ascii=False)
     logger.log("info", f"데이터 저장 완료: {filename}")
 
 if __name__ == "__main__":
@@ -104,7 +113,17 @@ if __name__ == "__main__":
         "https://comic.naver.com/webtoon/list?titleId=776601",
     ]
 
-    webtoon_list = [scraper.fetch_webtoon(url) for url in sample_urls]
-    save_to_json(webtoon_list)
+    success_list = []
+    failure_list = []
+
+    for url in sample_urls:
+        success, webtoon_data = scraper.fetch_webtoon(url)
+        if success:
+            success_list.append(webtoon_data.to_dict())
+        else:
+            failure_list.append({"url": url})
+
+    save_to_json(success_list, "webtoon_data.json")
+    save_to_json(failure_list, "failed_webtoon_list.json")
 
     driver.quit()
