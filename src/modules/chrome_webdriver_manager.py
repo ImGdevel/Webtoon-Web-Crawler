@@ -1,5 +1,3 @@
-import json
-import re
 from logger import Logger 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service

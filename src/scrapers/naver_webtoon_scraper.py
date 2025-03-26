@@ -1,93 +1,19 @@
 import re
-from logger import Logger 
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
-from bs4 import BeautifulSoup
-from enum import Enum
-from dataclasses import dataclass, asdict
 from typing import List, Optional, Tuple
 from selenium.webdriver.remote.webelement import WebElement
-from managers.chrome_webdriver_manager import ChromeWebDriverManager
-from managers.webtoon_repository import WebtoonRepository
+from models.webtoon import WebtoonDTO
+from models.author import AuthorDTO
+from models.serialization_status import SerializationStatus
+from logger import Logger
+from .i_webtoon_scraper import IWebtoonScraper
 
 logger = Logger()
 
-class ChromeWebDriverManager:
-    """크롬 드라이버를 자동으로 관리하는 클래스"""
-
-    def __init__(self, headless: bool = False):
-        self.headless = headless
-        self.driver_path = None
-        self.setup_driver()
-
-    def setup_driver(self):
-        """드라이버를 자동으로 다운로드하고 설정하는 메서드"""
-        try:
-            self.driver_path = ChromeDriverManager().install()
-            logger.log("info", "크롬 드라이버 설치 완료")
-        except Exception as e:
-            logger.log("error", f"크롬 드라이버 설치 오류: {e}")
-
-    def get_driver(self):
-        """설정된 크롬 드라이버를 반환하는 메서드"""
-        if not self.driver_path:
-            logger.log("warning", "크롬 드라이버를 찾을 수 없습니다. 다시 설정합니다.")
-            self.setup_driver()
-
-        options = Options()
-        if self.headless:
-            options.add_argument("--headless")
-            options.add_argument("--disable-gpu")
-            options.add_argument("--window-size=1920x1080")
-            options.add_argument("--no-sandbox")
-            options.add_argument("--disable-dev-shm-usage")
-
-        service = Service(self.driver_path)
-        driver = webdriver.Chrome(service=service, options=options)
-        logger.log("info", "크롬 드라이버 실행 완료")
-        return driver
-
-
-@dataclass
-class AuthorDTO:
-    """저자 정보를 저장하는 데이터 객체"""
-    id: str
-    name: str
-    role: str
-    link: str
-
-@dataclass
-class WebtoonDTO:
-    """웹툰 정보를 저장하는 데이터 객체"""
-    url: str
-    title: str
-    external_id: int
-    platform: str
-    day_of_week: Optional[str]
-    thumbnail_url: str
-    link: str
-    age_rating: Optional[str]
-    description: str
-    serialization_status: Optional[str]
-    episode_count: Optional[int]
-    authors: List[AuthorDTO]
-    genres: List[str]
-
-    def to_dict(self):
-        return asdict(self)
-
-class SerializationStatus(Enum):
-    ONGOING = "연재"
-    COMPLETED = "완결"
-    HIATUS = "휴재"
-
-class WebtoonScraper:
-    """웹툰 정보를 크롤링하는 클래스"""
+class NaverWebtoonScraper(IWebtoonScraper):
+    """네이버 웹툰 정보를 크롤링하는 클래스"""
 
     PLATFORM_NAME = "NAVER"
 
@@ -104,7 +30,7 @@ class WebtoonScraper:
     EXPAND_BUTTON_CLASS = "EpisodeListInfo__button_fold--ZKgEw"
     ABSENCE_INFO_CLASS = "EpisodeListInfo__info_text--MO6kz"
     CATEGORY_CLASS = "ContentMetaInfo__category--WwrCp"
-    WAITING_LOAD_PAGE = 5
+    WAITING_LOAD_PAGE = 3
 
     def __init__(self, driver):
         self.driver = driver
@@ -258,47 +184,4 @@ class WebtoonScraper:
                 return False, None
         except Exception as e:
             logger.log("error", f"크롤링 오류: {e}")
-            return False, None
-
-class WebtoonCrawler:
-    """웹툰 크롤러 클래스"""
-
-    def __init__(self):
-        self.urls: List[str] = [] 
-        self.driver_manager = ChromeWebDriverManager(headless=True)
-        self.driver = self.driver_manager.get_driver()
-        self.scraper = WebtoonScraper(self.driver)
-        self.success_list: List[dict] = []
-        self.failure_list: List[dict] = []
-        self.repository = WebtoonRepository("webtoon_data.json", "failed_webtoon_list.json")
-
-    def set_urls(self, urls: List[str]) -> None:
-        """URL 리스트를 추가하는 메서드"""
-        self.urls.extend(urls)
-
-    def run(self) -> None:
-        """크롤링 실행 메서드"""
-        for url in self.urls:
-            success, webtoon_data = self.scraper.fetch_webtoon(url)
-            if success and webtoon_data:
-                self.success_list.append(webtoon_data.to_dict())
-            else:
-                self.failure_list.append({"url": url})
-
-        self.save_results()
-        self.driver.quit()
-
-    def save_results(self):
-        """크롤링 결과를 JSON 파일로 저장"""
-        self.repository.save_success(self.success_list)
-        self.repository.save_failure(self.failure_list)
-
-if __name__ == "__main__":
-    crawler = WebtoonCrawler()
-    urls_to_add = [
-        "https://comic.naver.com/webtoon/list?titleId=747271",
-        "https://comic.naver.com/webtoon/list?titleId=769209",
-        "https://comic.naver.com/webtoon/list?titleId=776601",
-    ]
-    crawler.set_urls(urls_to_add)
-    crawler.run()
+            return False, None 
