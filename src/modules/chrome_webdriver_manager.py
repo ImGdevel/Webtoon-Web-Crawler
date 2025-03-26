@@ -30,11 +30,17 @@ class ChromeWebDriverManager:
 
         options = Options()
         if self.headless:
-            options.add_argument("--headless")
-            options.add_argument("--disable-gpu")
+            options.add_argument("--headless=new")  # 최신 headless 모드 사용
             options.add_argument("--window-size=1920x1080")
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
+
+        # WebGL 관련 에러 방지 옵션 추가
+        options.add_argument("--disable-gpu")  # GPU 가속 비활성화
+        options.add_argument("--disable-software-rasterizer")  # 소프트웨어 렌더링 방지
+        options.add_argument("--disable-webgl")  # WebGL 관련 기능 비활성화
+        options.add_argument("--log-level=3")  # 불필요한 로그 숨기기
+        options.add_argument("--disable-blink-features=AutomationControlled")  # 봇 탐지 방지
 
         service = Service(self.driver_path)
         driver = webdriver.Chrome(service=service, options=options)
