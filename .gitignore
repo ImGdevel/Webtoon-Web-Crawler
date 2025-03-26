@@ -3,3 +3,4 @@
 *webtoon_list.json
 *.json
 */__pycache__
+*.log
