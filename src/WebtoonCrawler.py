@@ -56,6 +56,7 @@ class ChromeWebDriverManager:
 
 @dataclass
 class AuthorDTO:
+    """저자 정보를 저장하는 데이터 객체"""
     id: str
     name: str
     role: str
@@ -91,6 +92,7 @@ class WebtoonScraper:
 
     PLATFORM_NAME = "NAVER"
 
+    # CSS 클래스 변수
     TITLE_CLASS = "EpisodeListInfo__title--mYLjC"
     THUMBNAIL_CLASS = "Poster__thumbnail_area--gviWY"
     SUMMARY_CLASS = "EpisodeListInfo__summary_wrap--ZWNW5"
@@ -100,31 +102,39 @@ class WebtoonScraper:
     AUTHOR_CLASS = "ContentMetaInfo__meta_info--GbTg4"
     TAG_GROUP_CLASS = "TagGroup__tag_group--uUJza"
     TAG_CLASS = "TagGroup__tag--xu0OH"
+    EXPAND_BUTTON_CLASS = "EpisodeListInfo__button_fold--ZKgEw"
+    ABSENCE_INFO_CLASS = "EpisodeListInfo__info_text--MO6kz"
+    CATEGORY_CLASS = "ContentMetaInfo__category--WwrCp"
     WAITING_LOAD_PAGE = 5
 
     def __init__(self, driver):
         self.driver = driver
 
     def wait_for_element(self, class_name: str) -> WebElement:
+        """주어진 클래스 이름을 가진 요소가 로드될 때까지 대기하는 메서드"""
         return WebDriverWait(self.driver, self.WAITING_LOAD_PAGE).until(
             EC.presence_of_element_located((By.CLASS_NAME, class_name))
         )
 
     def get_title(self) -> str:
+        """웹툰 제목을 가져오는 메서드"""
         element = self.wait_for_element(self.TITLE_CLASS)
         title = element.text.strip()
         cleaned_title = re.sub(r'\n.*', '', title).strip()
         return cleaned_title
 
     def get_thumbnail_url(self) -> str:
+        """웹툰 썸네일 URL을 가져오는 메서드"""
         element = self.wait_for_element(self.THUMBNAIL_CLASS)
         return element.find_element(By.TAG_NAME, 'img').get_attribute('src')
 
     def get_story(self) -> str:
+        """웹툰 설명을 가져오는 메서드"""
         element = self.wait_for_element(self.SUMMARY_CLASS)
         return element.find_element(By.TAG_NAME, 'p').text.strip()
 
     def get_day_age(self) -> Optional[str]:
+        """웹툰의 연령 등급을 가져오는 메서드"""
         element = self.wait_for_element(self.META_INFO_CLASS)
         text = element.find_element(By.CLASS_NAME, self.META_INFO_ITEM_CLASS).text.strip()
         age_match = re.search(r'(전체연령가|12세|15세|19세)', text)
@@ -139,7 +149,7 @@ class WebtoonScraper:
     def get_status(self) -> str:
         """연재 상태를 가져오는 메서드"""
         day_age_text = self.wait_for_element(self.META_INFO_CLASS).find_element(By.CLASS_NAME, self.META_INFO_ITEM_CLASS).text.strip()
-        absence_elements = self.driver.find_elements(By.CLASS_NAME, "EpisodeListInfo__info_text--MO6kz")
+        absence_elements = self.driver.find_elements(By.CLASS_NAME, self.ABSENCE_INFO_CLASS)
         for element in absence_elements:
             if element.text.strip() == '휴재':
                 return SerializationStatus.HIATUS.value
@@ -150,20 +160,17 @@ class WebtoonScraper:
 
     def get_genres(self) -> List[str]:
         """장르 정보를 가져오는 메서드"""
-        # 카테고리 펼치기 버튼 클릭
         try:
-            expand_button = self.driver.find_element(By.CLASS_NAME, "EpisodeListInfo__button_fold--ZKgEw")
+            expand_button = self.driver.find_element(By.CLASS_NAME, self.EXPAND_BUTTON_CLASS)
             if expand_button.is_displayed():
                 expand_button.click()
         except Exception:
             logger.log("debug", "장르 카테고리 펼치기 버튼이 없거나 클릭할 수 없습니다.")
 
-        # 모든 장르 요소가 로드될 때까지 대기
         WebDriverWait(self.driver, self.WAITING_LOAD_PAGE).until(
             EC.presence_of_all_elements_located((By.CLASS_NAME, self.TAG_CLASS))
         )
 
-        # 장르 요소 수집
         genre_elements = self.wait_for_element(self.TAG_GROUP_CLASS).find_elements(By.CLASS_NAME, self.TAG_CLASS)
         genres = [genre.text.strip().replace('#', '') for genre in genre_elements if genre.text.strip()]
         logger.log("debug", f"수집된 장르: {genres}")
@@ -176,7 +183,7 @@ class WebtoonScraper:
         author_elements = self.driver.find_elements(By.CLASS_NAME, self.AUTHOR_CLASS)
 
         for element in author_elements:
-            category_elements = element.find_elements(By.CLASS_NAME, "ContentMetaInfo__category--WwrCp")
+            category_elements = element.find_elements(By.CLASS_NAME, self.CATEGORY_CLASS)
             
             for category in category_elements:
                 link_tag = category.find_element(By.TAG_NAME, 'a')
@@ -203,11 +210,13 @@ class WebtoonScraper:
         return authors
 
     def get_unique_id(self) -> Optional[int]:
+        """웹툰의 고유 ID를 가져오는 메서드"""
         url = self.driver.current_url
         id_match = re.search(r'titleId=(\d+)', url)
         return int(id_match.group(1)) if id_match else None
 
     def get_episode_count(self) -> Optional[int]:
+        """웹툰의 에피소드 수를 가져오는 메서드"""
         element = self.wait_for_element(self.EPISODE_COUNT_CLASS)
         return int(re.search(r'\d+', element.text).group()) if element else None
 
@@ -252,16 +261,46 @@ class WebtoonScraper:
             logger.log("error", f"크롤링 오류: {e}")
             return False, None
 
+class WebtoonRepository:
+    """웹툰 데이터를 JSON 파일로 저장하고 불러오는 클래스"""
+
+    def __init__(self, success_filename: str, failure_filename: str):
+        self.success_filename = success_filename
+        self.failure_filename = failure_filename
+
+    def save_success(self, data_list: List[dict]) -> None:
+        """성공한 데이터를 JSON 파일로 저장"""
+        try:
+            with open(self.success_filename, "w", encoding="utf-8") as f:
+                json.dump(data_list, f, indent=4, ensure_ascii=False)
+            logger.log("info", f"성공 데이터 저장 완료: {self.success_filename}")
+        except Exception as e:
+            logger.log("error", f"성공 데이터 저장 실패: {e}")
+
+    def save_failure(self, data_list: List[dict]) -> None:
+        """실패한 데이터를 JSON 파일로 저장"""
+        try:
+            with open(self.failure_filename, "w", encoding="utf-8") as f:
+                json.dump(data_list, f, indent=4, ensure_ascii=False)
+            logger.log("info", f"실패 데이터 저장 완료: {self.failure_filename}")
+        except Exception as e:
+            logger.log("error", f"실패 데이터 저장 실패: {e}")
+
 class WebtoonCrawler:
     """웹툰 크롤러 클래스"""
 
-    def __init__(self, urls: List[str]):
-        self.urls = urls
+    def __init__(self):
+        self.urls: List[str] = [] 
         self.driver_manager = ChromeWebDriverManager(headless=True)
         self.driver = self.driver_manager.get_driver()
         self.scraper = WebtoonScraper(self.driver)
         self.success_list: List[dict] = []
         self.failure_list: List[dict] = []
+        self.repository = WebtoonRepository("webtoon_data.json", "failed_webtoon_list.json")
+
+    def set_urls(self, urls: List[str]) -> None:
+        """URL 리스트를 추가하는 메서드"""
+        self.urls.extend(urls)
 
     def run(self) -> None:
         """크롤링 실행 메서드"""
@@ -277,23 +316,15 @@ class WebtoonCrawler:
 
     def save_results(self):
         """크롤링 결과를 JSON 파일로 저장"""
-        save_to_json(self.success_list, "webtoon_data.json")
-        save_to_json(self.failure_list, "failed_webtoon_list.json")
-
-def save_to_json(data_list: List[dict], filename: str) -> None:
-    """크롤링된 데이터를 JSON 파일로 저장"""
-    try:
-        with open(filename, "w", encoding="utf-8") as f:
-            json.dump(data_list, f, indent=4, ensure_ascii=False)
-        logger.log("info", f"데이터 저장 완료: {filename}")
-    except Exception as e:
-        logger.log("error", f"데이터 저장 실패: {e}")
+        self.repository.save_success(self.success_list)
+        self.repository.save_failure(self.failure_list)
 
 if __name__ == "__main__":
-    sample_urls = [
+    crawler = WebtoonCrawler()
+    urls_to_add = [
         "https://comic.naver.com/webtoon/list?titleId=747271",
         "https://comic.naver.com/webtoon/list?titleId=769209",
         "https://comic.naver.com/webtoon/list?titleId=776601",
     ]
-    crawler = WebtoonCrawler(sample_urls)
+    crawler.set_urls(urls_to_add)
     crawler.run()
