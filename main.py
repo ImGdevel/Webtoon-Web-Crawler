@@ -1,4 +1,4 @@
-from src.WebtoonCrawler import WebtoonCrawler
+from src_old.WebtoonCrawler import WebtoonCrawler
 
 def main():
     scraper_type = 'naver'
