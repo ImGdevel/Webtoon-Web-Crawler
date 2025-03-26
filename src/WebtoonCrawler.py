@@ -49,9 +49,31 @@ class ChromeWebDriverManager:
         logger.log("info", "크롬 드라이버 실행 완료")
         return driver
 
+
+class AuthorDTO:
+    id: int
+    name: str
+    role: str
+    link: str
+
+    def __init__(self, id, name, role, link):
+        self.id = id
+        self.name = name
+        self.role = role
+        self.link = link
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'role': self.role,
+            'link': self.link
+        }
+
+
 class WebtoonDTO:
     """웹툰 정보를 저장하는 데이터 객체"""
-    def __init__(self, url, title, external_id, platform, day_of_week, thumbnail_url, link, age_rating, description, serialization_status, episode_count):
+    def __init__(self, url, title, external_id, platform, day_of_week, thumbnail_url, link, age_rating, description, serialization_status, episode_count, authors, genres):
         self.url = url
         self.title = title
         self.external_id = external_id
@@ -63,6 +85,8 @@ class WebtoonDTO:
         self.description = description
         self.serialization_status = serialization_status
         self.episode_count = episode_count
+        self.authors = authors
+        self.genres = genres
 
     def to_dict(self):
         return {
@@ -76,7 +100,9 @@ class WebtoonDTO:
             "ageRating": self.age_rating,
             "description": self.description,
             "serializationStatus": self.serialization_status,
-            "episodeCount": self.episode_count
+            "episodeCount": self.episode_count,
+            "authors": self.authors,
+            "genres": self.genres
         }
 
 class WebtoonScraper:
@@ -86,7 +112,12 @@ class WebtoonScraper:
     THUMBNAIL_CLASS = "Poster__thumbnail_area--gviWY"
     SUMMARY_CLASS = "EpisodeListInfo__summary_wrap--ZWNW5"
     EPISODE_COUNT_CLASS = "EpisodeListView__count--fTMc5"
-    WAITING_LOAD_PAGE = 5  # 최대 대기 시간 (초)
+    META_INFO_CLASS = "ContentMetaInfo__meta_info--GbTg4"
+    META_INFO_ITEM_CLASS = "ContentMetaInfo__info_item--utGrf"
+    AUTHOR_CLASS = "AuthorInfo__name--xHCVQ"
+    TAG_GROUP_CLASS = "TagGroup__tag_group--uUJza"
+    TAG_CLASS = "TagGroup__tag--xu0OH"
+    WAITING_LOAD_PAGE = 5
 
     def __init__(self, driver):
         self.driver = driver
@@ -108,7 +139,28 @@ class WebtoonScraper:
         element = self.wait_for_element(self.SUMMARY_CLASS)
         return element.find_element(By.TAG_NAME, 'p').text.strip()
 
-    def get_unique_id(self, url):
+    def get_day_age(self):
+        element = self.wait_for_element(self.META_INFO_CLASS)
+        return element.find_element(By.CLASS_NAME, self.META_INFO_ITEM_CLASS).text.strip()
+
+    def get_genres(self):
+        genre_elements = self.wait_for_element(self.TAG_GROUP_CLASS).find_elements(By.CLASS_NAME, self.TAG_CLASS)
+        return [genre.text.strip().replace('#', '') for genre in genre_elements]
+
+    def get_authors(self):
+        authors = []
+        author_elements = self.driver.find_elements(By.CLASS_NAME, self.AUTHOR_CLASS)
+        for element in author_elements:
+            link_tag = element.find_element(By.TAG_NAME, 'a')
+            author_id = int(re.search(r'id=(\d+)', link_tag.get_attribute('href')).group(1))
+            name = link_tag.text.strip()
+            role = element.text.split()[-1]
+            link = link_tag.get_attribute('href')
+            authors.append(AuthorDTO(author_id, name, role, link))
+        return authors
+
+    def get_unique_id(self):
+        url = self.driver.current_url
         id_match = re.search(r'titleId=(\d+)', url)
         return int(id_match.group(1)) if id_match else None
 
@@ -123,13 +175,16 @@ class WebtoonScraper:
             self.driver.get(url)
             
             title = self.get_title()
-            external_id = self.get_unique_id(url)
+            external_id = self.get_unique_id()
             thumbnail_url = self.get_thumbnail_url()
             description = self.get_story()
+            age = self.get_day_age()
             episode_count = self.get_episode_count()
-            
+            genres = self.get_genres()
+            authors = self.get_authors()
+
             if title and external_id and thumbnail_url:
-                webtoon_data = WebtoonDTO(url, title, external_id, "Naver", None, thumbnail_url, url, None, description, None, episode_count)
+                webtoon_data = WebtoonDTO(url, title, external_id, "Naver", None, thumbnail_url, url, age, description, None, episode_count, authors, genres)
                 return True, webtoon_data
             else:
                 logger.log("warning", "필수 정보를 찾을 수 없습니다.")
