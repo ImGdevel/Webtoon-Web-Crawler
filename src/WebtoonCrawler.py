@@ -96,6 +96,34 @@ class WebtoonScraper:
             logger.log("error", f"크롤링 오류: {e}")
             return False, None
 
+class WebtoonCrawler:
+    """웹툰 크롤러 클래스"""
+
+    def __init__(self, urls):
+        self.urls = urls
+        self.driver_manager = ChromeWebDriverManager(headless=True)
+        self.driver = self.driver_manager.get_driver()
+        self.scraper = WebtoonScraper(self.driver)
+        self.success_list = []
+        self.failure_list = []
+
+    def run(self):
+        """크롤링 실행 메서드"""
+        for url in self.urls:
+            success, webtoon_data = self.scraper.fetch_webtoon(url)
+            if success:
+                self.success_list.append(webtoon_data.to_dict())
+            else:
+                self.failure_list.append({"url": url})
+
+        self.save_results()
+        self.driver.quit()
+
+    def save_results(self):
+        """크롤링 결과를 JSON 파일로 저장"""
+        save_to_json(self.success_list, "webtoon_data.json")
+        save_to_json(self.failure_list, "failed_webtoon_list.json")
+
 def save_to_json(data_list, filename):
     """크롤링된 데이터를 JSON 파일로 저장"""
     with open(filename, "w", encoding="utf-8") as f:
@@ -103,27 +131,10 @@ def save_to_json(data_list, filename):
     logger.log("info", f"데이터 저장 완료: {filename}")
 
 if __name__ == "__main__":
-    driver_manager = ChromeWebDriverManager(headless=True)
-    driver = driver_manager.get_driver()
-    scraper = WebtoonScraper(driver)
-
     sample_urls = [
         "https://comic.naver.com/webtoon/list?titleId=747271",
         "https://comic.naver.com/webtoon/list?titleId=769209",
         "https://comic.naver.com/webtoon/list?titleId=776601",
     ]
-
-    success_list = []
-    failure_list = []
-
-    for url in sample_urls:
-        success, webtoon_data = scraper.fetch_webtoon(url)
-        if success:
-            success_list.append(webtoon_data.to_dict())
-        else:
-            failure_list.append({"url": url})
-
-    save_to_json(success_list, "webtoon_data.json")
-    save_to_json(failure_list, "failed_webtoon_list.json")
-
-    driver.quit()
+    crawler = WebtoonCrawler(sample_urls)
+    crawler.run()
