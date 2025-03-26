@@ -42,6 +42,12 @@ class ChromeWebDriverManager:
         options.add_argument("--log-level=3")  # 불필요한 로그 숨기기
         options.add_argument("--disable-blink-features=AutomationControlled")  # 봇 탐지 방지
 
+        options.add_argument("--blink-settings=imagesEnabled=false")  # 이미지 로드 차단
+        options.add_argument("--disable-extensions")  # 확장 프로그램 비활성화
+        options.add_argument("--disable-popup-blocking")  # 팝업 차단 기능 비활성화
+        options.add_argument("--disable-notifications")  # 알림 비활성화
+        options.add_argument("--disable-background-networking")  # 백그라운드 네트워크 요청 방지
+
         service = Service(self.driver_path)
         driver = webdriver.Chrome(service=service, options=options)
         logger.log("info", "크롬 드라이버 실행 완료")
