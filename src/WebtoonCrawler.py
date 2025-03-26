@@ -56,7 +56,7 @@ class ChromeWebDriverManager:
 
 @dataclass
 class AuthorDTO:
-    id: int
+    id: str
     name: str
     role: str
     link: str
@@ -97,7 +97,7 @@ class WebtoonScraper:
     EPISODE_COUNT_CLASS = "EpisodeListView__count--fTMc5"
     META_INFO_CLASS = "ContentMetaInfo__meta_info--GbTg4"
     META_INFO_ITEM_CLASS = "ContentMetaInfo__info_item--utGrf"
-    AUTHOR_CLASS = "AuthorInfo__name--xHCVQ"
+    AUTHOR_CLASS = "ContentMetaInfo__meta_info--GbTg4"
     TAG_GROUP_CLASS = "TagGroup__tag_group--uUJza"
     TAG_CLASS = "TagGroup__tag--xu0OH"
     WAITING_LOAD_PAGE = 5
@@ -112,7 +112,9 @@ class WebtoonScraper:
 
     def get_title(self) -> str:
         element = self.wait_for_element(self.TITLE_CLASS)
-        return element.text.strip()
+        title = element.text.strip()
+        cleaned_title = re.sub(r'\n.*', '', title).strip()
+        return cleaned_title
 
     def get_thumbnail_url(self) -> str:
         element = self.wait_for_element(self.THUMBNAIL_CLASS)
@@ -128,34 +130,76 @@ class WebtoonScraper:
         age_match = re.search(r'(전체연령가|12세|15세|19세)', text)
         return age_match.group(1) if age_match else None
 
-    def get_day(self, day_age: str) -> Optional[str]:
-        day_match = re.search(r'(월|화|수|목|금|토|일)', day_age)
+    def get_day(self) -> Optional[str]:
+        """요일 정보를 가져오는 메서드"""
+        day_age_text = self.wait_for_element(self.META_INFO_CLASS).find_element(By.CLASS_NAME, self.META_INFO_ITEM_CLASS).text.strip()
+        day_match = re.search(r'(월|화|수|목|금|토|일)', day_age_text)
         return day_match.group(1) if day_match else None
 
-    def get_status(self, day_age: str) -> str:
+    def get_status(self) -> str:
+        """연재 상태를 가져오는 메서드"""
+        day_age_text = self.wait_for_element(self.META_INFO_CLASS).find_element(By.CLASS_NAME, self.META_INFO_ITEM_CLASS).text.strip()
         absence_elements = self.driver.find_elements(By.CLASS_NAME, "EpisodeListInfo__info_text--MO6kz")
         for element in absence_elements:
             if element.text.strip() == '휴재':
                 return SerializationStatus.HIATUS.value
         
-        if '완결' in day_age:
+        if '완결' in day_age_text:
             return SerializationStatus.COMPLETED.value
         return SerializationStatus.ONGOING.value
 
     def get_genres(self) -> List[str]:
+        """장르 정보를 가져오는 메서드"""
+        # 카테고리 펼치기 버튼 클릭
+        try:
+            expand_button = self.driver.find_element(By.CLASS_NAME, "EpisodeListInfo__button_fold--ZKgEw")
+            if expand_button.is_displayed():
+                expand_button.click()
+        except Exception:
+            logger.log("debug", "장르 카테고리 펼치기 버튼이 없거나 클릭할 수 없습니다.")
+
+        # 모든 장르 요소가 로드될 때까지 대기
+        WebDriverWait(self.driver, self.WAITING_LOAD_PAGE).until(
+            EC.presence_of_all_elements_located((By.CLASS_NAME, self.TAG_CLASS))
+        )
+
+        # 장르 요소 수집
         genre_elements = self.wait_for_element(self.TAG_GROUP_CLASS).find_elements(By.CLASS_NAME, self.TAG_CLASS)
-        return [genre.text.strip().replace('#', '') for genre in genre_elements]
+        genres = [genre.text.strip().replace('#', '') for genre in genre_elements if genre.text.strip()]
+        logger.log("debug", f"수집된 장르: {genres}")
+
+        return genres
 
     def get_authors(self) -> List[AuthorDTO]:
+        """저자 정보를 가져오는 메서드"""
         authors = []
         author_elements = self.driver.find_elements(By.CLASS_NAME, self.AUTHOR_CLASS)
+
         for element in author_elements:
-            link_tag = element.find_element(By.TAG_NAME, 'a')
-            author_id = int(re.search(r'id=(\d+)', link_tag.get_attribute('href')).group(1))
-            name = link_tag.text.strip()
-            role = element.text.split()[-1]
-            link = link_tag.get_attribute('href')
-            authors.append(AuthorDTO(author_id, name, role, link))
+            category_elements = element.find_elements(By.CLASS_NAME, "ContentMetaInfo__category--WwrCp")
+            
+            for category in category_elements:
+                link_tag = category.find_element(By.TAG_NAME, 'a')
+                href = link_tag.get_attribute('href')
+                name = link_tag.text.strip()
+
+                if "artistTitle" in href:
+                    author_id_match = re.search(r'id=(\d+)', href)
+                    author_id = author_id_match.group(1) if author_id_match else None
+                    url = href
+                elif "community" in href:
+                    author_id_match = re.search(r'u/([^?]+)', href)
+                    author_id = author_id_match.group(1) if author_id_match else None
+                    url = href.split('?')[0]  
+                else:
+                    logger.log("warning", f"알 수 없는 구조의 링크: {href}")
+                    continue 
+
+                role = category.text.split()[-1].strip()
+
+                authors.append(AuthorDTO(author_id, name, role, url))
+                logger.log("debug", f"저자 추가: {name}, ID: {author_id}, 역할: {role}, 링크: {url}") 
+
         return authors
 
     def get_unique_id(self) -> Optional[int]:
@@ -177,10 +221,9 @@ class WebtoonScraper:
             external_id = self.get_unique_id()
             thumbnail_url = self.get_thumbnail_url()
             description = self.get_story()
-            day_age_text = self.wait_for_element(self.META_INFO_CLASS).find_element(By.CLASS_NAME, self.META_INFO_ITEM_CLASS).text.strip()
             age_rating = self.get_day_age()
-            day_of_week = self.get_day(day_age_text)
-            serialization_status = self.get_status(day_age_text)
+            day_of_week = self.get_day()
+            serialization_status = self.get_status()
             episode_count = self.get_episode_count()
             genres = self.get_genres()
             authors = self.get_authors()
