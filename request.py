@@ -1,13 +1,13 @@
 import requests
 import json
 
-url = 'http://localhost:8080/api/public/webtoon-request'
+url = 'http://localhost:8080/api/admin/webtoons'
 headers = {
     'Content-Type': 'application/json'
 }
 
 # JSON 파일을 읽어들입니다
-with open('naver_webtoon_list.json', 'r', encoding='utf-8') as file:
+with open('naverwebtoonscraper_webtoon_list.json', 'r', encoding='utf-8') as file:
     data = json.load(file)
 
 # 데이터를 POST 요청으로 전송합니다

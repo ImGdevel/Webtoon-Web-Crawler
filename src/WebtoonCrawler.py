@@ -46,6 +46,8 @@ class WebtoonCrawler:
                 logger.error(f"WebDriverException encountered while processing URL {url}: {e}")
                 continue
             finally:
+                self.save_and_cleanup()
+                self._restart_webdriver()
                 gc.collect()
 
     def _process_elements_in_batches(self, webtoon_elements, url, batch_size=40):
@@ -116,3 +118,12 @@ class WebtoonCrawler:
         except Exception as e:
             logger.error(f"Failed to restart WebDriver: {e}", exc_info=True)
             raise
+
+    def save_and_cleanup(self):
+            try:
+                scraper_type = self.scraper.__class__.__name__.lower()
+                self.repository.save_to_file(scraper_type + "_webtoon_list")
+                logger.info(f"Data saved successfully for scraper type: {scraper_type}")
+            finally:
+                self.driver.quit()
+                logger.info("WebDriver closed successfully")

@@ -118,18 +118,18 @@ class NaverWebtoonScraper(WebtoonScraper):
 
             return WebtoonCreateRequestDTO(
                 title=title,
-                external_id=str(unique_id),
+                externalId=str(unique_id),
                 platform=self.PLATFORM_NAME,
-                day_of_week=self.get_day(day_age),
-                thumbnail_url=thumbnail_url,
+                dayOfWeek=self.get_day(day_age),
+                thumbnailUrl=thumbnail_url,
                 link=self.driver.current_url,
-                age_rating=self.get_age_rating(day_age),
+                ageRating=self.get_age_rating(day_age),
                 description=story,
-                serialization_status=self.get_status(day_age, soup),
-                episode_count=episode_count,
-                platform_rating=rating,
-                publish_start_date=self.get_first_day(soup),
-                last_updated_date=last_update_day,
+                serializationStatus=self.get_status(day_age, soup),
+                episodeCount=episode_count,
+                platformRating=rating,
+                publishStartDate=self.get_first_day(soup),
+                lastUpdatedDate=last_update_day,
                 authors=authors_list,
                 genres=genres_list
             )
