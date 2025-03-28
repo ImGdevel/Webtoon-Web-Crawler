@@ -7,16 +7,23 @@ from selenium.webdriver.remote.webelement import WebElement
 from models.webtoon import WebtoonDTO
 from models.author import AuthorDTO
 from models.serialization_status import SerializationStatus
+from models.platform import Platform
+from models.age_rating import AgeRating
+from models.day_of_week import DayOfWeek
 from logger import Logger
 from .i_webtoon_scraper import IWebtoonScraper
 from selenium.common.exceptions import TimeoutException
+from bs4 import BeautifulSoup
+from datetime import datetime
+import json
+from dataclasses import asdict
 
 logger = Logger()
 
 class NaverWebtoonScraper(IWebtoonScraper):
     """네이버 웹툰 정보를 크롤링하는 클래스"""
 
-    PLATFORM_NAME = "NAVER"
+    PLATFORM_NAME = Platform.NAVER
 
     # CSS 클래스 변수
     TITLE_CLASS = "EpisodeListInfo__title--mYLjC"
@@ -32,6 +39,7 @@ class NaverWebtoonScraper(IWebtoonScraper):
     ABSENCE_INFO_CLASS = "EpisodeListInfo__info_text--MO6kz"
     CATEGORY_CLASS = "ContentMetaInfo__category--WwrCp"
     WAITING_LOAD_PAGE = 3
+    EPISODE_LIST_META_INFO_CLASS = "EpisodeListInfo__meta_info--GbTg4"
 
     def __init__(self, driver):
         self.driver = driver
@@ -64,13 +72,24 @@ class NaverWebtoonScraper(IWebtoonScraper):
         element = self.wait_for_element(self.META_INFO_CLASS)
         text = element.find_element(By.CLASS_NAME, self.META_INFO_ITEM_CLASS).text.strip()
         age_match = re.search(r'(전체연령가|12세|15세|19세)', text)
-        return age_match.group(1) if age_match else None
+        if age_match:
+            age_rating_map = {
+                "전체연령가": AgeRating.ALL,
+                "12세": AgeRating.AGE_12,
+                "15세": AgeRating.AGE_15,
+                "19세": AgeRating.ADULT
+            }
+            return age_rating_map[age_match.group(1)].name
+        return None
 
     def get_day(self) -> Optional[str]:
-        """요일 정보를 가져오는 메서드"""
         day_age_text = self.wait_for_element(self.META_INFO_CLASS).find_element(By.CLASS_NAME, self.META_INFO_ITEM_CLASS).text.strip()
         day_match = re.search(r'(월|화|수|목|금|토|일)', day_age_text)
-        return day_match.group(1) if day_match else None
+        if day_match:
+            korean_day = day_match.group(1)
+            day_of_week = DayOfWeek.from_korean(korean_day)
+            return day_of_week.name if day_of_week else None
+        return None
 
     def get_status(self) -> str:
         """연재 상태를 가져오는 메서드"""
@@ -78,11 +97,11 @@ class NaverWebtoonScraper(IWebtoonScraper):
         absence_elements = self.driver.find_elements(By.CLASS_NAME, self.ABSENCE_INFO_CLASS)
         for element in absence_elements:
             if element.text.strip() == '휴재':
-                return SerializationStatus.HIATUS.value
+                return SerializationStatus.HIATUS.name
         
         if '완결' in day_age_text:
-            return SerializationStatus.COMPLETED.value
-        return SerializationStatus.ONGOING.value
+            return SerializationStatus.COMPLETED.name
+        return SerializationStatus.ONGOING.name
 
     def get_genres(self) -> List[str]:
         """장르 정보를 가져오는 메서드"""
@@ -135,16 +154,53 @@ class NaverWebtoonScraper(IWebtoonScraper):
 
         return authors
 
-    def get_unique_id(self) -> Optional[int]:
+    def get_unique_id(self) -> Optional[str]:
         """웹툰의 고유 ID를 가져오는 메서드"""
         url = self.driver.current_url
         id_match = re.search(r'titleId=(\d+)', url)
-        return int(id_match.group(1)) if id_match else None
+        return int(id_match.group(1)) if str(id_match) else None
 
     def get_episode_count(self) -> Optional[int]:
         """웹툰의 에피소드 수를 가져오는 메서드"""
         element = self.wait_for_element(self.EPISODE_COUNT_CLASS)
         return int(re.search(r'\d+', element.text).group()) if element else None
+
+    def get_publish_start_date(self) -> Optional[str]:
+        """웹툰의 시작 날짜를 가져오는 메서드"""
+        try:
+            current_url = self.driver.current_url
+            modified_url = f"{current_url}&page=1&sort=ASC"
+            self.driver.get(modified_url)
+
+            first_item = self.wait_for_element("EpisodeListList__item--M8zq4")
+            date_element = first_item.find_element(By.CLASS_NAME, "date")
+            first_day = date_element.text.strip()
+
+            return self.format_date(first_day)
+        except Exception as e:
+            logger.log("warning", f"시작일 추출 오류: {e}")
+            return None
+
+    def get_last_updated_date(self) -> Optional[str]:
+        """웹툰의 마지막 업데이트 날짜를 가져오는 메서드"""
+        try:
+            first_item = self.wait_for_element("EpisodeListList__item--M8zq4")
+            date_element = first_item.find_element(By.CLASS_NAME, "date")
+            last_day = date_element.text.strip()
+            return self.format_date(last_day)
+        except Exception as e:
+            logger.log("warning", f"마지막일 추출 오류: {e}")
+            return None
+
+    def format_date(self, date_str: str) -> str:
+        return datetime.strptime(date_str, "%y.%m.%d").date().isoformat()
+
+    def get_age_rating(self) -> Optional[str]:
+        age_rating = self.get_day_age()
+        return age_rating
+
+    def get_serialization_status(self) -> str:
+        return self.get_status()
 
     def fetch_webtoon(self, url: str) -> Tuple[bool, Optional[WebtoonDTO]]:
         """웹툰 정보를 가져와 WebtoonDTO 객체로 반환"""
@@ -160,19 +216,20 @@ class NaverWebtoonScraper(IWebtoonScraper):
             external_id = self.get_unique_id()
             thumbnail_url = self.get_thumbnail_url()
             description = self.get_story()
-            age_rating = self.get_day_age()
             day_of_week = self.get_day()
-            serialization_status = self.get_status()
             episode_count = self.get_episode_count()
             genres = self.get_genres()
             authors = self.get_authors()
+            age_rating = self.get_age_rating()
+            serialization_status = self.get_serialization_status()
+            last_updated_date = self.get_last_updated_date()
+            publish_start_date = self.get_publish_start_date()
 
             if title and external_id and thumbnail_url:
                 webtoon_data = WebtoonDTO(
-                    url=url,
                     title=title,
                     external_id=external_id,
-                    platform=self.PLATFORM_NAME,
+                    platform=self.PLATFORM_NAME.name,
                     day_of_week=day_of_week,
                     thumbnail_url=thumbnail_url,
                     link=url,
@@ -180,6 +237,9 @@ class NaverWebtoonScraper(IWebtoonScraper):
                     description=description,
                     serialization_status=serialization_status,
                     episode_count=episode_count,
+                    platform_rating=0.0,
+                    publish_start_date=publish_start_date,
+                    last_updated_date=last_updated_date,
                     authors=authors,
                     genres=genres
                 )
