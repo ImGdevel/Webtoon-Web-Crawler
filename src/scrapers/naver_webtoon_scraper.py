@@ -10,15 +10,10 @@ from models.serialization_status import SerializationStatus
 from models.platform import Platform
 from models.age_rating import AgeRating
 from models.day_of_week import DayOfWeek
-from logger import Logger
+from utils.logger import logger
 from .i_webtoon_scraper import IWebtoonScraper
 from selenium.common.exceptions import TimeoutException
-from bs4 import BeautifulSoup
 from datetime import datetime
-import json
-from dataclasses import asdict
-
-logger = Logger()
 
 class NaverWebtoonScraper(IWebtoonScraper):
     """네이버 웹툰 정보를 크롤링하는 클래스"""

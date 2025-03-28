@@ -1,10 +1,8 @@
-from logger import Logger 
+from utils.logger import logger
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-
-logger = Logger()
 
 class ChromeWebDriverManager:
     """크롬 드라이버를 자동으로 관리하는 클래스"""

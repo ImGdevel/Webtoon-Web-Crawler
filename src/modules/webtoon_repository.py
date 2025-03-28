@@ -1,9 +1,7 @@
 import os
 import json
 from typing import List
-from logger import Logger
-
-logger = Logger()
+from utils.logger import logger
 
 class WebtoonRepository:
     """웹툰 데이터를 JSON 파일로 저장하고 불러오는 클래스"""

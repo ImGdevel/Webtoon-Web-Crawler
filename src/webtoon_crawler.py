@@ -1,13 +1,10 @@
-from logger import Logger
-from typing import List, Set
-import os
+from utils.logger import logger
+from typing import List
 from modules.chrome_webdriver_manager import ChromeWebDriverManager
 from modules.webtoon_repository import WebtoonRepository
 from modules.webtoon_list_manager import WebtoonListManager
 from scrapers.webtoon_scraper_factory import WebtoonScraperFactory
 from scrapers.webtoon_list_scraper import WebtoonListScraper
-
-logger = Logger()
 
 class WebtoonCrawler:
     """웹툰 크롤러 클래스"""
