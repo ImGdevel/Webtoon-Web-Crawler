@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup as bs
 from datetime import datetime
 from time import sleep
 import re
-from .WebtoonScraper import WebtoonScraper
+from ...src_old.Scraper.WebtoonScraper import WebtoonScraper
 from src.Model.enum import AgeRating, SerializationStatus
 
 class KaKaoWebtoonScraper(WebtoonScraper):
