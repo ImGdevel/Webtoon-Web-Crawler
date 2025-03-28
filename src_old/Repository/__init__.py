@@ -1,2 +1,0 @@
-from .WebtoonRepositoryFactory import WebtoonRepositoryFactory
-from .WebtoonRepository import WebtoonRepository
