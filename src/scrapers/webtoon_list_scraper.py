@@ -3,7 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
-from logger import Logger
+from utils.logger import Logger
 from time import sleep
 
 logger = Logger()

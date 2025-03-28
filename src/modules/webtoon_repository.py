@@ -1,7 +1,7 @@
 import os
 import json
 from typing import List
-from logger import Logger
+from utils.logger import Logger
 
 logger = Logger()
 

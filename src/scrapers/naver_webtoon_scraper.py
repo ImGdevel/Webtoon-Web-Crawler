@@ -10,7 +10,7 @@ from models.serialization_status import SerializationStatus
 from models.platform import Platform
 from models.age_rating import AgeRating
 from models.day_of_week import DayOfWeek
-from logger import Logger
+from utils.logger import Logger
 from .i_webtoon_scraper import IWebtoonScraper
 from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup
