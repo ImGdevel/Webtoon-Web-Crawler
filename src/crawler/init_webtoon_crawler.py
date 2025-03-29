@@ -1,12 +1,13 @@
 from utils.logger import logger
 from typing import List
-from modules.chrome_webdriver_manager import ChromeWebDriverManager
+from modules.web_driver.local_chrome_webdriver_manager import LocalChromeWebDriverManager
 from modules.webtoon_repository import WebtoonRepository
 from modules.webtoon_list_manager import WebtoonListManager
 from scrapers.webtoon_scraper_factory import WebtoonScraperFactory
 from scrapers.webtoon_list_scraper import WebtoonListScraper
+from .i_webtoon_crawler import IWebtoonCrawler
 
-class WebtoonCrawler:
+class InitWebtoonCrawler(IWebtoonCrawler):
     """웹툰 크롤러 클래스"""
 
     NAVER_WEBTOON_URLS = [
@@ -22,7 +23,7 @@ class WebtoonCrawler:
     BATCH_SIZE = 10
 
     def __init__(self):
-        self.driver_manager = ChromeWebDriverManager(headless=True)
+        self.driver_manager = LocalChromeWebDriverManager(headless=True)
         self.driver = self.driver_manager.get_driver()
         self.scraper = WebtoonScraperFactory.create_scraper(self.driver, "naver")
         self.list_scraper = WebtoonListScraper(self.driver)
@@ -77,5 +78,5 @@ class WebtoonCrawler:
         logger.log("info", "모든 배치 처리 완료")
 
 if __name__ == "__main__":
-    crawler = WebtoonCrawler()
+    crawler = InitWebtoonCrawler()
     crawler.run()
