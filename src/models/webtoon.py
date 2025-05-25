@@ -1,11 +1,9 @@
 from dataclasses import dataclass, asdict
 from typing import List, Optional, Set
 from .author import AuthorDTO
-from .serialization_status import SerializationStatus
-from .platform import Platform
-from .age_rating import AgeRating
+from models.enums import SerializationStatus, Platform, AgeRating, DayOfWeek
+from .enums.age_rating import AgeRating
 from datetime import date
-from .day_of_week import DayOfWeek
 
 @dataclass
 class WebtoonDTO:

@@ -6,10 +6,7 @@ from typing import List, Optional, Tuple
 from selenium.webdriver.remote.webelement import WebElement
 from models.webtoon import WebtoonDTO
 from models.author import AuthorDTO
-from models.serialization_status import SerializationStatus
-from models.platform import Platform
-from models.age_rating import AgeRating
-from models.day_of_week import DayOfWeek
+from models.enums import SerializationStatus, Platform, AgeRating, DayOfWeek, AuthorRole
 from utils.logger import logger
 from .i_webtoon_scraper import IWebtoonScraper
 from selenium.common.exceptions import TimeoutException
@@ -142,10 +139,15 @@ class NaverWebtoonScraper(IWebtoonScraper):
                     logger.log("warning", f"알 수 없는 구조의 링크: {href}")
                     continue 
 
-                role = category.text.split()[-1].strip()
+                role_text = category.text.split()[-1].strip()
+                try:
+                    role = AuthorRole(role_text)
+                    role = role.name
+                except ValueError:
+                    logger.log("warning", f"알 수 없는 역할: {role_text}")
+                    continue
 
-                authors.append(AuthorDTO(author_id, name, role, url))
-                logger.log("debug", f"저자 추가: {name}, ID: {author_id}, 역할: {role}, 링크: {url}") 
+                authors.append(AuthorDTO(author_id, name, role))
 
         return authors
 
@@ -153,7 +155,10 @@ class NaverWebtoonScraper(IWebtoonScraper):
         """웹툰의 고유 ID를 가져오는 메서드"""
         url = self.driver.current_url
         id_match = re.search(r'titleId=(\d+)', url)
-        return int(id_match.group(1)) if str(id_match) else None
+        if id_match:
+            return id_match.group(1)
+        return None
+
 
     def get_episode_count(self) -> Optional[int]:
         """웹툰의 에피소드 수를 가져오는 메서드"""
@@ -225,7 +230,7 @@ class NaverWebtoonScraper(IWebtoonScraper):
                     title=title,
                     external_id=external_id,
                     platform=self.PLATFORM_NAME.name,
-                    day_of_week=day_of_week,
+                    day_of_week= (day_of_week if serialization_status != SerializationStatus.COMPLETED.name else None),
                     thumbnail_url=thumbnail_url,
                     link=url,
                     age_rating=age_rating,
