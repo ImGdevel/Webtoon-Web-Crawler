@@ -1,63 +1,98 @@
 import json
 import boto3
+import requests
+import os
+from typing import Dict, Any
 
-# SQS 클라이언트 설정
+def get_parameter(parameter_name: str) -> str:
+    ssm = boto3.client('ssm')
+    response = ssm.get_parameter(
+        Name=parameter_name,
+        WithDecryption=True
+    )
+    return response['Parameter']['Value']
+
 sqs = boto3.client('sqs', region_name='ap-northeast-2')
-INPUT_SQS_URL = "https://sqs.ap-northeast-2.amazonaws.com/794038251153/SQS-TOONPICK-webtoon-update-request"
-OUTPUT_SQS_URL = "https://sqs.ap-northeast-2.amazonaws.com/794038251153/SQS-TOONPICK-webtoon-update-response"
+INPUT_SQS_URL = get_parameter('/TOONPICK/prod/AWS/AWS_SQS_WEBTOON_UPDATE_REQUEST_URL')
+OUTPUT_SQS_URL = get_parameter('/TOONPICK/prod/AWS/AWS_SQS_WEBTOON_UPDATE_COMPLETE_URL')
+SLACK_WEBHOOK_URL = get_parameter('/TOONPICK/prod/SLACK/SLACK_WEBHOOK_URL')
 
 def lambda_handler(event, context):
     print("Event:", json.dumps(event))
-
     for record in event['Records']:
-        message_body = json.loads(record['body'])
-        request_id = message_body.get('requestId')
-        webtoons = message_body.get('webtoons', [])
+        result = {
+            "request_id": None,
+            "status": "SUCCESS",
+            "error": None,
+            "updated_count": 0
+        }
 
-        # 웹툰 정보 업데이트 로직
-        updated_webtoons = process_webtoon_updates(webtoons)
+        try:
+            message_body = json.loads(record['body'])
+            result["request_id"] = message_body.get('requestTime')
+            webtoons = message_body.get('requests', [])
 
-        # SQS로 전송 비활성화
-        # response_data = {
-        #     "requestId": request_id,
-        #     "updatedWebtoons": updated_webtoons
-        # }
-        # send_message_to_sqs(response_data)
+            updated_webtoons = process_webtoon_updates(webtoons)
+            result["updated_count"] = len(updated_webtoons)
 
-        # 메시지 삭제 (처리 후) - 입력 SQS URL 사용
-        receipt_handle = record['receiptHandle']
-        delete_message_from_sqs(receipt_handle)
+            send_each_webtoon_to_sqs(result["request_id"], updated_webtoons)
 
-    return {"statusCode": 200, "body": json.dumps("Processing complete!!!")}
+        except Exception as e:
+            result["status"] = "FAILED"
+            result["error"] = f"Processing Error: {e}"
+            print(result["error"])
 
+        try:
+            receipt_handle = record['receiptHandle']
+            delete_message_from_sqs(receipt_handle)
+        except Exception as e:
+            result["status"] = "FAILED"
+            result["error"] = f"SQS Delete Error: {e}"
+            print(result["error"])
+
+        send_slack_message(result)
+
+    return {"statusCode": 200, "body": json.dumps("Processing complete.")}
 
 def process_webtoon_updates(webtoons):
-    """ 웹툰 업데이트 로직 """
-    for webtoon in webtoons:
-        webtoon['lastUpdatedDate'] = '2025-03-28'
+    # 실제 업데이트 로직 구현 예정
     return webtoons
 
-
-def send_message_to_sqs(response_data):
-    """ Lambda에서 SQS로 결과 메시지를 전송하는 함수 - 비활성화됨 """
-    try:
-        response_json = json.dumps(response_data)
-        # 비활성화
-        # response = sqs.send_message(QueueUrl=OUTPUT_SQS_URL, MessageBody=response_json)
-        print(f"(비활성화) Sent response to SQS: {response_json}")
-    except Exception as e:
-        print(f"Error sending message to SQS: {e}")
-        raise e
-
+def send_each_webtoon_to_sqs(request_id, updated_webtoons):
+    for webtoon in updated_webtoons:
+        try:
+            message_body = {
+                "requestId": request_id,
+                "updatedWebtoon": webtoon
+            }
+            response = sqs.send_message(
+                QueueUrl=OUTPUT_SQS_URL,
+                MessageBody=json.dumps(message_body)
+            )
+            print("웹툰 응답 메시지를 SQS에 전송함:", response['MessageId'])
+        except Exception as e:
+            raise RuntimeError(f"SQS Response Send Error: {e}")
 
 def delete_message_from_sqs(receipt_handle):
-    """ 입력 SQS 메시지 삭제 """
     try:
-        print(f"Attempting to delete message with receipt handle: {receipt_handle}")
         response = sqs.delete_message(QueueUrl=INPUT_SQS_URL, ReceiptHandle=receipt_handle)
-        print(f"Message deleted from SQS, ReceiptHandle: {receipt_handle}")
-    except sqs.exceptions.ReceiptHandleIsInvalid as e:
-        print(f"Invalid receipt handle: {receipt_handle}. The message might have already been deleted.")
+        print(f"SQS 메시지 삭제 완료: {receipt_handle}")
     except Exception as e:
-        print(f"Error deleting message from SQS: {e}")
-        raise e
+        raise RuntimeError(f"SQS Delete Error: {e}")
+
+def send_slack_message(result):
+    try:
+        if result["status"] == "SUCCESS":
+            text = f"[Lambda 처리 성공]\n- Request ID: `{result['request_id']}`\n- 처리된 웹툰 수: `{result['updated_count']}`"
+        else:
+            text = f"[Lambda 처리 실패]\n- Request ID: `{result['request_id']}`\n- 오류: `{result['error']}`"
+
+        slack_message = {"text": text}
+        response = requests.post(
+            SLACK_WEBHOOK_URL,
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(slack_message)
+        )
+        print("Slack 응답:", response.status_code)
+    except Exception as e:
+        print(f"Slack 전송 오류: {e}")
