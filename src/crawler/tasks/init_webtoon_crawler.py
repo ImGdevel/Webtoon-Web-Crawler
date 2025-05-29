@@ -29,7 +29,7 @@ class InitWebtoonCrawler(IWebtoonCrawler):
             raise ValueError("URL 리스트가 비어있습니다.")
         self.urls = list(url_list)
         self.current_batch_results = ([], [])
-        logger.log("info", f"{len(url_list)}개의 URL이 초기화되었습니다.")
+        logger.info("URL 리스트 초기화 완료", extra={"count": len(url_list)})
 
     def _process_single_url(self, url: str) -> tuple[bool, Optional[dict]]:
         """단일 URL 처리"""
@@ -39,7 +39,7 @@ class InitWebtoonCrawler(IWebtoonCrawler):
                 return True, webtoon_data.to_dict()
             return False, None
         except Exception as e:
-            logger.log("error", f"URL 처리 중 오류 발생: {url}, 오류: {e}")
+            logger.error("URL 처리 중 오류 발생", error=e, extra={"url": url})
             return False, None
 
     def _process_batch(self, url_batch: List[str]) -> tuple[List[dict], List[dict]]:
@@ -72,7 +72,10 @@ class InitWebtoonCrawler(IWebtoonCrawler):
                     self.current_batch_results[0] + success_batch,
                     self.current_batch_results[1] + failure_batch
                 )
-                logger.log("info", f"현재까지 누적: 성공 {len(self.current_batch_results[0])}, 실패 {len(self.current_batch_results[1])}")
+                logger.info("배치 처리 결과", extra={
+                    "success_count": len(self.current_batch_results[0]),
+                    "failure_count": len(self.current_batch_results[1])
+                })
         finally:
             self.is_running = False
 
@@ -85,6 +88,6 @@ class InitWebtoonCrawler(IWebtoonCrawler):
         try:
             self.driver.quit()
         except Exception as e:
-            logger.log("error", f"WebDriver 종료 중 오류 발생: {e}")
+            logger.error("WebDriver 종료 중 오류 발생", error=e)
         else:
-            logger.log("info", "WebDriver 종료 완료.")
+            logger.info("WebDriver 종료 완료")

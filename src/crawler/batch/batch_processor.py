@@ -25,9 +25,18 @@ class BatchProcessor:
             end_idx = min((batch_num + 1) * self.batch_size, len(items))
             current_batch = items[start_idx:end_idx]
 
-            logger.log("info", f"배치 {batch_num + 1}/{total_batches} 처리 중... ({start_idx + 1}~{end_idx})")
+            logger.info("배치 처리 중", extra={
+                "batch_number": batch_num + 1,
+                "total_batches": total_batches,
+                "start_index": start_idx + 1,
+                "end_index": end_idx
+            })
             
             success_batch, failure_batch = process_func(current_batch)
-            logger.log("info", f"배치 {batch_num + 1} 완료: 성공 {len(success_batch)}, 실패 {len(failure_batch)}")
+            logger.info("배치 처리 완료", extra={
+                "batch_number": batch_num + 1,
+                "success_count": len(success_batch),
+                "failure_count": len(failure_batch)
+            })
             
             yield success_batch, failure_batch 

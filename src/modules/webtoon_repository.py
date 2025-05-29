@@ -17,7 +17,7 @@ class WebtoonRepository:
                 with open(filename, "r", encoding="utf-8") as f:
                     return json.load(f)
             except json.JSONDecodeError:
-                logger.log("warning", f"파일 {filename}이 비어있거나 올바르지 않은 JSON 형식입니다.")
+                logger.warning("파일이 비어있거나 올바르지 않은 JSON 형식입니다.", extra={"filename": filename})
                 return []
         return []
 
@@ -38,9 +38,9 @@ class WebtoonRepository:
                         separators=(',', ':'),
                         indent=2
                     )
-                logger.log("info", f"{len(new_data)}개의 성공 데이터 추가 완료")
+                logger.info("성공 데이터 추가 완료", extra={"count": len(new_data)})
         except Exception as e:
-            logger.log("error", f"성공 데이터 저장 실패: {e}")
+            logger.error("성공 데이터 저장 실패", error=e)
 
     def append_failure(self, data_list: List[dict]) -> None:
         """실패한 데이터를 JSON 파일에 추가"""
@@ -59,6 +59,6 @@ class WebtoonRepository:
                         separators=(',', ':'),
                         indent=2 
                     )
-                logger.log("info", f"{len(new_data)}개의 실패 데이터 추가 완료")
+                logger.info("실패 데이터 추가 완료", extra={"count": len(new_data)})
         except Exception as e:
-            logger.log("error", f"실패 데이터 저장 실패: {e}")
+            logger.error("실패 데이터 저장 실패", error=e)

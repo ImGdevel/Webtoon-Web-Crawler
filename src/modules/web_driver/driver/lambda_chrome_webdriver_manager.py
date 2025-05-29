@@ -20,23 +20,23 @@ class ChromeWebDriverManager(IWebDriverManager):
         """드라이버를 /tmp 디렉토리에서 확인하고, 없으면 다운로드하는 메서드"""
         try:
             if os.path.exists(self.CHROME_DRIVER_PATH):
-                logger.log("info", "기존 크롬 드라이버를 재사용합니다.")
+                logger.info("기존 크롬 드라이버를 재사용합니다")
                 self.driver_path = self.CHROME_DRIVER_PATH
             else:
-                logger.log("info", "새로운 크롬 드라이버를 다운로드합니다.")
+                logger.info("새로운 크롬 드라이버를 다운로드합니다")
                 self.driver_path = ChromeDriverManager().install()
                 # 다운로드된 드라이버를 /tmp로 복사
                 import shutil
                 shutil.copy2(self.driver_path, self.CHROME_DRIVER_PATH)
                 self.driver_path = self.CHROME_DRIVER_PATH
-                logger.log("info", "크롬 드라이버 설치 완료")
+                logger.info("크롬 드라이버 설치 완료")
         except Exception as e:
-            logger.log("error", f"크롬 드라이버 설치 오류: {e}")
+            logger.error("크롬 드라이버 설치 오류", error=e)
 
     def get_driver(self):
         """설정된 크롬 드라이버를 반환하는 메서드"""
         if not self.driver_path:
-            logger.log("warning", "크롬 드라이버를 찾을 수 없습니다. 다시 설정합니다.")
+            logger.warning("크롬 드라이버를 찾을 수 없습니다. 다시 설정합니다")
             self.setup_driver()
 
         options = Options()
@@ -65,5 +65,5 @@ class ChromeWebDriverManager(IWebDriverManager):
 
         service = Service(self.driver_path)
         driver = webdriver.Chrome(service=service, options=options)
-        logger.log("info", "크롬 드라이버 실행 완료")
+        logger.info("크롬 드라이버 실행 완료")
         return driver 

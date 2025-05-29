@@ -114,7 +114,7 @@ class NaverWebtoonScraper(IWebtoonScraper):
             if expand_button.is_displayed():
                 expand_button.click()
         except Exception:
-            logger.log("debug", "장르 카테고리 펼치기 버튼이 없거나 클릭할 수 없습니다.")
+            logger.debug("장르 카테고리 펼치기 버튼이 없거나 클릭할 수 없습니다")
 
         WebDriverWait(self.driver, self.WAITING_LOAD_PAGE).until(
             EC.presence_of_all_elements_located((By.CLASS_NAME, self.TAG_CLASS))
@@ -122,7 +122,7 @@ class NaverWebtoonScraper(IWebtoonScraper):
 
         genre_elements = self.wait_for_element(self.TAG_GROUP_CLASS).find_elements(By.CLASS_NAME, self.TAG_CLASS)
         genres = [genre.text.strip().replace('#', '') for genre in genre_elements if genre.text.strip()]
-        logger.log("debug", f"수집된 장르: {genres}")
+        logger.debug("장르 수집 완료", extra={"genres": genres})
 
         return genres
 
@@ -148,7 +148,7 @@ class NaverWebtoonScraper(IWebtoonScraper):
                     author_id = author_id_match.group(1) if author_id_match else None
                     url = href.split('?')[0]  
                 else:
-                    logger.log("warning", f"알 수 없는 구조의 링크: {href}")
+                    logger.warning("알 수 없는 구조의 링크", extra={"href": href})
                     continue 
 
                 role_text = category.text.split()[-1].strip()
@@ -156,7 +156,7 @@ class NaverWebtoonScraper(IWebtoonScraper):
                     role = AuthorRole(role_text)
                     role = role.name
                 except ValueError:
-                    logger.log("warning", f"알 수 없는 역할: {role_text}")
+                    logger.warning("알 수 없는 역할", extra={"role": role_text})
                     continue
 
                 authors.append(AuthorDTO(author_id, name, role))
@@ -170,7 +170,6 @@ class NaverWebtoonScraper(IWebtoonScraper):
         if id_match:
             return id_match.group(1)
         return None
-
 
     def get_episode_count(self) -> Optional[int]:
         """웹툰의 에피소드 수를 가져오는 메서드"""
@@ -190,7 +189,7 @@ class NaverWebtoonScraper(IWebtoonScraper):
 
             return self.format_date(first_day)
         except Exception as e:
-            logger.log("warning", f"시작일 추출 오류: {e}")
+            logger.warning("시작일 추출 오류", error=e)
             return None
 
     def get_last_updated_date(self) -> Optional[str]:
@@ -201,7 +200,7 @@ class NaverWebtoonScraper(IWebtoonScraper):
             last_day = date_element.text.strip()
             return self.format_date(last_day)
         except Exception as e:
-            logger.log("warning", f"마지막일 추출 오류: {e}")
+            logger.warning("마지막일 추출 오류", error=e)
             return None
 
     def format_date(self, date_str: str) -> str:
@@ -217,11 +216,11 @@ class NaverWebtoonScraper(IWebtoonScraper):
     def fetch_webtoon(self, url: str) -> Tuple[bool, Optional[WebtoonDTO]]:
         """웹툰 정보를 가져와 WebtoonDTO 객체로 반환"""
         try:
-            logger.log("info", f"웹툰 페이지 접속: {url}")
+            logger.info("웹툰 페이지 접속", extra={"url": url})
             self.driver.get(url)
 
             if "nid.naver.com" in self.driver.current_url:
-                logger.log("warning", f"성인 인증이 필요한 웹툰입니다: {url}")
+                logger.warning("성인 인증이 필요한 웹툰", extra={"url": url})
                 return False, None
 
             # 선택적으로 데이터 수집
@@ -259,10 +258,10 @@ class NaverWebtoonScraper(IWebtoonScraper):
 
         except TimeoutException:
             if "nid.naver.com" in self.driver.current_url:
-                logger.log("warning", f"성인 인증이 필요한 웹툰입니다 (Timeout 발생): {url}")
+                logger.warning("성인 인증이 필요한 웹툰 (Timeout 발생)", extra={"url": url})
                 return False, None
-            logger.log("error", f"크롤링 오류 (TimeoutException): {url}")
+            logger.error("크롤링 오류 (TimeoutException)", extra={"url": url})
             return False, None
         except Exception as e:
-            logger.log("error", f"크롤링 오류: {e}")
+            logger.error("크롤링 오류", error=e, extra={"url": url})
             return False, None
