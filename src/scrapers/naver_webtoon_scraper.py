@@ -35,6 +35,18 @@ class NaverWebtoonScraper(IWebtoonScraper):
 
     def __init__(self, driver):
         self.driver = driver
+        # 스크래핑 옵션 초기화
+        self.scrape_title = False
+        self.scrape_thumbnail = False
+        self.scrape_story = False
+        self.scrape_day_age = False
+        self.scrape_day = False
+        self.scrape_status = False
+        self.scrape_genres = False
+        self.scrape_authors = False
+        self.scrape_unique_id = False
+        self.scrape_episode_count = False
+        self.scrape_dates = False
 
     def wait_for_element(self, class_name: str) -> WebElement:
         """주어진 클래스 이름을 가진 요소가 로드될 때까지 대기하는 메서드"""
@@ -212,41 +224,39 @@ class NaverWebtoonScraper(IWebtoonScraper):
                 logger.log("warning", f"성인 인증이 필요한 웹툰입니다: {url}")
                 return False, None
 
-            title = self.get_title()
-            external_id = self.get_unique_id()
-            thumbnail_url = self.get_thumbnail_url()
-            description = self.get_story()
-            day_of_week = self.get_day()
-            episode_count = self.get_episode_count()
-            genres = self.get_genres()
-            authors = self.get_authors()
-            age_rating = self.get_age_rating()
-            serialization_status = self.get_serialization_status()
-            last_updated_date = self.get_last_updated_date()
-            publish_start_date = self.get_publish_start_date()
+            # 선택적으로 데이터 수집
+            title = self.get_title() if self.scrape_title else None
+            external_id = self.get_unique_id() if self.scrape_unique_id else None
+            thumbnail_url = self.get_thumbnail_url() if self.scrape_thumbnail else None
+            description = self.get_story() if self.scrape_story else None
+            day_of_week = self.get_day() if self.scrape_day else None
+            episode_count = self.get_episode_count() if self.scrape_episode_count else None
+            genres = self.get_genres() if self.scrape_genres else []
+            authors = self.get_authors() if self.scrape_authors else []
+            age_rating = self.get_age_rating() if self.scrape_day_age else None
+            serialization_status = self.get_serialization_status() if self.scrape_status else None
+            last_updated_date = self.get_last_updated_date() if self.scrape_dates else None
+            publish_start_date = self.get_publish_start_date() if self.scrape_dates else None
 
-            if title and external_id and thumbnail_url:
-                webtoon_data = WebtoonDTO(
-                    title=title,
-                    external_id=external_id,
-                    platform=self.PLATFORM_NAME.name,
-                    day_of_week= (day_of_week if serialization_status != SerializationStatus.COMPLETED.name else None),
-                    thumbnail_url=thumbnail_url,
-                    link=url,
-                    age_rating=age_rating,
-                    description=description,
-                    serialization_status=serialization_status,
-                    episode_count=episode_count,
-                    platform_rating=0.0,
-                    publish_start_date=publish_start_date,
-                    last_updated_date=last_updated_date,
-                    authors=authors,
-                    genres=genres
-                )
-                return True, webtoon_data
-            else:
-                logger.log("warning", "필수 정보를 찾을 수 없습니다.")
-                return False, None
+            webtoon_data = WebtoonDTO(
+                title=title,
+                external_id=external_id,
+                platform=self.PLATFORM_NAME.name,
+                day_of_week=(day_of_week if serialization_status != SerializationStatus.COMPLETED.name else None),
+                thumbnail_url=thumbnail_url,
+                link=url,
+                age_rating=age_rating,
+                description=description,
+                serialization_status=serialization_status,
+                episode_count=episode_count,
+                platform_rating=0.0,
+                publish_start_date=publish_start_date,
+                last_updated_date=last_updated_date,
+                authors=authors,
+                genres=genres
+            )
+            return True, webtoon_data
+
         except TimeoutException:
             if "nid.naver.com" in self.driver.current_url:
                 logger.log("warning", f"성인 인증이 필요한 웹툰입니다 (Timeout 발생): {url}")

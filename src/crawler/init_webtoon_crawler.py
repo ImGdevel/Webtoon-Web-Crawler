@@ -14,7 +14,7 @@ class InitWebtoonCrawler(IWebtoonCrawler):
     def __init__(self):
         self.driver_manager = LocalChromeWebDriverManager(headless=True)
         self.driver = self.driver_manager.get_driver()
-        self.scraper = WebtoonScraperFactory.create_scraper(self.driver, "naver")
+        self.scraper = WebtoonScraperFactory.create_basic_info_scraper(self.driver, platform="naver")
         self.repository = WebtoonRepository("webtoon_data.json", "failed_webtoon_list.json")
 
         self.urls: List[str] = []
