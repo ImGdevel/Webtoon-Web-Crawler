@@ -5,10 +5,76 @@ import os
 from typing import Dict, Any
 
 
+
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+
+import os
+
+class LambdaChromeWebDriverManager:
+    def __init__(self, headless: bool = True):
+        self.headless = headless
+        self.driver_path = "/opt/chromedriver"
+        self.binary_path = "/opt/headless-chromium"
+
+    def get_driver(self):
+        options = Options()
+        options.binary_location = self.binary_path
+
+        if self.headless:
+            options.add_argument("--headless")
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--disable-gpu")
+            options.add_argument("--window-size=1920x1080")
+
+        options.add_argument("--single-process")
+        options.add_argument("--disable-background-networking")
+        options.add_argument("--disable-default-apps")
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-sync")
+        options.add_argument("--metrics-recording-only")
+        options.add_argument("--mute-audio")
+
+        service = Service(executable_path=self.driver_path)
+        driver = webdriver.Chrome(service=service, options=options)
+        return driver
+
+from typing import List, Tuple
+
+class IWebtoonCrawler:
+    def initialize_urls(self) -> None:
+        pass
+
+    def process_batch(self, url_batch: List[str]) -> Tuple[List[dict], List[dict]]:
+        pass
+
+    def run(self) -> None:
+        pass
+
+
+class InitWebtoonCrawler(IWebtoonCrawler):
+    BATCH_SIZE = 10
+
+    def __init__(self):
+        self.driver_manager = LambdaChromeWebDriverManager(headless=True)
+        self.driver = self.driver_manager.get_driver()
+
+    def initialize_urls(self) -> None:
+        pass
+
+    def process_batch(self, url_batch: List[str]) -> Tuple[List[dict], List[dict]]:
+        pass
+
+    def run(self) -> None:
+        pass
+
+
 # 캐시 저장소
 cached_parameters = {}
 ssm = boto3.client('ssm')
-sqs = boto3.client('sqs')
+sqs = boto3.client('sqs')  # region은 IAM 설정에 따름
 
 def get_parameter_cached(parameter_name: str) -> str:
     if parameter_name not in cached_parameters:
@@ -43,6 +109,22 @@ def lambda_handler(event, context):
             message_body = json.loads(record['body'])
             result["request_id"] = message_body.get('requestTime')
             webtoons = message_body.get('requests', [])
+
+            # ✅ WebDriver 테스트 추가
+            try:
+                from selenium.common.exceptions import WebDriverException
+                crawler = InitWebtoonCrawler()
+                driver = crawler.driver
+                driver.get("https://www.google.com")
+                print("WebDriver 정상 작동, 페이지 타이틀:", driver.title)
+                driver.quit()
+                result["webdriver_ok"] = True
+            except WebDriverException as we:
+                print(f"WebDriver 작동 실패: {we}")
+                result["webdriver_ok"] = False
+            except Exception as e:
+                print(f"WebDriver 초기화 오류: {e}")
+                result["webdriver_ok"] = False
 
             updated_webtoons = process_webtoon_updates(webtoons)
             result["updated_count"] = len(updated_webtoons)
