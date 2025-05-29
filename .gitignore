@@ -4,4 +4,4 @@
 *.json
 */__pycache__
 *.log
-*.txt
+webtoon_urls.txt
