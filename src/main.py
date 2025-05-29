@@ -2,6 +2,7 @@ from modules.webtoon_list_manager import WebtoonListManager
 from modules.webtoon_repository import WebtoonRepository
 from scrapers import WebtoonListScraper
 from crawler.webtoon_crawler_factory import WebtoonCrawlerFactory
+from modules.web_driver.web_driver_factory import WebDriverFactory
 
 def save_crawler_results(success_data: list, failed_data: list, repository: WebtoonRepository) -> None:
     """크롤러 결과를 저장하는 함수"""
@@ -14,8 +15,16 @@ if __name__ == "__main__":
     # 저장소 초기화
     repository = WebtoonRepository("webtoon_data.json", "failed_webtoon_list.json")
     
-    # 크롤러 초기화
-    crawler = WebtoonCrawlerFactory.create_crawler(task_name="test")
+    # 웹 드라이버 팩토리 및 크롤러 팩토리 초기화
+    web_driver_factory = WebDriverFactory()
+    crawler_factory = WebtoonCrawlerFactory(web_driver_factory=web_driver_factory)
+    
+    # 크롤러 초기화 (로컬 환경, 브라우저 표시)
+    crawler = crawler_factory.create_crawler(
+        task_name="test",
+        environment="local",
+        show_browser=True
+    )
     
     try:
         # URL 목록 초기화

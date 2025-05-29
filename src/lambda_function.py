@@ -17,6 +17,9 @@ def lambda_handler(event, context):
         output_sqs_url = aws_service.get_parameter('/TOONPICK/prod/AWS/AWS_SQS_WEBTOON_UPDATE_COMPLETE_URL')
         slack_webhook_url = aws_service.get_parameter('/TOONPICK/prod/SLACK/SLACK_WEBHOOK_URL')
         slack_notifier = SlackNotifier(slack_webhook_url)
+        
+        # 크롤러 팩토리 초기화
+        crawler_factory = WebtoonCrawlerFactory()
         logger.info("Lambda 함수 초기화 완료")
     except Exception as e:
         logger.error("초기화 중 오류 발생", error=e)
@@ -44,7 +47,10 @@ def lambda_handler(event, context):
             try:
                 # 크롤러 초기화 및 실행
                 logger.info("크롤러 초기화 시작")
-                crawler = WebtoonCrawlerFactory.create_crawler(task_name="update")
+                crawler = crawler_factory.create_crawler(
+                    task_name="update",
+                    environment="docker_lambda"
+                )
                 
                 # URL 목록 추출
                 urls = [req.url for req in request.requests]

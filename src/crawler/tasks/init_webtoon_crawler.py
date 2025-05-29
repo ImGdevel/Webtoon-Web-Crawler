@@ -13,9 +13,13 @@ class InitWebtoonCrawler(IWebtoonCrawler):
     def __init__(
         self,
         driver_manager: Optional[IWebDriverManager] = None,
-        batch_size: int = 10
+        batch_size: int = 10,
+        environment: Optional[str] = None
     ):
-        self.driver_manager = driver_manager or WebDriverFactory.create_driver(headless=True)
+        self.driver_manager = driver_manager or WebDriverFactory.create_driver(
+            environment=environment,
+            headless=True
+        )
         self.driver: WebDriver = self.driver_manager.get_driver()
         self.scraper = WebtoonScraperFactory.create_basic_info_scraper(self.driver, platform="naver")
         self.batch_processor = BatchProcessor(batch_size)
