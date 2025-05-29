@@ -1,8 +1,6 @@
 import os
-from typing import List, Set
-from utils.logger import Logger
-
-logger = Logger()
+from typing import Set
+from utils.logger import logger
 
 class WebtoonListManager:
     """웹툰 리스트를 관리하는 클래스"""

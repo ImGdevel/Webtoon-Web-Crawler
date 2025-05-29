@@ -8,10 +8,11 @@ from bs4 import BeautifulSoup as bs
 from datetime import datetime
 from time import sleep
 import re
-from ...src_old.Scraper.WebtoonScraper import WebtoonScraper
-from src.Model.enum import AgeRating, SerializationStatus
+from .i_webtoon_scraper import IWebtoonScraper
+from models.enums import SerializationStatus, Platform, AgeRating, DayOfWeek, AuthorRole
 
-class KaKaoWebtoonScraper(WebtoonScraper):
+
+class KaKaoWebtoonScraper(IWebtoonScraper):
     PLATFORM_NAME = "kakao"
     
     KAKAO_WEBTOON_URLS = [

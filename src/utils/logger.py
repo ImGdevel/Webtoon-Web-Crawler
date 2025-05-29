@@ -39,5 +39,4 @@ class Logger:
         
         getattr(logging, level.lower())(log_message)
 
-# 기본적으로 사용할 Logger 인스턴스 생성
 logger = Logger()
