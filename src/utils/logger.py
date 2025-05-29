@@ -2,11 +2,19 @@ import logging
 import traceback
 import inspect
 from datetime import datetime
+import os
 
 class Logger:
     """로그를 관리하는 클래스"""
-    def __init__(self, log_level_console=logging.INFO, log_level_file=logging.DEBUG, enable_caller_info=False):
-        self.log_filename = datetime.now().strftime("%Y-%m-%d.log")
+    def __init__(
+        self,
+        log_dir="logs",
+        log_level_console=logging.INFO,
+        log_level_file=logging.DEBUG,
+        enable_caller_info=False
+    ):
+        os.makedirs(log_dir, exist_ok=True)
+        self.log_filename = os.path.join(log_dir, datetime.now().strftime("%Y-%m-%d.log"))
         self.log_level_console = log_level_console
         self.log_level_file = log_level_file
         self.enable_caller_info = enable_caller_info
@@ -39,4 +47,4 @@ class Logger:
         
         getattr(logging, level.lower())(log_message)
 
-logger = Logger()
+logger = Logger(log_dir="logs")
