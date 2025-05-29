@@ -26,7 +26,6 @@ def lambda_handler(event, context):
 
     for record in event['Records']:
         result = {
-            "request_id": None,
             "status": "SUCCESS",
             "error": None,
             "updated_count": 0,
@@ -37,17 +36,19 @@ def lambda_handler(event, context):
             # 메시지 검증 및 파싱
             message_body = json.loads(record['body'])
             request = validate_request_message(message_body)
-            result["request_id"] = request.request_id
-            logger.info("메시지 검증 완료", extra={"request_id": request.request_id})
+            logger.info("메시지 검증 완료", extra={"size": request.size})
 
             if not request.requests:
                 raise ValueError("URL 목록이 비어있습니다.")
 
             try:
                 # 크롤러 초기화 및 실행
-                logger.info("크롤러 초기화 시작", extra={"task_name": request.request_action})
-                crawler = WebtoonCrawlerFactory.create_crawler(task_name=request.request_action)
-                crawler.initialize(request.requests)
+                logger.info("크롤러 초기화 시작")
+                crawler = WebtoonCrawlerFactory.create_crawler(task_name="update")
+                
+                # URL 목록 추출
+                urls = [req.url for req in request.requests]
+                crawler.initialize(urls)
                 crawler.run()
                 
                 # 결과 저장
@@ -62,11 +63,15 @@ def lambda_handler(event, context):
 
                 # 성공한 웹툰 데이터를 SQS로 전송
                 for webtoon in success_data:
-                    message_body = {
-                        "request_id": request.request_id,
-                        "webtoon_data": webtoon
-                    }
-                    aws_service.send_sqs_message(output_sqs_url, message_body)
+                    # 원본 요청에서 해당 웹툰의 ID 찾기
+                    webtoon_request = next((req for req in request.requests if req.url == webtoon['url']), None)
+                    if webtoon_request:
+                        message_body = {
+                            "webtoon_id": webtoon_request.id,
+                            "platform": webtoon_request.platform,
+                            "webtoon_data": webtoon
+                        }
+                        aws_service.send_sqs_message(output_sqs_url, message_body)
                 logger.info("SQS 메시지 전송 완료")
 
             except Exception as e:
