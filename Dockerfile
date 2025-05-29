@@ -31,14 +31,13 @@ RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 # 실행 이미지 (최종)
-FROM python:3.11-slim-bullseye
+FROM public.ecr.aws/lambda/python:3.11
 
 # 런타임용 라이브러리만 설치
-RUN apt-get update && apt-get install -y \
-    libglib2.0-0 libnss3 libgconf-2-4 libfontconfig1 \
-    libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 \
-    libxtst6 libxrandr2 libasound2 libatk-bridge2.0-0 libgtk-3-0 \
-    && rm -rf /var/lib/apt/lists/*
+RUN yum update -y && yum install -y \
+    libX11 libXcomposite libXcursor libXdamage libXi \
+    libXtst libXrandr alsa-lib atk gtk3 \
+    && yum clean all
 
 # Chrome 및 ChromeDriver 복사
 COPY --from=builder /usr/bin/google-chrome /usr/bin/
@@ -47,8 +46,17 @@ COPY --from=builder /usr/local/bin/chromedriver /usr/local/bin/
 # Python 라이브러리 복사
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 
+# Lambda 환경 변수 설정
+ENV LAMBDA_TASK_ROOT=/var/task
+ENV LAMBDA_RUNTIME_DIR=/var/runtime
+ENV PYTHONPATH=/var/task
+
+# Chrome 실행을 위한 환경 변수
+ENV CHROME_BIN=/usr/bin/google-chrome
+ENV CHROMEDRIVER_PATH=/usr/local/bin/chromedriver
+
 # Lambda 핸들러 코드 복사
-WORKDIR /var/task
+WORKDIR ${LAMBDA_TASK_ROOT}
 COPY src/ .
 
 # 실행 권한
