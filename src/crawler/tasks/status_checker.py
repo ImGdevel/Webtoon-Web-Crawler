@@ -13,7 +13,7 @@ class StatusCheckCrawler(IWebtoonCrawler):
         # 각 웹툰이 연재 중인지, 완결인지 등 상태만 확인
         pass
 
-    def save(self) -> None:
+    def get_results(self) -> None:
         pass
 
     def shutdown(self) -> None:

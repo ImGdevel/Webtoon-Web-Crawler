@@ -13,7 +13,7 @@ class EpisodeCollectorCrawler(IWebtoonCrawler):
         # 각 웹툰 URL에서 에피소드 목록 긁어오기
         pass
 
-    def save(self) -> None:
+    def get_results(self) -> None:
         pass
 
     def shutdown(self) -> None:
