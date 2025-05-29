@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
     unzip \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Chrome 및 ChromeDriver 설치
@@ -17,10 +18,13 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 
 # ChromeDriver 설치
 RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d'.' -f1) \
+    && echo "Chrome 버전: $CHROME_VERSION" \
     && CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION") \
+    && echo "ChromeDriver 버전: $CHROMEDRIVER_VERSION" \
     && wget -q "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip" \
     && unzip chromedriver_linux64.zip \
     && mv chromedriver /usr/local/bin/ \
+    && chmod +x /usr/local/bin/chromedriver \
     && rm chromedriver_linux64.zip
 
 # Python 패키지 설치를 위한 작업 디렉토리 생성
