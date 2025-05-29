@@ -1,43 +1,41 @@
+import atexit
 from utils.logger import logger
 from typing import List
 from modules.web_driver.local_chrome_webdriver_manager import LocalChromeWebDriverManager
 from modules.webtoon_repository import WebtoonRepository
-from modules.webtoon_list_manager import WebtoonListManager
 from scrapers.webtoon_scraper_factory import WebtoonScraperFactory
-from scrapers.webtoon_list_scraper import WebtoonListScraper
 from .i_webtoon_crawler import IWebtoonCrawler
 
 class InitWebtoonCrawler(IWebtoonCrawler):
     """웹툰 크롤러 클래스"""
 
-    NAVER_WEBTOON_URLS = [
-        "https://comic.naver.com/webtoon?tab=finish",
-        "https://comic.naver.com/webtoon?tab=mon",
-        "https://comic.naver.com/webtoon?tab=tue",
-        "https://comic.naver.com/webtoon?tab=wed",
-        "https://comic.naver.com/webtoon?tab=thu",
-        "https://comic.naver.com/webtoon?tab=fri",
-        "https://comic.naver.com/webtoon?tab=sat",
-        "https://comic.naver.com/webtoon?tab=sun",
-    ]
     BATCH_SIZE = 10
 
     def __init__(self):
         self.driver_manager = LocalChromeWebDriverManager(headless=True)
         self.driver = self.driver_manager.get_driver()
         self.scraper = WebtoonScraperFactory.create_scraper(self.driver, "naver")
-        self.list_scraper = WebtoonListScraper(self.driver)
         self.repository = WebtoonRepository("webtoon_data.json", "failed_webtoon_list.json")
-        self.list_manager = WebtoonListManager("webtoon_urls.txt")
 
-    def initialize_urls(self) -> None:
-        """URL 초기화 메서드: 파일에서 로드하거나 새로 수집"""
-        if not self.list_manager.load_urls_from_txt():
-            logger.log("info", "새로운 URL 수집을 시작합니다.")
-            self.list_manager.collect_webtoon_urls(self.list_scraper)
+        self.urls: List[str] = []
+        self.success_data: List[dict] = []
+        self.failed_data: List[dict] = []
+
+        # 종료 시 save 자동 호출
+        atexit.register(self._safe_exit)
+
+    def _safe_exit(self):
+        """종료 시 안전하게 저장 및 셧다운"""
+        try:
+            self.save()
+        finally:
+            self.shutdown()
+
+    def initialize(self, url_list: List[str]) -> None:
+        self.urls = list(url_list)
+        logger.log("info", f"{len(url_list)}개의 URL이 초기화되었습니다.")
 
     def process_batch(self, url_batch: List[str]) -> tuple[List[dict], List[dict]]:
-        """배치 단위로 웹툰 정보를 처리"""
         success_batch = []
         failure_batch = []
 
@@ -51,32 +49,40 @@ class InitWebtoonCrawler(IWebtoonCrawler):
         return success_batch, failure_batch
 
     def run(self) -> None:
-        """크롤링 실행 메서드"""
-        self.initialize_urls()
-        logger.log("info", f"총 {len(self.list_manager.urls)}개의 웹툰 URL에 대해 크롤링을 시작합니다.")
 
-        url_list = list(self.list_manager.urls)
-        total_batches = (len(url_list) + self.BATCH_SIZE - 1) // self.BATCH_SIZE
+        if not self.urls:
+            raise ValueError("URL 리스트가 초기화되지 않았습니다. initialize()를 먼저 호출하세요.")
+
+        total_batches = (len(self.urls) + self.BATCH_SIZE - 1) // self.BATCH_SIZE
 
         for batch_num in range(total_batches):
             start_idx = batch_num * self.BATCH_SIZE
-            end_idx = min((batch_num + 1) * self.BATCH_SIZE, len(url_list))
-            current_batch = url_list[start_idx:end_idx]
+            end_idx = min((batch_num + 1) * self.BATCH_SIZE, len(self.urls))
+            current_batch = self.urls[start_idx:end_idx]
 
             logger.log("info", f"배치 {batch_num + 1}/{total_batches} 처리 중... ({start_idx + 1}~{end_idx})")
-            
+
             success_batch, failure_batch = self.process_batch(current_batch)
-            
-            if success_batch:
-                self.repository.append_success(success_batch)
-            if failure_batch:
-                self.repository.append_failure(failure_batch)
+
+            # 메모리에만 저장 (디스크 저장은 shutdown 시점에)
+            self.success_data.extend(success_batch)
+            self.failed_data.extend(failure_batch)
 
             logger.log("info", f"배치 {batch_num + 1} 완료: 성공 {len(success_batch)}, 실패 {len(failure_batch)}")
 
-        self.driver.quit()
-        logger.log("info", "모든 배치 처리 완료")
+    def save(self) -> None:
+        if self.success_data:
+            self.repository.append_success(self.success_data)
+        if self.failed_data:
+            self.repository.append_failure(self.failed_data)
 
-if __name__ == "__main__":
-    crawler = InitWebtoonCrawler()
-    crawler.run()
+        logger.log("info", f"[자동 저장] 저장 완료: 성공 {len(self.success_data)}, 실패 {len(self.failed_data)}")
+
+    def shutdown(self) -> None:
+        try:
+            self.driver.quit()
+        except Exception:
+            logger.log("error", "WebDriver 종료 중 오류 발생")
+        else:
+            logger.log("info", "WebDriver 종료 완료.")
+
