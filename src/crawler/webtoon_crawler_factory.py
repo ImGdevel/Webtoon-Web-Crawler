@@ -1,4 +1,4 @@
-from crawler.i_webtoon_crawler import IWebtoonCrawler
+from crawler.common.i_webtoon_crawler import IWebtoonCrawler
 
 class WebtoonCrawlerFactory:
     @staticmethod
@@ -6,13 +6,13 @@ class WebtoonCrawlerFactory:
         task_name = task_name.lower()
 
         if task_name == "collect_episodes":
-            from crawler.EpisodeCollectorCrawler import EpisodeCollectorCrawler
+            from crawler import EpisodeCollectorCrawler
             return EpisodeCollectorCrawler()
         elif task_name == "check_status":
-            from crawler.StatusCheckCrawler import StatusCheckCrawler
+            from crawler import StatusCheckCrawler
             return StatusCheckCrawler()
         elif task_name == "test":
-            from crawler.init_webtoon_crawler import InitWebtoonCrawler
+            from crawler import InitWebtoonCrawler
             return InitWebtoonCrawler()
         else:
             # 향후 다른 크롤러가 생기면 여기에 추가

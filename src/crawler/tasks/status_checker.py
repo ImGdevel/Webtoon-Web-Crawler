@@ -1,4 +1,4 @@
-from crawler.i_webtoon_crawler import IWebtoonCrawler
+from crawler.common.i_webtoon_crawler import IWebtoonCrawler
 from typing import List
 
 class StatusCheckCrawler(IWebtoonCrawler):

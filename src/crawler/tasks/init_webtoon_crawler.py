@@ -4,7 +4,7 @@ from typing import List
 from modules.web_driver.local_chrome_webdriver_manager import LocalChromeWebDriverManager
 from modules.webtoon_repository import WebtoonRepository
 from scrapers.webtoon_scraper_factory import WebtoonScraperFactory
-from .i_webtoon_crawler import IWebtoonCrawler
+from crawler import IWebtoonCrawler
 
 class InitWebtoonCrawler(IWebtoonCrawler):
     """웹툰 크롤러 클래스"""
