@@ -7,7 +7,7 @@ class IWebtoonCrawler:
     def run(self) -> None:
         pass
 
-    def save(self) -> None:
+    def get_results(self) -> Tuple[List[dict], List[dict]]:
         pass
 
     def shutdown(self) -> None:
