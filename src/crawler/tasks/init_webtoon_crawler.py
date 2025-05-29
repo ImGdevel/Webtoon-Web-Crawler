@@ -1,7 +1,7 @@
 import atexit
 from utils.logger import logger
 from typing import List
-from modules.web_driver.local_chrome_webdriver_manager import LocalChromeWebDriverManager
+from modules.web_driver import WebDriverFactory
 from modules.webtoon_repository import WebtoonRepository
 from scrapers.webtoon_scraper_factory import WebtoonScraperFactory
 from crawler import IWebtoonCrawler
@@ -12,7 +12,7 @@ class InitWebtoonCrawler(IWebtoonCrawler):
     BATCH_SIZE = 10
 
     def __init__(self):
-        self.driver_manager = LocalChromeWebDriverManager(headless=True)
+        self.driver_manager = WebDriverFactory.create_driver(headless=True)
         self.driver = self.driver_manager.get_driver()
         self.scraper = WebtoonScraperFactory.create_basic_info_scraper(self.driver, platform="naver")
         self.repository = WebtoonRepository("webtoon_data.json", "failed_webtoon_list.json")

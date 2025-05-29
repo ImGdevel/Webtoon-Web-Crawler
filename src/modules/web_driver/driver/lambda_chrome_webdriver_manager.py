@@ -4,9 +4,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from ..common.i_web_driver_manager import IWebDriverManager
 
-class ChromeWebDriverManager:
-    """크롬 드라이버를 자동으로 관리하는 클래스"""
+class ChromeWebDriverManager(IWebDriverManager):
+    """Lambda 환경에서 크롬 드라이버를 자동으로 관리하는 클래스"""
     
     CHROME_DRIVER_PATH = "/tmp/chromedriver"
 
