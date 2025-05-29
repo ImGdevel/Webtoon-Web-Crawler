@@ -1,9 +1,10 @@
-from crawler.init_webtoon_crawler import InitWebtoonCrawler
 from modules.webtoon_list_manager import WebtoonListManager
 from scrapers.webtoon_list_scraper import WebtoonListScraper
+from crawler.webtoon_crawler_factory import WebtoonCrawlerFactory
 
 if __name__ == "__main__":
-    crawler = InitWebtoonCrawler()
+
+    crawler = WebtoonCrawlerFactory.create_crawler(task_name="test")
     
     try:
         list_manager = WebtoonListManager("webtoon_urls.txt")
