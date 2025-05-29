@@ -1,9 +1,8 @@
-from selenium import webdriver
 from selenium.webdriver.remote.webdriver import WebDriver
 from typing import Dict, Type
-from .naver_webtoon_scraper import NaverWebtoonScraper
-from .webtoon_scraper_builder import WebtoonScraperBuilder
-from .i_webtoon_scraper import IWebtoonScraper
+from scrapers.platforms.naver_webtoon_scraper import NaverWebtoonScraper
+from scrapers.webtoon_scraper_builder import WebtoonScraperBuilder
+from scrapers.common import IWebtoonScraper
 
 class WebtoonScraperFactory:
     """웹툰 스크래퍼 팩토리 클래스"""
@@ -57,27 +56,3 @@ class WebtoonScraperFactory:
             .scrape_episode_count()
             .scrape_dates()
             .build()) 
-    
-
-"""
-# 1. 기본 사용법
-scraper = WebtoonScraperFactory.create_basic_info_scraper(driver)
-
-# 2. 특정 플랫폼 지정
-scraper = WebtoonScraperFactory.create_basic_info_scraper(driver, platform="naver")
-
-# 3. 커스텀 빌더 사용
-builder = WebtoonScraperFactory.create_builder(driver, platform="naver")
-scraper = (builder
-    .scrape_title()
-    .scrape_genres()
-    .scrape_authors()
-    .build())
-
-# 4. 새로운 플랫폼 등록
-class KakaoWebtoonScraper(IWebtoonScraper):
-    # 구현...
-
-WebtoonScraperFactory.register_scraper("kakao", KakaoWebtoonScraper)
-scraper = WebtoonScraperFactory.create_basic_info_scraper(driver, platform="kakao")
-"""

@@ -1,7 +1,7 @@
-from typing import List, Optional, Type
-from .naver_webtoon_scraper import NaverWebtoonScraper
+from typing import Type
 from selenium.webdriver.remote.webdriver import WebDriver
-from .i_webtoon_scraper import IWebtoonScraper
+from scrapers.platforms.naver_webtoon_scraper import NaverWebtoonScraper
+from scrapers.common import IWebtoonScraper
 
 class WebtoonScraperBuilder:
     def __init__(self, driver: WebDriver, scraper_class: Type[IWebtoonScraper]):

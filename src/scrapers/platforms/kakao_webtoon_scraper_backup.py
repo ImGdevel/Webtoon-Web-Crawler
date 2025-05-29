@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup as bs
 from datetime import datetime
 from time import sleep
 import re
-from .i_webtoon_scraper import IWebtoonScraper
+from scrapers.common import IWebtoonScraper
 from models.enums import SerializationStatus, Platform, AgeRating, DayOfWeek, AuthorRole
 
 

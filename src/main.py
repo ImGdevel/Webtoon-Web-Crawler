@@ -1,5 +1,5 @@
 from modules.webtoon_list_manager import WebtoonListManager
-from scrapers.webtoon_list_scraper import WebtoonListScraper
+from scrapers import WebtoonListScraper
 from crawler.webtoon_crawler_factory import WebtoonCrawlerFactory
 
 if __name__ == "__main__":

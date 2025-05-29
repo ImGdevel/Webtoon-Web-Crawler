@@ -8,7 +8,7 @@ from models.webtoon import WebtoonDTO
 from models.author import AuthorDTO
 from models.enums import SerializationStatus, Platform, AgeRating, DayOfWeek, AuthorRole
 from utils.logger import logger
-from .i_webtoon_scraper import IWebtoonScraper
+from scrapers.common import IWebtoonScraper
 from selenium.common.exceptions import TimeoutException
 from datetime import datetime
 
