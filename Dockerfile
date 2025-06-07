@@ -24,12 +24,6 @@ RUN wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}
     && chmod +x /usr/local/bin/chromedriver \
     && rm chromedriver_linux64.zip
 
-# Python 패키지 설치
-WORKDIR /build
-COPY requirements.txt .
-RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
-
 # 실행 이미지 (최종)
 FROM public.ecr.aws/lambda/python:3.11
 
@@ -43,21 +37,27 @@ RUN yum update -y && yum install -y \
 COPY --from=builder /usr/bin/google-chrome /usr/bin/
 COPY --from=builder /usr/local/bin/chromedriver /usr/local/bin/
 
-# Python 라이브러리 복사
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+# 작업 디렉토리 설정
+WORKDIR ${LAMBDA_TASK_ROOT}
 
-# Lambda 환경 변수 설정
+# 소스 코드 및 설정 파일 복사
+COPY src/ .
+COPY requirements.txt .
+
+# Python 패키지 설치
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# AWS 및 Lambda 환경 변수 설정
+ENV AWS_DEFAULT_REGION=ap-northeast-2
+ENV AWS_ACCESS_KEY_ID=dummy-key
+ENV AWS_SECRET_ACCESS_KEY=dummy-secret
 ENV LAMBDA_TASK_ROOT=/var/task
 ENV LAMBDA_RUNTIME_DIR=/var/runtime
-ENV PYTHONPATH=/var/task
 
 # Chrome 실행을 위한 환경 변수
 ENV CHROME_BIN=/usr/bin/google-chrome
 ENV CHROMEDRIVER_PATH=/usr/local/bin/chromedriver
-
-# Lambda 핸들러 코드 복사
-WORKDIR ${LAMBDA_TASK_ROOT}
-COPY src/ .
 
 # 실행 권한
 RUN chmod +x /usr/bin/google-chrome && chmod +x /usr/local/bin/chromedriver
