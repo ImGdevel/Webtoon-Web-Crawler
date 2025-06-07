@@ -2,8 +2,8 @@ import json
 from typing import Dict, Any
 from crawler.webtoon_crawler_factory import WebtoonCrawlerFactory
 from modules.aws_service import AWSService, SlackNotifier
-from modules.request_validator import validate_request_message
 from utils.logger import logger, LoggerFactory, LoggerType
+from models.sqs_message import SQSRequestMessage, WebtoonUpdateData, SQSEventType
 import os
 
 # 환경 설정
@@ -62,13 +62,11 @@ class ServiceManager:
 
 service_manager = ServiceManager()
 
-def run_crawling(message_body: Dict[str, Any], crawler_factory: WebtoonCrawlerFactory):
-    request = validate_request_message(message_body)
-
-    if not request.requests:
+def run_crawling(update_data: WebtoonUpdateData, crawler_factory: WebtoonCrawlerFactory):
+    if not update_data.requests:
         raise ValueError("URL 목록이 비어있습니다.")
 
-    urls = [req.url for req in request.requests]
+    urls = [req.url for req in update_data.requests]
 
     crawler = crawler_factory.create_crawler(
         task_name="update",
@@ -78,16 +76,20 @@ def run_crawling(message_body: Dict[str, Any], crawler_factory: WebtoonCrawlerFa
     crawler.run()
 
     success_data, failed_data = crawler.get_results()
-    return request, success_data, failed_data
+    return success_data, failed_data
 
-def send_success_results_to_sqs(success_data: list[dict], request):
+def send_success_results_to_sqs(success_data: list[dict], update_data: WebtoonUpdateData):
     for webtoon in success_data:
-        matched_req = next((req for req in request.requests if req.url == webtoon['url']), None)
+        matched_req = next((req for req in update_data.requests if req.url == webtoon['url']), None)
         if matched_req:
             message_body = {
-                "webtoon_id": matched_req.id,
-                "platform": matched_req.platform,
-                "webtoon_data": webtoon
+                "requestId": matched_req.id,
+                "eventType": SQSEventType.WEBTOON_UPDATE.value,
+                "data": {
+                    "webtoon_id": matched_req.id,
+                    "platform": matched_req.platform,
+                    "webtoon_data": webtoon
+                }
             }
             service_manager.send_to_sqs(message_body)
 
@@ -100,28 +102,42 @@ def handle_record(record: Dict[str, Any]) -> Dict[str, Any]:
     }
 
     try:
+        # SQS 메시지 파싱
         body = record['body']
         if isinstance(body, str):
-            message_body = json.loads(body)
-        else:
-            message_body = body
+            body = json.loads(body)
+        
+        # SQS 메시지를 객체로 변환
+        sqs_message = SQSRequestMessage.from_dict(body)
+        
+        # 이벤트 타입 검증
+        if sqs_message.eventType != SQSEventType.WEBTOON_UPDATE:
+            raise ValueError(f"지원하지 않는 이벤트 타입: {sqs_message.eventType}")
 
+        # 데이터를 WebtoonUpdateData 객체로 변환
+        update_data = WebtoonUpdateData.from_dict(sqs_message.data)
+
+        # 크롤링 실행
         crawler_factory = WebtoonCrawlerFactory()
-        request, success_data, failed_data = run_crawling(message_body, crawler_factory)
+        success_data, failed_data = run_crawling(update_data, crawler_factory)
 
-        result["updated_count"] = len(success_data)
-        result["webdriver_ok"] = True
-        result["success_data"] = success_data
-        result["failed_data"] = failed_data
+        result.update({
+            "requestId": sqs_message.requestId,
+            "updated_count": len(success_data),
+            "webdriver_ok": True,
+            "success_data": success_data,
+            "failed_data": failed_data
+        })
 
         # SQS 메시지 전송
-        send_success_results_to_sqs(success_data, request)
+        send_success_results_to_sqs(success_data, update_data)
         
         # SQS 메시지 삭제
         if 'receiptHandle' in record:
             service_manager.delete_from_sqs(record['receiptHandle'])
 
         logger.info("크롤링 완료", extra={
+            "requestId": sqs_message.requestId,
             "success": len(success_data), 
             "failed": len(failed_data)
         })

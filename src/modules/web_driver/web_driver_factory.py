@@ -1,14 +1,35 @@
 import os
 from typing import Optional
-from .driver.docker_chrome_webdriver_manager import DockerChromeWebDriverManager
-from .driver.local_chrome_webdriver_manager import LocalChromeWebDriverManager
+from .driver import (
+    ChromeWebDriverManager,
+    DockerChromeWebDriverManager,
+    WebDriverManager
+)
 from .common.i_web_driver_manager import IWebDriverManager
 
 class WebDriverFactory:
-    """WebDriver 인스턴스를 생성하는 팩토리 클래스"""
-    
+    """웹 드라이버 팩토리 클래스"""
+
+    def create_driver(self, environment: str = "local", headless: bool = True) -> WebDriverManager:
+        """
+        환경에 따른 웹 드라이버 매니저를 생성합니다.
+
+        Args:
+            environment (str): 실행 환경 ("local" 또는 "docker_lambda")
+            headless (bool): 헤드리스 모드 사용 여부 (로컬 환경에서만 적용)
+
+        Returns:
+            WebDriverManager: 웹 드라이버 매니저 인스턴스
+        """
+        if environment == "docker_lambda":
+            # Docker Lambda 환경에서는 항상 headless 모드로 동작
+            return DockerChromeWebDriverManager()
+        else:
+            # 로컬 환경에서만 headless 옵션 적용
+            return ChromeWebDriverManager(headless=headless)
+
     @staticmethod
-    def create_driver(environment: Optional[str] = None, headless: bool = False) -> IWebDriverManager:
+    def create_driver_old(environment: Optional[str] = None, headless: bool = False) -> IWebDriverManager:
         """
         환경에 맞는 WebDriver 인스턴스를 생성합니다.
         
